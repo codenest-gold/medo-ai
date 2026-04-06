@@ -6,10 +6,11 @@
 <title>Medo plan</title>
 <style>
   :root{
-    --bg:#071428;
+    --ui-bg:#071428;
     --accent:#6ee7b7;
     --muted:#94a3b8;
     --page-bg:#f8fafc;
+    --panel:#0b1220;
   }
   html,body{height:100%;margin:0;font-family:Inter, "Segoe UI", Tahoma, sans-serif;background:linear-gradient(180deg,#071029 0%, #0b1220 100%);color:#e6eef8}
   header{display:flex;align-items:center;gap:12px;padding:12px 16px;background:linear-gradient(90deg, rgba(255,255,255,0.03), transparent);box-shadow:0 2px 8px rgba(2,6,23,0.6)}
@@ -18,19 +19,19 @@
   .btn{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);padding:8px 10px;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
   .btn.active{border-color:var(--accent);color:var(--accent);box-shadow:0 4px 18px rgba(110,231,183,0.08)}
   main{display:flex;flex-direction:column;height:calc(100vh - 110px);gap:8px;padding:8px}
-  /* لوحة الإعدادات العلوية */
   .top-settings{display:flex;gap:12px;align-items:flex-start;padding:10px;background:linear-gradient(180deg,#071428, #071a2a);border-radius:10px;box-shadow:0 8px 30px rgba(2,6,23,0.6);overflow:auto}
-  .settings-block{min-width:220px;max-width:420px}
+  .settings-block{min-width:220px;max-width:420px;color:#e6eef8}
   label{display:block;font-size:13px;color:var(--muted);margin-top:6px}
   input[type="color"], input[type="range"], input[type="text"], input[type="number"], select{width:100%;padding:6px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#e6eef8}
   .small{display:flex;gap:8px}
   .small > *{flex:1}
-  /* لوحة العمل */
-  .canvas-wrap{flex:1;display:flex;justify-content:center;align-items:flex-start;padding:12px;overflow:auto}
+  .canvas-wrap{flex:1;display:flex;justify-content:center;align-items:flex-start;padding:12px;overflow:auto;touch-action:none}
   #page{
     width:1024px;height:640px;background:var(--page-bg);border-radius:12px;box-shadow:0 8px 30px rgba(2,6,23,0.6);
-    position:relative;touch-action:none;overflow:hidden;
+    position:relative;touch-action:none;overflow:auto;
     transform-origin:top left;
+    -webkit-overflow-scrolling:touch;
+    scroll-behavior:smooth;
   }
   .elem{position:absolute;touch-action:none;user-select:none;display:flex;align-items:center;justify-content:center}
   /* مركب: خط يحدد الحواف، ونص في المنتصف */
@@ -38,11 +39,15 @@
   .rect-inner{display:flex;align-items:center;justify-content:center;width:100%;height:100%;border-radius:6px;padding:6px;box-sizing:border-box}
   .text-elem{font-size:18px;color:#0b1220;white-space:pre-wrap;text-align:center}
   .img-elem img{max-width:100%;max-height:100%;display:block;border-radius:6px}
-  .handle{width:12px;height:12px;border-radius:2px;background:var(--accent);position:absolute;right:-6px;bottom:-6px;touch-action:none;cursor:se-resize}
+  /* المربع الصغير يظهر فقط أثناء التحديد (selected) */
+  .handle{width:12px;height:12px;border-radius:2px;background:var(--accent);position:absolute;right:-6px;bottom:-6px;touch-action:none;cursor:se-resize;display:none}
+  .elem.selected .handle{display:block}
   .selected{outline:2px dashed rgba(99,102,241,0.9);outline-offset:6px}
-  footer{display:flex;gap:8px;align-items:center;padding:10px 18px;background:linear-gradient(90deg, rgba(255,255,255,0.02), transparent)}
   .muted{color:var(--muted);font-size:13px}
-  .hidden{display:none}
+  .value-badge{display:inline-block;min-width:44px;text-align:center;background:rgba(0,0,0,0.25);padding:4px 6px;border-radius:6px;color:#e6eef8;margin-top:6px;font-size:13px}
+  .overlay-info{position:absolute;pointer-events:none;background:rgba(11,18,32,0.8);color:#e6eef8;padding:6px 8px;border-radius:8px;font-size:12px;border:1px solid rgba(255,255,255,0.04)}
+  .controls-row{display:flex;gap:8px;align-items:center}
+  footer{display:flex;gap:8px;align-items:center;padding:10px 18px;background:linear-gradient(90deg, rgba(255,255,255,0.02), transparent)}
   @media (max-width:900px){
     main{padding:8px}
     .top-settings{flex-direction:column;align-items:stretch}
@@ -60,7 +65,7 @@
     <button class="btn" id="tool-image">صورة</button>
     <button class="btn" id="tool-hex">سداسي</button>
     <button class="btn" id="btn-undo">تراجع</button>
-    <button class="btn" id="btn-export">تصدير صورة</button>
+    <button class="btn" id="btn-export">تصدير ورفع</button>
     <button class="btn" id="btn-save">تحميل المشروع</button>
     <button class="btn" id="btn-load">استيراد مشروع</button>
     <input type="file" id="file-load" accept=".json,image/*" style="display:none" />
@@ -69,7 +74,6 @@
 </header>
 
 <main>
-  <!-- لوحة الإعدادات العلوية -->
   <div class="top-settings" id="top-settings">
     <div class="settings-block">
       <h3 style="margin:0;color:var(--accent)">إعدادات الصفحة</h3>
@@ -108,12 +112,15 @@
             <div>
               <label>دوران (deg)</label>
               <input id="rect-rotate" type="range" min="0" max="360" value="0" />
+              <div class="value-badge" id="rect-rotate-val">0°</div>
             </div>
             <div>
               <label>الحجم (مقياس)</label>
               <input id="rect-scale" type="range" min="0.3" max="3" step="0.01" value="1" />
+              <div class="value-badge" id="rect-scale-val">1.00x</div>
             </div>
           </div>
+          <div style="margin-top:6px" class="muted">أبعاد العنصر: <span id="rect-size-val">—</span></div>
         </div>
 
         <!-- نص -->
@@ -126,30 +133,38 @@
             <div>
               <label>حجم الخط (px)</label>
               <input id="text-size" type="range" min="8" max="120" value="18" />
+              <div class="value-badge" id="text-size-val">18px</div>
             </div>
             <div>
               <label>دوران (deg)</label>
               <input id="text-rotate" type="range" min="0" max="360" value="0" />
+              <div class="value-badge" id="text-rotate-val">0°</div>
             </div>
           </div>
+          <div style="margin-top:6px" class="muted">أبعاد العنصر: <span id="text-size-box">—</span></div>
         </div>
 
         <!-- سهم -->
         <div id="settings-arrow" style="display:none">
           <label>لون السهم</label>
           <input id="arrow-color" type="color" value="#0b1220" />
-          <label>انحناء (سالب/موجب)</label>
+          <label>انحناء (اعوجاج)</label>
           <input id="arrow-curve" type="range" min="-100" max="100" value="0" />
+          <div class="value-badge" id="arrow-curve-val">0</div>
+          <label><input type="checkbox" id="arrow-arc-mode" /> اجعل الانحناء قوس دائري (دائرة)</label>
           <div class="small">
             <div>
               <label>دوران (deg)</label>
               <input id="arrow-rotate" type="range" min="0" max="360" value="0" />
+              <div class="value-badge" id="arrow-rotate-val">0°</div>
             </div>
             <div>
               <label>الحجم (مقياس)</label>
               <input id="arrow-scale" type="range" min="0.2" max="3" step="0.01" value="1" />
+              <div class="value-badge" id="arrow-scale-val">1.00x</div>
             </div>
           </div>
+          <div style="margin-top:6px" class="muted">أبعاد العنصر: <span id="arrow-size-box">—</span></div>
         </div>
 
         <!-- صورة -->
@@ -161,6 +176,7 @@
             <input id="img-w" type="number" value="200" />
             <input id="img-h" type="number" value="120" />
           </div>
+          <div style="margin-top:6px" class="muted">أبعاد الصورة: <span id="img-size-box">200 × 120</span></div>
         </div>
 
         <!-- سداسي -->
@@ -169,6 +185,7 @@
           <input id="hex-color" type="color" value="#ffd166" />
           <label>حجم (px)</label>
           <input id="hex-size" type="range" min="30" max="400" value="120" />
+          <div class="value-badge" id="hex-size-val">120px</div>
         </div>
 
         <div style="margin-top:8px;display:flex;gap:8px">
@@ -179,14 +196,13 @@
     </div>
   </div>
 
-  <!-- لوحة العمل -->
   <div class="canvas-wrap">
     <div id="page" tabindex="0" aria-label="لوحة العمل"></div>
   </div>
 </main>
 
 <footer>
-  <div class="muted">اسحب العناصر لتغيير مكانها. اضغط على زر ثم اضغط في الصفحة لإضافة العنصر.</div>
+  <div class="muted">اسحب العناصر لتغيير مكانها. اضغط على زر ثم اضغط في الصفحة لإضافة العنصر. اسحب الصفحة بمؤشر واحد على الخلفية للتنقل بسلاسة.</div>
 </footer>
 
 <script>
@@ -219,7 +235,7 @@ function pushHistory(label){
   history.splice(historyIndex+1);
   history.push(state);
   historyIndex = history.length - 1;
-  if(history.length > 80) history.shift();
+  if(history.length > 120) history.shift();
 }
 function restoreHistory(idx){
   if(idx < 0 || idx >= history.length) return;
@@ -280,18 +296,22 @@ const settings = {
 /* Rect inputs */
 const rectText = $('#rect-text'), rectBg = $('#rect-bg'), rectBorder = $('#rect-border'), rectColor = $('#rect-color'),
       rectShadow = $('#rect-shadow'), rectRotate = $('#rect-rotate'), rectScale = $('#rect-scale');
+const rectRotateVal = $('#rect-rotate-val'), rectScaleVal = $('#rect-scale-val'), rectSizeVal = $('#rect-size-val');
 
 /* Text inputs */
 const textContent = $('#text-content'), textColor = $('#text-color'), textSize = $('#text-size'), textRotate = $('#text-rotate');
+const textSizeVal = $('#text-size-val'), textRotateVal = $('#text-rotate-val'), textBoxVal = $('#text-size-box');
 
 /* Arrow inputs */
 const arrowColor = $('#arrow-color'), arrowCurve = $('#arrow-curve'), arrowRotate = $('#arrow-rotate'), arrowScale = $('#arrow-scale');
+const arrowCurveVal = $('#arrow-curve-val'), arrowRotateVal = $('#arrow-rotate-val'), arrowScaleVal = $('#arrow-scale-val'), arrowSizeBox = $('#arrow-size-box');
+const arrowArcMode = $('#arrow-arc-mode');
 
 /* Image inputs */
-const changeImageBtn = $('#change-image'), imgW = $('#img-w'), imgH = $('#img-h');
+const changeImageBtn = $('#change-image'), imgW = $('#img-w'), imgH = $('#img-h'), imgSizeBox = $('#img-size-box');
 
 /* Hex inputs */
-const hexColor = $('#hex-color'), hexSize = $('#hex-size');
+const hexColor = $('#hex-color'), hexSize = $('#hex-size'), hexSizeVal = $('#hex-size-val');
 
 const btnDelete = $('#btn-delete');
 const btnCenter = $('#btn-center');
@@ -320,6 +340,12 @@ tools.arrow.addEventListener('click', ()=>setTool('arrow'));
 tools.image.addEventListener('click', ()=>setTool('image'));
 tools.hex.addEventListener('click', ()=>setTool('hex'));
 
+/* Subscript replacement: H~2o -> H₂o etc. */
+const subMap = {'0':'₀','1':'₁','2':'₂','3':'₃','4':'₄','5':'₅','6':'₆','7':'₇','8':'₈','9':'₉'};
+function applySubscripts(str){
+  return str.replace(/~([0-9]+)/g, (m, digits) => digits.split('').map(d=>subMap[d]||d).join(''));
+}
+
 /* Create element factory */
 function createElement(type, x=50, y=50, opts={}){
   elemIdCounter++;
@@ -341,7 +367,7 @@ function createElement(type, x=50, y=50, opts={}){
     innerWrap.style.background = opts.bg || '#ffffff';
     innerWrap.style.border = `2px solid ${opts.border || '#0b1220'}`; // خط يحدد الحواف
     innerWrap.style.color = opts.color || '#0b1220';
-    innerWrap.innerText = opts.text || 'مركب';
+    innerWrap.innerText = applySubscripts(opts.text || 'مركب');
     const outer = document.createElement('div');
     outer.className = 'rect';
     outer.appendChild(innerWrap);
@@ -357,7 +383,7 @@ function createElement(type, x=50, y=50, opts={}){
   } else if(type === 'text'){
     const t = document.createElement('div');
     t.className = 'text-elem';
-    t.innerText = opts.text || 'نص قابل للتعديل';
+    t.innerText = applySubscripts(opts.text || 'نص قابل للتعديل');
     el.appendChild(t);
     el.dataset.text = t.innerText;
     el.dataset.color = opts.color || '#0b1220';
@@ -374,7 +400,7 @@ function createElement(type, x=50, y=50, opts={}){
     marker.setAttribute('id','arrowhead-'+id);
     marker.setAttribute('markerWidth','10');
     marker.setAttribute('markerHeight','10');
-    marker.setAttribute('refX','6');
+    marker.setAttribute('refX','0'); // remove short stub by aligning head flush
     marker.setAttribute('refY','3');
     marker.setAttribute('orient','auto');
     const poly = document.createElementNS(svgNS,'polygon');
@@ -396,6 +422,7 @@ function createElement(type, x=50, y=50, opts={}){
     el.dataset.curve = opts.curve || 0;
     el.dataset.rotate = opts.rotate || 0;
     el.dataset.scale = opts.scale || 1;
+    el.dataset.arc = opts.arc || 'false';
     applyArrowStyles(el);
   } else if(type === 'image'){
     const wrap = document.createElement('div');
@@ -429,7 +456,7 @@ function createElement(type, x=50, y=50, opts={}){
     const circle = document.createElementNS(svgNS,'circle');
     circle.setAttribute('cx',100);
     circle.setAttribute('cy',100);
-    circle.setAttribute('r',60); // أصغر من السداسي لترك فراغ
+    circle.setAttribute('r',60);
     circle.setAttribute('fill','#ffffff');
     circle.setAttribute('stroke','#0b1220');
     circle.setAttribute('stroke-width','2');
@@ -448,6 +475,11 @@ function createElement(type, x=50, y=50, opts={}){
   el.addEventListener('pointerdown', elemPointerDown);
   el.addEventListener('touchstart', e=>e.stopPropagation());
   el.addEventListener('dblclick', e=>{ e.stopPropagation(); if(el.dataset.type==='rect'){ const inner = el.querySelector('.rect-inner'); inner.contentEditable = true; inner.focus(); } if(el.dataset.type==='text'){ const t = el.querySelector('.text-elem'); t.contentEditable = true; t.focus(); }});
+  // overlay for angle/size
+  const overlay = document.createElement('div');
+  overlay.className = 'overlay-info hidden';
+  overlay.dataset.for = id;
+  document.body.appendChild(overlay);
   page.appendChild(el);
   return el;
 }
@@ -466,6 +498,7 @@ function applyRectStyles(el){
   innerWrap.style.display = 'flex';
   innerWrap.style.alignItems = 'center';
   innerWrap.style.justifyContent = 'center';
+  updateOverlay(el);
 }
 function applyTextStyles(el){
   const t = el.querySelector('.text-elem');
@@ -474,15 +507,39 @@ function applyTextStyles(el){
   const r = el.dataset.rotate || 0;
   el.style.transform = `translate(-50%,-50%) rotate(${r}deg)`;
   t.innerText = el.dataset.text || t.innerText;
+  updateOverlay(el);
 }
 function applyArrowStyles(el){
   const svg = el.querySelector('svg');
   const path = svg.querySelector('path');
   const color = el.dataset.color || '#0b1220';
   const curve = parseFloat(el.dataset.curve || 0);
-  const cx1 = 50, cy1 = 40 + curve*0.2;
-  const cx2 = 150, cy2 = 40 - curve*0.2;
-  const d = `M10 40 C ${cx1} ${cy1} ${cx2} ${cy2} 190 40`;
+  const arcMode = (el.dataset.arc === 'true');
+  // start/end
+  const x1 = 10, y1 = 40, x2 = 190, y2 = 40;
+  let d = '';
+  if(arcMode){
+    // compute arc parameters: use midpoint offset by curve to determine radius and sweep
+    const mx = (x1 + x2)/2;
+    const my = (y1 + y2)/2;
+    const offset = curve * 0.6;
+    const cx = mx;
+    const cy = my - offset;
+    // radius as distance from center to start
+    const rx = Math.abs(cx - x1);
+    const ry = Math.abs(cy - y1);
+    // ensure non-zero
+    const r = Math.max(1, Math.hypot(x1 - cx, y1 - cy));
+    // large-arc flag based on magnitude
+    const laf = Math.abs(curve) > 50 ? 1 : 0;
+    const sweep = curve >= 0 ? 0 : 1;
+    // use elliptical arc A rx ry x-axis-rotation large-arc-flag sweep-flag x y
+    d = `M ${x1} ${y1} A ${r} ${r} 0 ${laf} ${sweep} ${x2} ${y2}`;
+  } else {
+    const cx1 = 50, cy1 = 40 + curve*0.2;
+    const cx2 = 150, cy2 = 40 - curve*0.2;
+    d = `M${x1} ${y1} C ${cx1} ${cy1} ${cx2} ${cy2} ${x2} ${y2}`;
+  }
   path.setAttribute('d', d);
   path.setAttribute('stroke', color);
   const marker = svg.querySelector('marker polygon');
@@ -492,12 +549,14 @@ function applyArrowStyles(el){
   el.style.width = (200 * s) + 'px';
   el.style.height = (80 * s) + 'px';
   el.style.transform = `translate(-50%,-50%) rotate(${r}deg)`;
+  updateOverlay(el);
 }
 function applyImageStyles(el){
   const img = el.querySelector('img');
   img.src = el.dataset.src || '';
   el.style.width = (el.dataset.w || 200) + 'px';
   el.style.height = (el.dataset.h || 120) + 'px';
+  updateOverlay(el);
 }
 function applyHexStyles(el){
   const svg = el.querySelector('svg');
@@ -506,41 +565,77 @@ function applyHexStyles(el){
   const size = parseInt(el.dataset.size || 120);
   el.style.width = size + 'px';
   el.style.height = size + 'px';
+  updateOverlay(el);
+}
+
+/* Overlay update: show angle and size near element */
+function updateOverlay(el){
+  const id = el.dataset.id;
+  const overlay = document.querySelector(`.overlay-info[data-for="${id}"]`);
+  if(!overlay) return;
+  const rect = el.getBoundingClientRect();
+  const pageRect = page.getBoundingClientRect();
+  const angle = el.dataset.rotate || 0;
+  // compute scale or size
+  const w = Math.round(parseFloat(el.style.width) || el.offsetWidth);
+  const h = Math.round(parseFloat(el.style.height) || el.offsetHeight);
+  const scale = (el.dataset.scale ? parseFloat(el.dataset.scale).toFixed(2) : '1.00');
+  overlay.textContent = `زاوية: ${angle}°  |  حجم: ${w}×${h}  |  مقياس: ${scale}x`;
+  overlay.style.left = (pageRect.left + rect.left - pageRect.left + rect.width + 12) + 'px';
+  overlay.style.top = (pageRect.top + rect.top - pageRect.top) + 'px';
+  overlay.classList.remove('hidden');
+}
+
+/* Hide overlay */
+function hideOverlay(el){
+  const id = el.dataset.id;
+  const overlay = document.querySelector(`.overlay-info[data-for="${id}"]`);
+  if(overlay) overlay.classList.add('hidden');
 }
 
 /* Page click to place element */
 page.addEventListener('pointerdown', function(e){
-  if(!placing) return;
-  const rect = page.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
-  let el;
-  if(currentTool === 'rect') el = createElement('rect', x, y);
-  if(currentTool === 'text') el = createElement('text', x, y);
-  if(currentTool === 'arrow') el = createElement('arrow', x, y);
-  if(currentTool === 'image'){
-    imgUploader.onchange = function(ev){
-      const f = ev.target.files[0];
-      if(!f) return;
-      const url = URL.createObjectURL(f);
-      el = createElement('image', x, y, {src:url, w:200, h:120});
+  // if placing mode, add element
+  if(placing){
+    const rect = page.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    let el;
+    if(currentTool === 'rect') el = createElement('rect', x, y);
+    if(currentTool === 'text') el = createElement('text', x, y);
+    if(currentTool === 'arrow') el = createElement('arrow', x, y);
+    if(currentTool === 'image'){
+      imgUploader.onchange = function(ev){
+        const f = ev.target.files[0];
+        if(!f) return;
+        const url = URL.createObjectURL(f);
+        el = createElement('image', x, y, {src:url, w:200, h:120});
+        selectElement(el);
+        pushHistory('add-image');
+        imgUploader.value = '';
+      };
+      imgUploader.click();
+      return;
+    }
+    if(currentTool === 'hex') el = createElement('hex', x, y);
+    if(el){
       selectElement(el);
-      pushHistory('add-image');
-      imgUploader.value = '';
-    };
-    imgUploader.click();
+      pushHistory('add-'+currentTool);
+    }
     return;
   }
-  if(currentTool === 'hex') el = createElement('hex', x, y);
-  if(el){
-    selectElement(el);
-    pushHistory('add-'+currentTool);
+  // if clicked background (not on element) start panning
+  if(e.target === page){
+    startPan(e);
   }
 });
 
 /* Selection handling */
 function selectElement(el){
-  if(selectedElem) selectedElem.classList.remove('selected');
+  if(selectedElem) {
+    selectedElem.classList.remove('selected');
+    hideOverlay(selectedElem);
+  }
   selectedElem = el;
   if(!el) {
     settingsArea.style.display='none'; noSelection.style.display='block'; return;
@@ -559,27 +654,41 @@ function selectElement(el){
     rectShadow.value = el.dataset.shadow || 'soft';
     rectRotate.value = el.dataset.rotate || 0;
     rectScale.value = el.dataset.scale || 1;
+    rectRotateVal.textContent = `${el.dataset.rotate}°`;
+    rectScaleVal.textContent = `${parseFloat(el.dataset.scale).toFixed(2)}x`;
+    rectSizeVal.textContent = `${Math.round(parseFloat(el.style.width))} × ${Math.round(parseFloat(el.style.height))}`;
   } else if(el.dataset.type === 'text'){
     settings.text.style.display='block';
     textContent.value = el.dataset.text || '';
     textColor.value = el.dataset.color || '#0b1220';
     textSize.value = el.dataset.size || 18;
     textRotate.value = el.dataset.rotate || 0;
+    textSizeVal.textContent = `${el.dataset.size}px`;
+    textRotateVal.textContent = `${el.dataset.rotate}°`;
+    textBoxVal.textContent = `${Math.round(parseFloat(el.style.width))} × ${Math.round(parseFloat(el.style.height))}`;
   } else if(el.dataset.type === 'arrow'){
     settings.arrow.style.display='block';
     arrowColor.value = el.dataset.color || '#0b1220';
     arrowCurve.value = el.dataset.curve || 0;
     arrowRotate.value = el.dataset.rotate || 0;
     arrowScale.value = el.dataset.scale || 1;
+    arrowArcMode.checked = (el.dataset.arc === 'true');
+    arrowCurveVal.textContent = el.dataset.curve || 0;
+    arrowRotateVal.textContent = `${el.dataset.rotate}°`;
+    arrowScaleVal.textContent = `${parseFloat(el.dataset.scale).toFixed(2)}x`;
+    arrowSizeBox.textContent = `${Math.round(parseFloat(el.style.width))} × ${Math.round(parseFloat(el.style.height))}`;
   } else if(el.dataset.type === 'image'){
     settings.image.style.display='block';
     imgW.value = parseInt(el.dataset.w || 200);
     imgH.value = parseInt(el.dataset.h || 120);
+    imgSizeBox.textContent = `${Math.round(el.dataset.w)} × ${Math.round(el.dataset.h)}`;
   } else if(el.dataset.type === 'hex'){
     settings.hex.style.display='block';
     hexColor.value = el.dataset.color || '#ffd166';
     hexSize.value = el.dataset.size || 120;
+    hexSizeVal.textContent = `${el.dataset.size}px`;
   }
+  updateOverlay(el);
 }
 
 /* Deselect on background click when not placing */
@@ -620,6 +729,7 @@ function elemPointerMove(e){
       el.dataset.size = Math.max(30, newW);
       applyHexStyles(el);
     }
+    updateOverlay(el);
     return;
   } else {
     const pageRect = page.getBoundingClientRect();
@@ -629,6 +739,7 @@ function elemPointerMove(e){
     top = Math.max(0, Math.min(top, pageRect.height));
     el.style.left = left + 'px';
     el.style.top = top + 'px';
+    updateOverlay(el);
   }
 }
 function elemPointerUp(e){
@@ -638,24 +749,30 @@ function elemPointerUp(e){
   pushHistory('move/resize');
 }
 
-/* Settings change handlers */
-rectText.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.text = rectText.value; applyRectStyles(selectedElem); pushHistory('edit-rect'); });
+/* Settings change handlers with numeric displays and subscript handling */
+rectText.addEventListener('input', ()=>{
+  if(!selectedElem) return;
+  selectedElem.dataset.text = applySubscripts(rectText.value);
+  applyRectStyles(selectedElem);
+  pushHistory('edit-rect');
+});
 rectBg.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.bg = rectBg.value; applyRectStyles(selectedElem); pushHistory('edit-rect'); });
 rectBorder.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.border = rectBorder.value; applyRectStyles(selectedElem); pushHistory('edit-rect'); });
 rectColor.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.color = rectColor.value; applyRectStyles(selectedElem); pushHistory('edit-rect'); });
 rectShadow.addEventListener('change', ()=>{ if(!selectedElem) return; selectedElem.dataset.shadow = rectShadow.value; applyRectStyles(selectedElem); pushHistory('edit-rect'); });
-rectRotate.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.rotate = rectRotate.value; applyRectStyles(selectedElem); pushHistory('edit-rect'); });
-rectScale.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.scale = rectScale.value; applyRectStyles(selectedElem); pushHistory('edit-rect'); });
+rectRotate.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.rotate = rectRotate.value; applyRectStyles(selectedElem); rectRotateVal.textContent = `${rectRotate.value}°`; });
+rectScale.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.scale = rectScale.value; applyRectStyles(selectedElem); rectScaleVal.textContent = `${parseFloat(rectScale.value).toFixed(2)}x`; });
 
-textContent.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.text = textContent.value; applyTextStyles(selectedElem); pushHistory('edit-text'); });
+textContent.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.text = applySubscripts(textContent.value); applyTextStyles(selectedElem); pushHistory('edit-text'); });
 textColor.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.color = textColor.value; applyTextStyles(selectedElem); pushHistory('edit-text'); });
-textSize.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.size = textSize.value; applyTextStyles(selectedElem); pushHistory('edit-text'); });
-textRotate.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.rotate = textRotate.value; applyTextStyles(selectedElem); pushHistory('edit-text'); });
+textSize.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.size = textSize.value; applyTextStyles(selectedElem); textSizeVal.textContent = `${textSize.value}px`; });
+textRotate.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.rotate = textRotate.value; applyTextStyles(selectedElem); textRotateVal.textContent = `${textRotate.value}°`; });
 
 arrowColor.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.color = arrowColor.value; applyArrowStyles(selectedElem); pushHistory('edit-arrow'); });
-arrowCurve.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.curve = arrowCurve.value; applyArrowStyles(selectedElem); pushHistory('edit-arrow'); });
-arrowRotate.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.rotate = arrowRotate.value; applyArrowStyles(selectedElem); pushHistory('edit-arrow'); });
-arrowScale.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.scale = arrowScale.value; applyArrowStyles(selectedElem); pushHistory('edit-arrow'); });
+arrowCurve.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.curve = arrowCurve.value; applyArrowStyles(selectedElem); arrowCurveVal.textContent = arrowCurve.value; pushHistory('edit-arrow'); });
+arrowArcMode.addEventListener('change', ()=>{ if(!selectedElem) return; selectedElem.dataset.arc = arrowArcMode.checked ? 'true' : 'false'; applyArrowStyles(selectedElem); pushHistory('edit-arrow'); });
+arrowRotate.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.rotate = arrowRotate.value; applyArrowStyles(selectedElem); arrowRotateVal.textContent = `${arrowRotate.value}°`; });
+arrowScale.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.scale = arrowScale.value; applyArrowStyles(selectedElem); arrowScaleVal.textContent = `${parseFloat(arrowScale.value).toFixed(2)}x`; });
 
 changeImageBtn.addEventListener('click', ()=> imgUploader.click());
 imgUploader.addEventListener('change', function(e){
@@ -672,7 +789,7 @@ imgW.addEventListener('change', ()=>{ if(!selectedElem) return; selectedElem.dat
 imgH.addEventListener('change', ()=>{ if(!selectedElem) return; selectedElem.dataset.w = imgW.value; selectedElem.dataset.h = imgH.value; applyImageStyles(selectedElem); pushHistory('edit-image'); });
 
 hexColor.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.color = hexColor.value; applyHexStyles(selectedElem); pushHistory('edit-hex'); });
-hexSize.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.size = hexSize.value; applyHexStyles(selectedElem); pushHistory('edit-hex'); });
+hexSize.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.size = hexSize.value; applyHexStyles(selectedElem); hexSizeVal.textContent = `${hexSize.value}px`; pushHistory('edit-hex'); });
 
 btnDelete.addEventListener('click', ()=>{
   if(!selectedElem) return;
@@ -749,23 +866,27 @@ fileLoad.addEventListener('change', function(e){
   fileLoad.value = '';
 });
 
-/* Export page as image */
-btnExport.addEventListener('click', async ()=>{
-  const scale = 2;
+/* Export page as high-quality image and attempt upload to catbox.moe (gives copyable link) */
+async function exportAndUpload(){
+  const scale = 3; // جودة أعلى
   const w = parseInt(page.style.width);
   const h = parseInt(page.style.height);
+  // clone page and inline styles
   const clone = page.cloneNode(true);
   clone.style.transform = 'none';
   clone.style.width = w + 'px';
   clone.style.height = h + 'px';
   clone.querySelectorAll('.selected').forEach(s=>s.classList.remove('selected'));
+  // hide overlays and controls that shouldn't appear
+  clone.querySelectorAll('.overlay-info').forEach(o=>o.remove());
+  // inline computed styles
   function inlineStyles(node){
     if(node.nodeType !== 1) return;
     const cs = window.getComputedStyle(node);
     let styleStr = '';
     const props = ['background','color','font-size','border-radius','box-shadow','padding','display','justify-content','align-items','width','height','left','top','transform','position','overflow','border','white-space','text-align'];
     props.forEach(p=>{
-      try{ if(cs.getPropertyValue(p)) styleStr += `${p}:${cs.getPropertyValue(p)};`; }catch(e){}
+      try{ const v = cs.getPropertyValue(p); if(v) styleStr += `${p}:${v};`; }catch(e){}
     });
     node.setAttribute('style', (node.getAttribute('style')||'') + styleStr);
     Array.from(node.children).forEach(inlineStyles);
@@ -786,25 +907,90 @@ btnExport.addEventListener('click', async ()=>{
   const img = new Image();
   const svgBlob = new Blob([svgStr], {type:'image/svg+xml;charset=utf-8'});
   const url = URL.createObjectURL(svgBlob);
-  img.onload = function(){
-    const canvas = document.createElement('canvas');
-    canvas.width = w*scale;
-    canvas.height = h*scale;
-    const ctx = canvas.getContext('2d');
-    ctx.fillStyle = pageBg.value || '#ffffff';
-    ctx.fillRect(0,0,canvas.width,canvas.height);
-    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-    URL.revokeObjectURL(url);
-    const dataURL = canvas.toDataURL('image/png');
-    const a = document.createElement('a');
-    a.href = dataURL;
-    a.download = 'medo-plan-export.png';
-    a.click();
-  };
-  img.onerror = function(){
-    alert('تعذر إنشاء الصورة. جرب متصفح آخر أو قلل التعقيد.');
-  };
-  img.src = url;
+  return new Promise((resolve, reject)=>{
+    img.onload = async function(){
+      try{
+        const canvas = document.createElement('canvas');
+        canvas.width = w*scale;
+        canvas.height = h*scale;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = pageBg.value || '#ffffff';
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        URL.revokeObjectURL(url);
+        canvas.toBlob(async function(blob){
+          if(!blob){ reject('تعذر إنشاء الصورة'); return; }
+          // محاولة رفع الملف إلى catbox.moe (يعطي رابط يمكن نسخه يدوياً)
+          try{
+            const form = new FormData();
+            form.append('reqtype','fileupload');
+            form.append('userhash','');
+            form.append('fileToUpload', blob, 'medo-plan-export.png');
+            const resp = await fetch('https://catbox.moe/user/api.php', { method:'POST', body: form });
+            if(!resp.ok) throw new Error('upload-failed');
+            const text = await resp.text();
+            resolve({success:true, url:text.trim()});
+          }catch(err){
+            // فشل الرفع: نعيد تنزيل الملف محلياً كنسخة احتياطية
+            const a = document.createElement('a');
+            const localUrl = URL.createObjectURL(blob);
+            a.href = localUrl;
+            a.download = 'medo-plan-export.png';
+            a.click();
+            resolve({success:false, message:'تم تنزيل الصورة محلياً. رفع catbox فشل أو محظور (CORS).'});
+          }
+        }, 'image/png');
+      }catch(err){
+        reject(err);
+      }
+    };
+    img.onerror = function(){
+      URL.revokeObjectURL(url);
+      reject('تعذر تحميل SVG كصورة. جرب متصفح آخر.');
+    };
+    img.src = url;
+  });
+}
+
+btnExport.addEventListener('click', async ()=>{
+  btnExport.disabled = true;
+  btnExport.textContent = 'جاري التصدير...';
+  try{
+    const res = await exportAndUpload();
+    if(res.success){
+      const link = res.url;
+      const container = document.createElement('div');
+      container.style.position = 'fixed';
+      container.style.left = '50%';
+      container.style.top = '50%';
+      container.style.transform = 'translate(-50%,-50%)';
+      container.style.background = '#0b1220';
+      container.style.padding = '16px';
+      container.style.borderRadius = '10px';
+      container.style.boxShadow = '0 8px 30px rgba(0,0,0,0.6)';
+      container.style.zIndex = 9999;
+      container.innerHTML = `<div style="color:#e6eef8;margin-bottom:8px">تم الرفع بنجاح — انسخ الرابط يدوياً:</div>
+        <input id="export-link" style="width:520px;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:#e6eef8" value="${link}" />
+        <div style="margin-top:8px;display:flex;gap:8px">
+          <button id="copy-link" class="btn">نسخ</button>
+          <button id="close-link" class="btn">إغلاق</button>
+        </div>`;
+      document.body.appendChild(container);
+      $('#copy-link').addEventListener('click', ()=>{
+        const inp = $('#export-link');
+        inp.select();
+        try{ document.execCommand('copy'); alert('تم النسخ'); }catch(e){ alert('انسخ الرابط يدوياً'); }
+      });
+      $('#close-link').addEventListener('click', ()=> container.remove());
+    }else{
+      alert(res.message || 'تم التصدير لكن لم يتم رفع الملف.');
+    }
+  }catch(err){
+    alert('حدث خطأ أثناء التصدير: ' + err);
+  }finally{
+    btnExport.disabled = false;
+    btnExport.textContent = 'تصدير ورفع';
+  }
 });
 
 /* Undo button */
@@ -821,13 +1007,96 @@ document.addEventListener('pointerdown', (e)=>{
   }
 });
 
-/* Touch friendly */
-page.addEventListener('touchstart', e=>{});
+/* Touch & mouse panning with smooth inertia */
+let isPanning = false;
+let panStart = null;
+let panVelocity = {x:0,y:0};
+let panAnim = null;
+
+function startPan(e){
+  // only start pan if clicked on background (not on element)
+  if(e.target !== page) return;
+  isPanning = true;
+  cancelInertia();
+  panStart = {x: e.clientX, y: e.clientY, scrollLeft: page.scrollLeft, scrollTop: page.scrollTop, time: performance.now()};
+  document.addEventListener('pointermove', panMove);
+  document.addEventListener('pointerup', panEnd);
+}
+function panMove(e){
+  if(!isPanning || !panStart) return;
+  const dx = e.clientX - panStart.x;
+  const dy = e.clientY - panStart.y;
+  page.scrollLeft = panStart.scrollLeft - dx;
+  page.scrollTop = panStart.scrollTop - dy;
+  const now = performance.now();
+  const dt = Math.max(1, now - panStart.time);
+  panVelocity.x = ( -dx ) / dt * 16; // normalized per frame
+  panVelocity.y = ( -dy ) / dt * 16;
+  panStart.time = now;
+  panStart.x = e.clientX;
+  panStart.y = e.clientY;
+}
+function panEnd(e){
+  document.removeEventListener('pointermove', panMove);
+  document.removeEventListener('pointerup', panEnd);
+  isPanning = false;
+  startInertia();
+}
+function startInertia(){
+  const friction = 0.95;
+  function step(){
+    panVelocity.x *= friction;
+    panVelocity.y *= friction;
+    if(Math.abs(panVelocity.x) < 0.05 && Math.abs(panVelocity.y) < 0.05){
+      cancelInertia();
+      return;
+    }
+    page.scrollLeft += panVelocity.x;
+    page.scrollTop += panVelocity.y;
+    panAnim = requestAnimationFrame(step);
+  }
+  panAnim = requestAnimationFrame(step);
+}
+function cancelInertia(){
+  if(panAnim) cancelAnimationFrame(panAnim);
+  panAnim = null;
+}
+
+/* Keyboard: space to pan (hold) */
+let spaceDown = false;
+document.addEventListener('keydown', (e)=>{ if(e.code === 'Space'){ spaceDown = true; document.body.style.cursor = 'grab'; }});
+document.addEventListener('keyup', (e)=>{ if(e.code === 'Space'){ spaceDown = false; document.body.style.cursor = ''; }});
+
+/* Subscript in inputs and contenteditable */
+document.addEventListener('input', (e)=>{
+  const t = e.target;
+  if(t === rectText || t === textContent){
+    // replace ~digits with subscript live
+    const pos = t.selectionStart || 0;
+    const newVal = applySubscripts(t.value);
+    if(newVal !== t.value){
+      t.value = newVal;
+      try{ t.setSelectionRange(pos, pos); }catch(err){}
+    }
+  }
+  // contenteditable editing for inner rect or text
+  if(t.isContentEditable){
+    // replace pattern in innerText
+    const txt = t.innerText;
+    const replaced = applySubscripts(txt);
+    if(replaced !== txt){
+      // preserve caret by simple replace (may move caret slightly)
+      t.innerText = replaced;
+    }
+  }
+});
+
+/* Remove short front line of arrow handled by marker refX=0 above */
 
 /* Initial demo elements and initial history snapshot */
 createElement('rect', 200, 120, {text:'مركب', bg:'#ffffff', border:'#0b1220', color:'#0b1220', shadow:'soft'});
-createElement('text', 420, 80, {text:'مرحبا Medo plan', color:'#0b1220', size:22});
-createElement('arrow', 300, 300, {color:'#0b1220', curve:20});
+createElement('text', 420, 80, {text:'مرحبا H~2o', color:'#0b1220', size:22});
+createElement('arrow', 300, 300, {color:'#0b1220', curve:20, arc:'false'});
 createElement('hex', 700, 200, {color:'#ffd166', size:120});
 pushHistory('init');
 </script>
