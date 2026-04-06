@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ميدو AI - نظام التعلم الذكي</title>
+    <style>
+        :root {
+            --gold: #d4af37;
+            --dark-bg: #121212;
+            --chat-bg: #f5f7fb;
+            --user-blue: #0078ff;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: var(--dark-bg);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .mido-container {
+            width: 420px;
+            height: 680px;
+            background: white;
+            border-radius: 25px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        /* Header */
+        .header {
+            background: #1a1a1a;
+            padding: 15px;
+            text-align: center;
+            border-bottom: 2px solid var(--gold);
+        }
+        .header h1 { margin: 0; color: var(--gold); font-size: 20px; }
+        .header span { font-size: 9px; color: #777; letter-spacing: 2px; }
+
+        /* Mode Indicator */
+        #mode-info {
+            background: #eee;
+            font-size: 11px;
+            padding: 5px;
+            text-align: center;
+            color: #555;
+            font-weight: bold;
+        }
+
+        /* Settings Overlay */
+        #settings {
+            position: absolute;
+            inset: 0;
+            background: #fff;
+            z-index: 100;
+            padding: 25px;
+            display: none;
+            overflow-y: auto;
+        }
+        .settings-active { display: block !important; }
+
+        /* Chat Display */
+        #chat-window {
+            flex: 1;
+            background: var(--chat-bg);
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .bubble {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .bot { background: white; align-self: flex-start; color: #333; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .user { background: var(--user-blue); color: white; align-self: flex-end; }
+
+        /* Footer */
+        .controls {
+            padding: 15px;
+            background: white;
+            border-top: 1px solid #eee;
+        }
+        .input-row { display: flex; gap: 10px; margin-bottom: 10px; }
+        input {
+            flex: 1;
+            padding: 12px;
+            border-radius: 25px;
+            border: 1px solid #ddd;
+            outline: none;
+        }
+        .btn {
+            background: var(--gold);
+            border: none;
+            padding: 10px 18px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            border-top: 1px solid #f0f0f0;
+            padding-top: 10px;
+        }
+        .mode-btn { color: var(--user-blue); cursor: pointer; text-decoration: underline; }
+        .time-stamp { font-size: 10px; opacity: 0.6; display: block; margin-top: 4px; }
+    </style>
+</head>
+<body>
+
+<div class="mido-container">
+    <div class="header">
+        <h1>ميدو AI</h1>
+        <span>CODENEST GOLD PRODUCTION</span>
+    </div>
+
+    <div id="mode-info">الوضع الحالي: المحادثة والحفظ الذكي 💬</div>
+
+    <div id="settings">
+        <h2 style="color:var(--gold)">⚙️ تعليمات التشغيل</h2>
+        <p><b>1. وضع المحادثة:</b> اسأل عن أي شيء حفظته (مثل: فيسبوك) وسيجيبك ميدو.</p>
+        <p><b>2. وضع التعلم:</b> استخدم صيغة محددة لتعليم الروبوت ردوداً جديدة:<br>
+           <code style="background:#eee; padding:2px;">س/كيف حالك ج/بخير والحمد لله</code></p>
+        <p><b>3. التخزين:</b> كل البيانات مشفرة محلياً في متصفحك عبر IndexedDB.</p>
+        <hr>
+        <p>المطور: Codenest Gold<br>واتساب: <a href="https://wa.me/201124680211">+201124680211</a></p>
+        <button onclick="closeSettings()" class="btn" style="width:100%">فهمت، ابدأ الآن</button>
+    </div>
+
+    <div id="chat-window"></div>
+
+    <div class="controls">
+        <div class="input-row">
+            <input type="text" id="mido-in" placeholder="اكتب شيئاً..." onkeypress="if(event.key==='Enter') mainProcess()">
+            <button class="btn" onclick="mainProcess()">إرسال</button>
+        </div>
+        <div class="action-bar">
+            <span class="mode-btn" id="toggle-btn" onclick="switchMode()">التبديل إلى وضع التعلم 🎓</span>
+            <span onclick="openSettings()" style="cursor:pointer">شرح الاستخدام 📖</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    let db;
+    let currentMode = "chat"; // "chat" or "learn"
+    const dbReq = indexedDB.open("MidoAI_Pro", 2);
+
+    dbReq.onupgradeneeded = (e) => {
+        let database = e.target.result;
+        if (!database.objectStoreNames.contains("memories")) database.createObjectStore("memories", { keyPath: "key" });
+        if (!database.objectStoreNames.contains("brain")) database.createObjectStore("brain", { keyPath: "question" });
+    };
+
+    dbReq.onsuccess = (e) => {
+        db = e.target.result;
+        bootAI();
+    };
+
+    function bootAI() {
+        addMsg("أهلاً بك في <b>ميدو AI</b> الذكي.<br>أشكرك علي موقع ميدو Ai.. كيف حالك اليوم؟ 😊", "bot");
+    }
+
+    function switchMode() {
+        currentMode = (currentMode === "chat") ? "learn" : "chat";
+        const info = document.getElementById('mode-info');
+        const btn = document.getElementById('toggle-btn');
+        if(currentMode === "learn") {
+            info.innerText = "الوضع الحالي: وضع التعلم النشط 🎓";
+            btn.innerText = "العودة لوضع المحادثة 💬";
+            addMsg("لقد دخلت <b>وضع التعلم</b>. علمني شيئاً جديداً باستخدام صيغة (س/ ج/)", "bot");
+        } else {
+            info.innerText = "الوضع الحالي: المحادثة والحفظ الذكي 💬";
+            btn.innerText = "التبديل إلى وضع التعلم 🎓";
+        }
+    }
+
+    function addMsg(text, sender, time = "") {
+        const win = document.getElementById('chat-window');
+        const div = document.createElement('div');
+        div.className = `bubble ${sender}`;
+        div.innerHTML = text + (time ? `<span class="time-stamp">${time}</span>` : "");
+        win.appendChild(div);
+        win.scrollTop = win.scrollHeight;
+    }
+
+    function openSettings() { document.getElementById('settings').classList.add('settings-active'); }
+    function closeSettings() { document.getElementById('settings').classList.remove('settings-active'); }
+
+    async function mainProcess() {
+        const input = document.getElementById('mido-in');
+        const val = input.value.trim();
+        if(!val) return;
+
+        addMsg(val, "user");
+        input.value = "";
+
+        if(currentMode === "learn") {
+            handleLearning(val);
+        } else {
+            handleChat(val);
+        }
+    }
+
+    // --- محرك التعلم ---
+    function handleLearning(text) {
+        if(text.includes("س/") && text.includes("ج/")) {
+            const parts = text.split("ج/");
+            const q = parts[0].replace("س/", "").trim().toLowerCase();
+            const a = parts[1].trim();
+
+            const tx = db.transaction("brain", "readwrite");
+            tx.objectStore("brain").put({ question: q, answer: a });
+            tx.oncomplete = () => addMsg("تمت العملية بنجاح! سأجيب بهذا الرد عندما تسألني مستقبلاً.", "bot");
+        } else {
+            addMsg("عفواً، يجب أن تكون الصيغة مثل:<br>س/كيف حالك ج/أنا بخير", "bot");
+        }
+    }
+
+    // --- محرك المحادثة والحفظ ---
+    async function handleChat(text) {
+        // أولاً: التحقق من الردود المتعلمة
+        const txBrain = db.transaction("brain", "readonly");
+        const brainReq = txBrain.objectStore("brain").get(text.toLowerCase());
+
+        brainReq.onsuccess = () => {
+            if(brainReq.result) {
+                addMsg(brainReq.result.answer, "bot");
+            } else {
+                // ثانياً: إذا لم يكن رداً متعلم، ابحث في الحافظة (باسوردات)
+                if(text.includes("حفظ") || text.includes("باسورد")) {
+                    saveInfo(text);
+                } else {
+                    searchInfo(text);
+                }
+            }
+        };
+    }
+
+    function saveInfo(text) {
+        let key = text.match(/(فيسبوك|جوجل|انستا|تيك|ايميل)/)?.[0] || "عام";
+        const tx = db.transaction("memories", "readwrite");
+        tx.objectStore("memories").put({
+            key: key,
+            content: text,
+            date: new Date().toLocaleString('ar-EG')
+        });
+        tx.oncomplete = () => addMsg(`تم الحفظ في ذاكرة Codenest Gold تحت تصنيف (${key}). كيف حالك الآن؟`, "bot");
+    }
+
+    function searchInfo(word) {
+        const tx = db.transaction("memories", "readonly");
+        const req = tx.objectStore("memories").getAll();
+        req.onsuccess = () => {
+            const found = req.result.find(r => word.includes(r.key) || r.key.includes(word));
+            if(found) {
+                addMsg(`تذكرت ذلك!<br>🔒: ${found.content}<br>📅: ${found.date}<br><br>هل أنت بخير اليوم؟`, "bot", found.date);
+            } else {
+                addMsg("لم أجد معلومة بهذا الاسم، هل جربت تعليمي إياها في وضع التعلم؟ وكيف حالك؟", "bot");
+            }
+        };
+    }
+</script>
+</body>
+</html>
