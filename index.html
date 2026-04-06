@@ -6,7 +6,7 @@
 <title>Medo plan</title>
 <style>
   :root{
-    --ui-bg:#071428;
+    --bg:#071428;
     --accent:#6ee7b7;
     --muted:#94a3b8;
     --page-bg:#f8fafc;
@@ -19,7 +19,7 @@
   .btn.active{border-color:var(--accent);color:var(--accent);box-shadow:0 4px 18px rgba(110,231,183,0.08)}
   main{display:flex;flex-direction:column;height:calc(100vh - 110px);gap:8px;padding:8px}
   /* لوحة الإعدادات العلوية */
-  .top-settings{display:flex;gap:12px;align-items:center;padding:10px;background:linear-gradient(180deg,#071428, #071a2a);border-radius:10px;box-shadow:0 8px 30px rgba(2,6,23,0.6);overflow:auto}
+  .top-settings{display:flex;gap:12px;align-items:flex-start;padding:10px;background:linear-gradient(180deg,#071428, #071a2a);border-radius:10px;box-shadow:0 8px 30px rgba(2,6,23,0.6);overflow:auto}
   .settings-block{min-width:220px;max-width:420px}
   label{display:block;font-size:13px;color:var(--muted);margin-top:6px}
   input[type="color"], input[type="range"], input[type="text"], input[type="number"], select{width:100%;padding:6px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#e6eef8}
@@ -33,9 +33,9 @@
     transform-origin:top left;
   }
   .elem{position:absolute;touch-action:none;user-select:none;display:flex;align-items:center;justify-content:center}
-  /* مركب: الآن بخط يحدد الحواف والنص في المنتصف */
-  .rect{background:transparent;color:#0b1220;padding:8px 12px;border-radius:8px;min-width:80px;min-height:40px;display:flex;align-items:center;justify-content:center;box-sizing:border-box}
-  .rect .rect-inner{display:flex;align-items:center;justify-content:center;width:100%;height:100%;border-radius:6px;padding:6px;box-sizing:border-box}
+  /* مركب: خط يحدد الحواف، ونص في المنتصف */
+  .rect{background:transparent;color:#0b1220;padding:0;border-radius:8px;min-width:80px;min-height:40px;display:flex;align-items:center;justify-content:center;box-sizing:border-box}
+  .rect-inner{display:flex;align-items:center;justify-content:center;width:100%;height:100%;border-radius:6px;padding:6px;box-sizing:border-box}
   .text-elem{font-size:18px;color:#0b1220;white-space:pre-wrap;text-align:center}
   .img-elem img{max-width:100%;max-height:100%;display:block;border-radius:6px}
   .handle{width:12px;height:12px;border-radius:2px;background:var(--accent);position:absolute;right:-6px;bottom:-6px;touch-action:none;cursor:se-resize}
@@ -69,7 +69,7 @@
 </header>
 
 <main>
-  <!-- لوحة الإعدادات العلوية (التي طلبتها) -->
+  <!-- لوحة الإعدادات العلوية -->
   <div class="top-settings" id="top-settings">
     <div class="settings-block">
       <h3 style="margin:0;color:var(--accent)">إعدادات الصفحة</h3>
@@ -92,7 +92,7 @@
         <div id="settings-rect" style="display:none">
           <label>نص المستطيل</label>
           <input id="rect-text" type="text" />
-          <label>لون المستطيل (الخلفية)</label>
+          <label>لون خلفية المستطيل</label>
           <input id="rect-bg" type="color" value="#ffffff" />
           <label>لون خط الحواف</label>
           <input id="rect-border" type="color" value="#0b1220" />
@@ -190,7 +190,7 @@
 </footer>
 
 <script>
-/* Medo plan - تحديثات */
+/* Medo plan - نهائي مع التعديلات المطلوبة */
 const $ = s => document.querySelector(s);
 const $$ = s => Array.from(document.querySelectorAll(s));
 
@@ -203,7 +203,6 @@ let elemIdCounter = 0;
 const history = [];
 let historyIndex = -1;
 function pushHistory(label){
-  // serialize minimal project state
   const state = {
     page: {w: $('#page-width').value, h: $('#page-height').value, bg: $('#page-bg').value},
     elems: $$('.elem').map(el=>{
@@ -217,17 +216,14 @@ function pushHistory(label){
       };
     })
   };
-  // if we undid and then make new change, drop forward states
   history.splice(historyIndex+1);
   history.push(state);
   historyIndex = history.length - 1;
-  // optional: limit history length
-  if(history.length > 60) history.shift();
+  if(history.length > 80) history.shift();
 }
 function restoreHistory(idx){
   if(idx < 0 || idx >= history.length) return;
   const state = history[idx];
-  // clear
   $$('.elem').forEach(e=>e.remove());
   $('#page-width').value = state.page.w;
   $('#page-height').value = state.page.h;
@@ -237,11 +233,9 @@ function restoreHistory(idx){
     const left = parseFloat(obj.left) || 50;
     const top = parseFloat(obj.top) || 50;
     const el = createElement(obj.type, left, top, obj.dataset);
-    // restore dataset and sizes
     for(const k in obj.dataset) el.dataset[k] = obj.dataset[k];
     if(obj.width) el.style.width = obj.width;
     if(obj.height) el.style.height = obj.height;
-    // apply styles
     if(el.dataset.type === 'rect') applyRectStyles(el);
     if(el.dataset.type === 'text') applyTextStyles(el);
     if(el.dataset.type === 'arrow') applyArrowStyles(el);
@@ -345,7 +339,7 @@ function createElement(type, x=50, y=50, opts={}){
     const innerWrap = document.createElement('div');
     innerWrap.className = 'rect-inner';
     innerWrap.style.background = opts.bg || '#ffffff';
-    innerWrap.style.border = `2px solid ${opts.border || '#0b1220'}`;
+    innerWrap.style.border = `2px solid ${opts.border || '#0b1220'}`; // خط يحدد الحواف
     innerWrap.style.color = opts.color || '#0b1220';
     innerWrap.innerText = opts.text || 'مركب';
     const outer = document.createElement('div');
@@ -431,11 +425,11 @@ function createElement(type, x=50, y=50, opts={}){
     poly.setAttribute('fill', opts.color || '#ffd166');
     poly.setAttribute('stroke','#0b1220');
     poly.setAttribute('stroke-width','2');
-    // inner circle smaller to create gap
+    // دائرة داخلية أصغر لترك فراغ بين الحواف والدائرة
     const circle = document.createElementNS(svgNS,'circle');
     circle.setAttribute('cx',100);
     circle.setAttribute('cy',100);
-    circle.setAttribute('r',60); // smaller than hex to leave gap
+    circle.setAttribute('r',60); // أصغر من السداسي لترك فراغ
     circle.setAttribute('fill','#ffffff');
     circle.setAttribute('stroke','#0b1220');
     circle.setAttribute('stroke-width','2');
@@ -462,14 +456,13 @@ function createElement(type, x=50, y=50, opts={}){
 function applyRectStyles(el){
   const innerWrap = el.querySelector('.rect-inner');
   innerWrap.style.background = el.dataset.bg;
-  innerWrap.style.border = `2px solid ${el.dataset.border || '#0b1220'}`;
+  innerWrap.style.border = `2px solid ${el.dataset.border || '#0b1220'}`; // خط الحواف واضح
   innerWrap.style.color = el.dataset.color;
   innerWrap.style.boxShadow = el.dataset.shadow === 'none' ? 'none' : (el.dataset.shadow === 'soft' ? '0 6px 18px rgba(2,6,23,0.12)' : '0 10px 30px rgba(2,6,23,0.2)');
   innerWrap.innerText = el.dataset.text || innerWrap.innerText;
   const r = el.dataset.rotate || 0;
   const s = el.dataset.scale || 1;
   el.style.transform = `translate(-50%,-50%) rotate(${r}deg) scale(${s})`;
-  // ensure text centered
   innerWrap.style.display = 'flex';
   innerWrap.style.alignItems = 'center';
   innerWrap.style.justifyContent = 'center';
@@ -603,12 +596,9 @@ function elemPointerDown(e){
   const el = e.currentTarget;
   selectElement(el);
   const rect = el.getBoundingClientRect();
-  const pageRect = page.getBoundingClientRect();
   const startX = e.clientX, startY = e.clientY;
-  const offsetX = startX - rect.left;
-  const offsetY = startY - rect.top;
   const isHandle = e.target.classList.contains('handle');
-  dragState = {el, startX, startY, offsetX, offsetY, rect, isHandle};
+  dragState = {el, startX, startY, rect, isHandle};
   document.addEventListener('pointermove', elemPointerMove);
   document.addEventListener('pointerup', elemPointerUp);
 }
@@ -759,7 +749,7 @@ fileLoad.addEventListener('change', function(e){
   fileLoad.value = '';
 });
 
-/* Export page as image (same approach as before) */
+/* Export page as image */
 btnExport.addEventListener('click', async ()=>{
   const scale = 2;
   const w = parseInt(page.style.width);
