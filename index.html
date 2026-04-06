@@ -3,154 +3,165 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>شات بوت ذكي مع IndexedDB</title>
+<title>شات بوت ذكي احترافي</title>
 <style>
-  body{font-family:Arial,Helvetica,sans-serif;background:#f4f6f8;padding:20px}
-  #chat{max-width:900px;margin:0 auto;background:#fff;border-radius:10px;padding:18px;box-shadow:0 4px 18px rgba(0,0,0,.06)}
-  h1{margin:0 0 12px;font-size:20px}
-  #messages{height:60vh;overflow:auto;padding:8px;border:1px solid #eee;border-radius:8px;background:#fafafa}
-  .msg{margin:8px 0;padding:10px;border-radius:8px;max-width:78%}
-  .user{background:#e6f7ff;margin-left:auto}
-  .bot{background:#f0f0f0}
-  .meta{font-size:11px;color:#666;margin-top:6px}
-  #inputRow{display:flex;gap:8px;margin-top:12px}
-  input{flex:1;padding:10px;border:1px solid #ddd;border-radius:8px}
-  button{padding:10px 14px;border:none;background:#007bff;color:#fff;border-radius:8px;cursor:pointer}
-  #controls{display:flex;gap:8px;margin-top:10px;align-items:center}
-  small{color:#666}
+  :root{--bg:#f4f6f8;--card:#ffffff;--accent:#0b74de;--muted:#6b7280}
+  body{font-family:Inter,Arial,Helvetica,sans-serif;background:var(--bg);margin:0;padding:20px;direction:rtl}
+  .container{max-width:920px;margin:0 auto}
+  .card{background:var(--card);border-radius:12px;padding:18px;box-shadow:0 6px 24px rgba(12,20,30,.06)}
+  header{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+  header h1{margin:0;font-size:18px}
+  #messages{height:62vh;overflow:auto;padding:12px;border-radius:10px;background:#fbfdff;border:1px solid #eef2f6}
+  .row{display:flex;gap:8px;align-items:flex-end}
+  .input{flex:1;display:flex;gap:8px}
+  input[type="text"]{flex:1;padding:12px;border-radius:10px;border:1px solid #e6eef8;font-size:14px}
+  button{background:var(--accent);color:#fff;border:none;padding:10px 14px;border-radius:10px;cursor:pointer}
+  .msg{max-width:78%;padding:10px;border-radius:12px;margin:8px 0;position:relative;word-break:break-word}
+  .user{margin-left:auto;background:linear-gradient(180deg,#e6f7ff,#dff3ff);border:1px solid #d0ecff}
+  .bot{background:#f7f8fb;border:1px solid #eef0f6}
+  .meta{font-size:12px;color:var(--muted);margin-top:6px}
+  .small{font-size:12px;color:var(--muted)}
+  .controls{display:flex;gap:8px;align-items:center;margin-top:10px}
+  .badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#eef6ff;color:#0353a4;font-size:12px}
+  .typing{font-style:italic;color:var(--muted)}
+  .conf{font-weight:600;color:#0b74de;margin-left:8px}
+  .actions{margin-left:auto;display:flex;gap:8px}
+  .danger{background:#ef4444}
+  .file{display:none}
 </style>
 </head>
 <body>
-<div id="chat" role="region" aria-label="شات بوت ذكي">
-  <h1>شات بوت ذكي مع IndexedDB</h1>
-  <div id="messages" aria-live="polite"></div>
+<div class="container">
+  <div class="card" role="region" aria-label="شات بوت ذكي احترافي">
+    <header>
+      <div>
+        <h1>شات بوت ذكي</h1>
+        <div class="small">يتعلم محلياً ويستدعي خادم الذكاء الاصطناعي عند الحاجة</div>
+      </div>
+      <div class="actions">
+        <button id="exportBtn">تنزيل الذاكرة</button>
+        <button id="importBtn">استيراد</button>
+        <input id="fileInput" class="file" type="file" accept="application/json" />
+        <button id="clearBtn" class="danger">مسح الذاكرة</button>
+      </div>
+    </header>
 
-  <div id="inputRow">
-    <input id="text" placeholder="اكتب سؤالك..." autocomplete="off" />
-    <button id="send">إرسال</button>
-  </div>
+    <div id="messages" aria-live="polite"></div>
 
-  <div id="controls">
-    <button id="clearLocal">مسح الذاكرة المحلية</button>
-    <small>المطابقة المحلية تستخدم تشابه نصي؛ إذا لم توجد إجابة مناسبة يتم استدعاء الخادم.</small>
+    <div class="row" style="margin-top:12px">
+      <div class="input">
+        <input id="text" type="text" placeholder="اكتب سؤالك..." autocomplete="off" />
+        <button id="send">إرسال</button>
+      </div>
+      <div style="width:120px;text-align:left">
+        <div class="badge" id="modeBadge">وضع: هجين</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="small">مصدر محلي: إجابات محفوظة في جهازك؛ إذا لم توجد إجابة مناسبة يتم استدعاء الخادم.</div>
+    </div>
   </div>
 </div>
 
 <script>
-/* ======= إعدادات ======= */
-const API_ENDPOINT = 'YOUR_API_ENDPOINT'; // استبدل برابط الخادم الوسيط الآمن
-const DB_NAME = 'smart-chat-db';
+/* ===== إعدادات ===== */
+const API_ENDPOINT = 'YOUR_API_ENDPOINT';
+const DB_NAME = 'smart-chat-db-v2';
 const STORE_NAME = 'qa_store';
-const MAX_MEMORY = 1000; // حد عدد السجلات المحلية
+const MAX_MEMORY = 1500;
+const PROFANITY = ['نيك','كلمة_بذيئة_مثال']; // أضف كلمات أخرى حسب الحاجة
+const PROFANITY_REPLACEMENT = '***';
 
-/* ======= واجهة المستخدم ======= */
+/* ===== واجهة ===== */
 const messagesEl = document.getElementById('messages');
 const textEl = document.getElementById('text');
 const sendBtn = document.getElementById('send');
-const clearBtn = document.getElementById('clearLocal');
+const clearBtn = document.getElementById('clearBtn');
+const exportBtn = document.getElementById('exportBtn');
+const importBtn = document.getElementById('importBtn');
+const fileInput = document.getElementById('fileInput');
 
+function nowTime(){ return new Date().toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'}); }
 function renderMessage(text, cls, meta){
   const d = document.createElement('div');
   d.className = 'msg ' + cls;
-  d.textContent = text;
+  d.innerHTML = `<div>${escapeHtml(text)}</div><div class="meta">${nowTime()} ${meta? ' • ' + meta : ''}</div>`;
   messagesEl.appendChild(d);
-  if(meta){
-    const m = document.createElement('div');
-    m.className = 'meta';
-    m.textContent = meta;
-    messagesEl.appendChild(m);
-  }
   messagesEl.scrollTop = messagesEl.scrollHeight;
 }
+function escapeHtml(s){ return s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
 
-/* ======= IndexedDB مساعد بسيط ======= */
+/* ===== IndexedDB مساعد ===== */
 function openDB(){
-  return new Promise((resolve, reject) => {
-    const req = indexedDB.open(DB_NAME, 1);
+  return new Promise((resolve,reject)=>{
+    const req = indexedDB.open(DB_NAME,1);
     req.onupgradeneeded = e => {
       const db = e.target.result;
       if(!db.objectStoreNames.contains(STORE_NAME)){
-        const store = db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
-        store.createIndex('createdAt', 'createdAt', { unique: false });
+        const store = db.createObjectStore(STORE_NAME,{keyPath:'id',autoIncrement:true});
+        store.createIndex('createdAt','createdAt',{unique:false});
       }
     };
     req.onsuccess = e => resolve(e.target.result);
     req.onerror = e => reject(e.target.error);
   });
 }
-
 async function addRecord(record){
   const db = await openDB();
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(STORE_NAME, 'readwrite');
-    const store = tx.objectStore(STORE_NAME);
-    store.add(record).onsuccess = () => resolve();
-    tx.oncomplete = () => db.close();
-    tx.onerror = e => reject(e.target.error);
+  return new Promise((res,rej)=>{
+    const tx = db.transaction(STORE_NAME,'readwrite');
+    tx.objectStore(STORE_NAME).add(record).onsuccess = ()=>res();
+    tx.oncomplete = ()=>db.close();
+    tx.onerror = e => rej(e.target.error);
   });
 }
-
 async function getAllRecords(){
   const db = await openDB();
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(STORE_NAME, 'readonly');
-    const store = tx.objectStore(STORE_NAME);
-    const req = store.getAll();
-    req.onsuccess = () => { resolve(req.result || []); db.close(); };
-    req.onerror = e => reject(e.target.error);
+  return new Promise((res,rej)=>{
+    const tx = db.transaction(STORE_NAME,'readonly');
+    const req = tx.objectStore(STORE_NAME).getAll();
+    req.onsuccess = ()=>{ res(req.result||[]); db.close(); };
+    req.onerror = e => rej(e.target.error);
   });
 }
-
 async function clearAll(){
   const db = await openDB();
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(STORE_NAME, 'readwrite');
-    const store = tx.objectStore(STORE_NAME);
-    store.clear().onsuccess = () => resolve();
-    tx.oncomplete = () => db.close();
-    tx.onerror = e => reject(e.target.error);
+  return new Promise((res,rej)=>{
+    const tx = db.transaction(STORE_NAME,'readwrite');
+    tx.objectStore(STORE_NAME).clear().onsuccess = ()=>res();
+    tx.oncomplete = ()=>db.close();
+    tx.onerror = e => rej(e.target.error);
   });
 }
 
-/* ======= تمثيل نصي بسيط وقياس تشابه ======= */
-/* تنظيف وتقطيع الكلمات */
+/* ===== تمثيل نصي وقياس تشابه محسّن ===== */
 function tokenize(text){
-  return text.toLowerCase()
-    .replace(/[^\p{L}\p{N}\s]+/gu, ' ')
-    .split(/\s+/)
-    .filter(Boolean);
+  return text.toLowerCase().replace(/[^\p{L}\p{N}\s]+/gu,' ').split(/\s+/).filter(Boolean);
 }
-
-/* قائمة كلمات توقف بسيطة بالعربية والإنجليزية */
-const STOPWORDS = new Set([
-  'و','في','على','من','إلى','عن','هو','هي','هذا','هذه','ذلك','تلك','ما','لم','لن','لا','نعم',
-  'the','is','a','an','of','to','in','for','and','or','that','it'
-]);
-
+const STOPWORDS = new Set(['و','في','على','من','إلى','عن','هو','هي','هذا','هذه','ذلك','ما','لم','لن','لا','نعم','the','is','a','of','to','in','for','and']);
 function termFreqVector(text){
-  const tokens = tokenize(text).filter(t => !STOPWORDS.has(t));
+  const tokens = tokenize(text).filter(t=>!STOPWORDS.has(t));
   const freqs = {};
-  tokens.forEach(t => freqs[t] = (freqs[t]||0) + 1);
+  tokens.forEach(t=> freqs[t] = (freqs[t]||0)+1);
   return freqs;
 }
+function dotProduct(a,b){ let s=0; for(const k in a) if(b[k]) s+=a[k]*b[k]; return s; }
+function magnitude(a){ let s=0; for(const k in a) s+=a[k]*a[k]; return Math.sqrt(s); }
+function cosineSim(a,b){ const num=dotProduct(a,b); const den=magnitude(a)*magnitude(b); return den===0?0:num/den; }
 
-function dotProduct(a,b){
-  let s = 0;
-  for(const k in a) if(b[k]) s += a[k]*b[k];
-  return s;
+/* ===== فلتر بذيئة بسيط ===== */
+function sanitize(text){
+  let t = text;
+  for(const w of PROFANITY){
+    const re = new RegExp('\\b'+escapeReg(w)+'\\b','ig');
+    t = t.replace(re, PROFANITY_REPLACEMENT);
+  }
+  return t;
 }
-function magnitude(a){
-  let s = 0;
-  for(const k in a) s += a[k]*a[k];
-  return Math.sqrt(s);
-}
-function cosineSim(a,b){
-  const num = dotProduct(a,b);
-  const den = magnitude(a)*magnitude(b);
-  return den === 0 ? 0 : num/den;
-}
+function escapeReg(s){ return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
 
-/* ======= منطق البحث المحلي الذكي ======= */
+/* ===== بحث محلي ذكي ===== */
 async function findBestLocalMatch(query, threshold=0.62){
   const records = await getAllRecords();
   if(!records.length) return null;
@@ -158,95 +169,109 @@ async function findBestLocalMatch(query, threshold=0.62){
   let best = null;
   for(const r of records){
     const rVec = r.vector || termFreqVector(r.q);
-    const sim = cosineSim(qVec, rVec);
-    if(!best || sim > best.sim) best = { record: r, sim };
+    const sim = cosineSim(qVec,rVec);
+    if(!best || sim>best.sim) best = { record:r, sim };
   }
   if(best && best.sim >= threshold) return best;
   return null;
 }
 
-/* ======= استدعاء الخادم الوسيط ======= */
+/* ===== استدعاء الخادم الوسيط ===== */
 async function queryAPI(userText, contextRecords){
-  // يرسل النص وسياق محدود للخادم؛ الخادم يتعامل مع مزود الـ AI ومفتاحه
-  const payload = { message: userText, context: contextRecords.slice(-10) };
+  const payload = { message: userText, context: contextRecords.slice(-8) };
   const res = await fetch(API_ENDPOINT, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
     body: JSON.stringify(payload)
   });
-  if(!res.ok) throw new Error('API error ' + res.status);
+  if(!res.ok) throw new Error('API error '+res.status);
   return res.json();
 }
 
-/* ======= إدارة الذاكرة المحلية بعد الحصول على إجابة ======= */
-async function storeQA(q, a){
+/* ===== إدارة الذاكرة ===== */
+async function storeQA(q,a){
   const vector = termFreqVector(q);
   await addRecord({ q, a, vector, createdAt: Date.now() });
-  // ضبط الحد الأقصى للذاكرة
   const all = await getAllRecords();
   if(all.length > MAX_MEMORY){
-    // احذف الأقدم
     const sorted = all.sort((x,y)=>x.createdAt - y.createdAt);
     const toDelete = sorted.slice(0, all.length - MAX_MEMORY);
     const db = await openDB();
-    const tx = db.transaction(STORE_NAME, 'readwrite');
+    const tx = db.transaction(STORE_NAME,'readwrite');
     const store = tx.objectStore(STORE_NAME);
     toDelete.forEach(item => store.delete(item.id));
-    tx.oncomplete = () => db.close();
+    tx.oncomplete = ()=>db.close();
   }
 }
 
-/* ======= تفاعل المستخدم ======= */
+/* ===== تفاعل المستخدم ===== */
 sendBtn.addEventListener('click', onSend);
-textEl.addEventListener('keydown', e => { if(e.key === 'Enter') onSend(); });
+textEl.addEventListener('keydown', e=>{ if(e.key==='Enter') onSend(); });
 
 async function onSend(){
-  const text = textEl.value.trim();
+  let text = textEl.value.trim();
   if(!text) return;
+  text = sanitize(text);
   renderMessage(text, 'user');
   textEl.value = '';
-  // أولاً حاول المطابقة المحلية الذكية
-  renderMessage('جارٍ البحث محلياً عن إجابة مناسبة...', 'bot');
+  renderMessage('جارٍ البحث محلياً...', 'bot', 'حالة');
+
   try{
-    const best = await findBestLocalMatch(text, 0.62);
+    const best = await findBestLocalMatch(text, 0.64);
     if(best){
-      // استبدال الرسالة المؤقتة
+      const conf = Math.round(best.sim*100);
+      const meta = `مصدر: محلي • ثقة ${conf}%`;
       const lastBot = messagesEl.querySelector('.bot:last-child');
-      if(lastBot) lastBot.textContent = best.record.a + ' (من الذاكرة المحلية)';
+      if(lastBot) lastBot.innerHTML = `<div>${escapeHtml(best.record.a)}</div><div class="meta">${nowTime()} • ${meta}</div>`;
       return;
     }
-    // لم نجد تطابقاً جيداً، استدعي الخادم
+
     const lastBot = messagesEl.querySelector('.bot:last-child');
-    if(lastBot) lastBot.textContent = 'جارٍ الاتصال بالخادم للحصول على إجابة ذكية...';
-    // جلب بعض السجلات الأخيرة كسياق
-    const context = (await getAllRecords()).slice(-8).map(r => ({ q: r.q, a: r.a }));
+    if(lastBot) lastBot.innerHTML = `<div class="typing">جارٍ الاتصال بالخادم للحصول على إجابة ذكية...</div><div class="meta">${nowTime()}</div>`;
+
+    const context = (await getAllRecords()).slice(-6).map(r=>({q:r.q,a:r.a}));
     const apiRes = await queryAPI(text, context);
-    const answer = apiRes.answer || 'عذراً، لم أتمكن من توليد إجابة.';
-    if(lastBot) lastBot.textContent = answer;
-    // خزّن الزوج محلياً مع المتجه
+    const answerRaw = apiRes.answer || 'عذراً، لم أتمكن من توليد إجابة.';
+    const answer = sanitize(answerRaw);
+    if(lastBot) lastBot.innerHTML = `<div>${escapeHtml(answer)}</div><div class="meta">${nowTime()} • مصدر: خادم</div>`;
     await storeQA(text, answer);
   }catch(err){
     const lastBot = messagesEl.querySelector('.bot:last-child');
-    if(lastBot) lastBot.textContent = 'حدث خطأ في الاتصال بالخادم.';
+    if(lastBot) lastBot.innerHTML = `<div>حدث خطأ في الاتصال بالخادم.</div><div class="meta">${nowTime()}</div>`;
     console.error(err);
   }
 }
 
-/* ======= زر مسح الذاكرة المحلية ======= */
+/* ===== أزرار مساعدة ===== */
 clearBtn.addEventListener('click', async ()=>{
   if(!confirm('هل تريد مسح كل الذاكرة المحلية؟')) return;
   await clearAll();
   renderMessage('تم مسح الذاكرة المحلية.', 'bot');
 });
+exportBtn.addEventListener('click', async ()=>{
+  const all = await getAllRecords();
+  const blob = new Blob([JSON.stringify(all, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'chat_memory.json'; document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+});
+importBtn.addEventListener('click', ()=> fileInput.click());
+fileInput.addEventListener('change', async (e)=>{
+  const f = e.target.files[0]; if(!f) return;
+  const txt = await f.text();
+  try{
+    const arr = JSON.parse(txt);
+    for(const item of arr) await addRecord(item);
+    renderMessage('تم استيراد الذاكرة بنجاح.', 'bot');
+  }catch(err){ renderMessage('ملف غير صالح.', 'bot'); }
+});
 
-/* ======= تحميل بعض الرسائل الترحيبية من الذاكرة إن وجدت ======= */
+/* ===== تهيئة ===== */
 (async function init(){
   const recs = await getAllRecords();
-  if(recs.length){
-    renderMessage('تم تحميل الذاكرة المحلية. عدد السجلات: ' + recs.length, 'bot');
-  } else {
-    renderMessage('مرحباً! اسألني أي شيء. سأتعلم من المحادثات وأحاول الإجابة محلياً قبل الاتصال بالخادم.', 'bot');
-  }
+  if(recs.length) renderMessage('تم تحميل الذاكرة المحلية. عدد السجلات: ' + recs.length, 'bot');
+  else renderMessage('مرحباً! اسألني أي شيء. سأتعلم من المحادثات وأحاول الإجابة محلياً قبل الاتصال بالخادم.', 'bot');
 })();
 </script>
 </body>
