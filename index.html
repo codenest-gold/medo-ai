@@ -2,188 +2,65 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ميدو AI</title>
+    <title>ميدو AI | الإصدار المباشر</title>
     <style>
-        :root { --gold: #d4af37; --dark: #121212; --blue: #0078ff; --bot-msg: #ffffff; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--dark); margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; color: #fff; }
-        .mido-container { width: 450px; height: 750px; background: #fff; border-radius: 20px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 25px 60px rgba(0,0,0,0.8); position: relative; }
-        
-        /* Header */
-        .header { background: #1a1a1a; padding: 15px; text-align: center; border-bottom: 2px solid var(--gold); }
-        .header h1 { margin: 0; color: var(--gold); font-size: 22px; text-shadow: 0 0 10px rgba(212,175,55,0.3); }
-        .header span { color: #666; font-size: 10px; font-weight: bold; display: block; margin-top: 4px; letter-spacing: 1px; }
-
-        /* Chat Display */
-        #display { flex: 1; background: #f0f2f5; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
-        .msg { max-width: 85%; padding: 12px; border-radius: 15px; font-size: 14px; color: #333; line-height: 1.5; animation: slideUp 0.3s ease; }
-        .bot { background: var(--bot-msg); align-self: flex-start; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-right: 4px solid var(--gold); }
-        .user { background: var(--blue); color: white; align-self: flex-end; border-left: 4px solid #0056b3; }
-        .thinking { font-size: 12px; color: #888; font-style: italic; }
-
-        /* Suggestion Buttons */
-        .sugg-box { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 5px; }
-        .sugg-btn { background: #fff; border: 1px solid var(--gold); color: #8a6d0a; padding: 6px 12px; border-radius: 12px; cursor: pointer; font-size: 12px; transition: 0.2s; }
-        .sugg-btn:hover { background: var(--gold); color: #000; }
-
-        /* Footer & Inputs */
-        .footer { padding: 15px; background: white; border-top: 1px solid #eee; }
-        .input-row { display: flex; gap: 8px; }
-        input { flex: 1; padding: 12px; border-radius: 20px; border: 1px solid #ddd; outline: none; font-size: 14px; }
-        
-        .learn-panel { display: none; background: #fffcf0; padding: 15px; border-radius: 15px; border: 1px dashed var(--gold); margin-bottom: 10px; flex-direction: column; gap: 8px; }
-        
-        .btn-main { background: var(--gold); border: none; padding: 10px 18px; border-radius: 20px; cursor: pointer; font-weight: bold; font-size: 14px; color: #000; }
-        .mode-toggle { display: block; text-align: center; margin-top: 10px; font-size: 11px; color: var(--blue); cursor: pointer; font-weight: bold; }
-
-        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        body { font-family: Tahoma, sans-serif; background: #111; color: #fff; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .app { width: 100%; max-width: 400px; background: #222; border-radius: 12px; display: flex; flex-direction: column; height: 80vh; border: 2px solid #d4af37; }
+        #chat { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .msg { padding: 10px 14px; border-radius: 8px; font-size: 14px; max-width: 85%; line-height: 1.5; }
+        .user { background: #007bff; align-self: flex-end; }
+        .bot { background: #333; align-self: flex-start; border-right: 3px solid #d4af37; }
+        .input-box { display: flex; padding: 10px; background: #1a1a1a; border-top: 1px solid #444; }
+        input { flex: 1; padding: 10px; border: none; border-radius: 5px; outline: none; background: #333; color: #fff; }
+        button { background: #d4af37; color: #000; border: none; padding: 10px 15px; margin-right: 8px; cursor: pointer; border-radius: 5px; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div class="mido-container">
-    <div class="header">
-        <h1>ميدو AI</h1>
-        <span>CODENEST GOLD PRODUCTION</span>
-    </div>
-
-    <div id="display"></div>
-
-    <div class="footer">
-        <div id="learn-panel" class="learn-panel">
-            <input type="text" id="q-in" placeholder="س/ (السؤال المراد حفظه)">
-            <input type="text" id="a-in" placeholder="ج/ (الإجابة المباشرة)">
-            <button class="btn-main" onclick="saveToBrain()">حفظ في ذاكرة Codenest Gold ✅</button>
-        </div>
-
-        <div id="chat-ui" class="input-row">
-            <input type="text" id="m-in" placeholder="تحدث مع ميدو AI..." onkeypress="if(event.key==='Enter') startLogic()">
-            <button class="btn-main" onclick="startLogic()">إرسال</button>
-        </div>
-
-        <span class="mode-toggle" id="toggle-btn" onclick="toggleMode()">تبديل إلى وضع التعلم الذاتي 🎓</span>
+<div class="app">
+    <div id="chat"><div class="msg bot">جاهز يا سيادة الملازم. المفتاح سليم، هات أوامرك.</div></div>
+    <div class="input-box">
+        <input type="text" id="m-text" placeholder="اكتب هنا..." onkeypress="if(event.key==='Enter') sendMsg()">
+        <button onclick="sendMsg()">إرسال</button>
     </div>
 </div>
 
 <script>
-    const API_KEY = "AIzaSyDO8qnXKN2cFHuIPbRQKmEqw9MVMzRGQBQ";
-    let db;
-    let mode = "chat";
+    const KEY = "AIzaSyDV-fIADKtlDtSGY9FBp7ZKyETpDvIf_So"; // مفتاحك المباشر
 
-    // إعداد قاعدة البيانات المحلية
-    const request = indexedDB.open("CodenestMidoDB", 1);
-    request.onupgradeneeded = (e) => { e.target.result.createObjectStore("brain", { keyPath: "q" }); };
-    request.onsuccess = (e) => { db = e.target.result; welcome(); };
-
-    function welcome() {
-        addMsg("أشكرك علي موقع ميدو Ai.. كيف حالك؟ أنا <b>ميدو AI</b> من تطوير شركة <b>Codenest Gold</b>، جاهز لحفظ بياناتك والدردشة معك بذكاء فائق.", "bot");
-    }
-
-    function toggleMode() {
-        mode = (mode === "chat") ? "learn" : "chat";
-        document.getElementById('chat-ui').style.display = (mode === "chat") ? "flex" : "none";
-        document.getElementById('learn-panel').style.display = (mode === "learn") ? "flex" : "none";
-        document.getElementById('toggle-btn').innerText = (mode === "chat") ? "تبديل إلى وضع التعلم الذاتي 🎓" : "العودة للدردشة الذكية 💬";
-    }
-
-    function addMsg(txt, type) {
-        const d = document.getElementById('display');
-        const div = document.createElement('div');
-        div.className = `msg ${type}`;
-        div.innerHTML = txt;
-        d.appendChild(div);
-        d.scrollTop = d.scrollHeight;
-        return div;
-    }
-
-    // حفظ في الذاكرة المحلية
-    async function saveToBrain() {
-        const q = document.getElementById('q-in').value.trim().toLowerCase();
-        const a = document.getElementById('a-in').value.trim();
-        if(!q || !a) return;
-
-        const tx = db.transaction("brain", "readwrite");
-        tx.objectStore("brain").put({ q: q, a: a });
-        tx.oncomplete = () => {
-            addMsg(`تم الحفظ بنجاح في قاعدة بيانات <b>Codenest Gold</b>.`, "bot");
-            document.getElementById('q-in').value = ""; document.getElementById('a-in').value = "";
-            toggleMode();
-        };
-    }
-
-    // معالجة الرسائل
-    async function startLogic() {
-        const field = document.getElementById('m-in');
-        const val = field.value.trim();
+    async function sendMsg() {
+        const inp = document.getElementById('m-text');
+        const val = inp.value.trim();
         if(!val) return;
-
-        addMsg(val, "user");
-        field.value = "";
-
-        const thinking = addMsg("جاري التفكير...", "bot thinking");
         
-        setTimeout(async () => {
-            const lowerInput = val.toLowerCase();
-            const tx = db.transaction("brain", "readonly");
-            const allReq = tx.objectStore("brain").getAll();
+        const chat = document.getElementById('chat');
+        chat.innerHTML += `<div class="msg user">${val}</div>`;
+        inp.value = "";
+        
+        const botMsg = document.createElement('div');
+        botMsg.className = 'msg bot';
+        botMsg.innerHTML = "جاري التنفيذ...";
+        chat.appendChild(botMsg);
+        chat.scrollTop = chat.scrollHeight;
 
-            allReq.onsuccess = async () => {
-                const data = allReq.result;
-                
-                // أولاً: البحث عن تطابق كامل في المحفوظات
-                const exactMatch = data.find(item => item.q === lowerInput);
-                if(exactMatch) {
-                    thinking.remove();
-                    addMsg(exactMatch.a, "bot");
-                    return;
-                }
-
-                // ثانياً: البحث عن تطابق جزئي واقتراح أسئلة
-                const suggestions = data.filter(item => item.q.includes(lowerInput) || lowerInput.includes(item.q));
-                if(suggestions.length > 0 && lowerInput.length > 2) {
-                    thinking.remove();
-                    addMsg("قصدك أي سؤال من دول؟", "bot");
-                    const sBox = document.createElement('div');
-                    sBox.className = "sugg-box";
-                    suggestions.forEach(s => {
-                        const btn = document.createElement('button');
-                        btn.className = "sugg-btn";
-                        btn.innerText = s.q;
-                        btn.onclick = () => {
-                            addMsg(s.q, "user");
-                            const t = addMsg("لحظة...", "bot thinking");
-                            setTimeout(() => { t.remove(); addMsg(s.a, "bot"); }, 1000);
-                        };
-                        sBox.appendChild(btn);
-                    });
-                    document.getElementById('display').appendChild(sBox);
-                    return;
-                }
-
-                // ثالثاً: استخدام الذكاء الاصطناعي الحقيقي (Gemini)
-                try {
-                    const aiResponse = await callGeminiAI(val);
-                    thinking.remove();
-                    addMsg(aiResponse, "bot");
-                } catch (err) {
-                    thinking.remove();
-                    addMsg("عذراً، حدث خطأ في الاتصال بالذكاء الاصطناعي.", "bot");
-                }
-            };
-        }, 2000);
-    }
-
-    async function callGeminiAI(prompt) {
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
-        const response = await fetch(url, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                contents: [{ parts: [{ text: prompt + " (أجب باللغة العربية بذكاء بصفتك ميدو AI المطور من قبل شركة Codenest Gold)" }] }]
-            })
-        });
-        const resData = await response.json();
-        return resData.candidates[0].content.parts[0].text;
+        try {
+            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${KEY}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ contents: [{ parts: [{ text: val + " (أجب باختصار بصفتك ميدو AI)" }] }] })
+            });
+            
+            const data = await res.json();
+            
+            if (data.error) {
+                // الكود هنا هيعرض الخطأ الحقيقي من جوجل مباشرة
+                botMsg.innerHTML = `<span style="color:#ff4444">خطأ من السيرفر:</span> ${data.error.message}`;
+            } else {
+                botMsg.innerHTML = data.candidates[0].content.parts[0].text.replace(/\n/g, "<br>");
+            }
+        } catch (e) {
+            botMsg.innerHTML = `<span style="color:#ff4444">خطأ في الشبكة:</span> تأكد من اتصالك.`;
+        }
     }
 </script>
 
