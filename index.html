@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ميدو AI - العقل الهجين</title>
+    <title>ميدو AI</title>
     <style>
         :root { --gold: #d4af37; --dark: #121212; --blue: #0078ff; --bot-msg: #ffffff; }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--dark); margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; color: #fff; }
@@ -11,12 +11,12 @@
         
         /* Header */
         .header { background: #1a1a1a; padding: 15px; text-align: center; border-bottom: 2px solid var(--gold); }
-        .header h1 { margin: 0; color: var(--gold); font-size: 20px; text-shadow: 0 0 10px rgba(212,175,55,0.3); }
-        .header span { color: #666; font-size: 9px; letter-spacing: 1px; display: block; }
+        .header h1 { margin: 0; color: var(--gold); font-size: 22px; text-shadow: 0 0 10px rgba(212,175,55,0.3); }
+        .header span { color: #666; font-size: 10px; font-weight: bold; display: block; margin-top: 4px; letter-spacing: 1px; }
 
         /* Chat Display */
         #display { flex: 1; background: #f0f2f5; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
-        .msg { max-width: 85%; padding: 12px; border-radius: 15px; font-size: 14px; color: #333; line-height: 1.5; animation: slideUp 0.3s ease; position: relative; }
+        .msg { max-width: 85%; padding: 12px; border-radius: 15px; font-size: 14px; color: #333; line-height: 1.5; animation: slideUp 0.3s ease; }
         .bot { background: var(--bot-msg); align-self: flex-start; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-right: 4px solid var(--gold); }
         .user { background: var(--blue); color: white; align-self: flex-end; border-left: 4px solid #0056b3; }
         .thinking { font-size: 12px; color: #888; font-style: italic; }
@@ -30,12 +30,11 @@
         .footer { padding: 15px; background: white; border-top: 1px solid #eee; }
         .input-row { display: flex; gap: 8px; }
         input { flex: 1; padding: 12px; border-radius: 20px; border: 1px solid #ddd; outline: none; font-size: 14px; }
-        input:focus { border-color: var(--gold); box-shadow: 0 0 5px rgba(212,175,55,0.2); }
         
         .learn-panel { display: none; background: #fffcf0; padding: 15px; border-radius: 15px; border: 1px dashed var(--gold); margin-bottom: 10px; flex-direction: column; gap: 8px; }
         
-        .btn-main { background: var(--gold); border: none; padding: 10px 18px; border-radius: 20px; cursor: pointer; font-weight: bold; font-size: 14px; }
-        .mode-toggle { display: block; text-align: center; margin-top: 10px; font-size: 11px; color: var(--blue); cursor: pointer; font-weight: bold; text-decoration: underline; }
+        .btn-main { background: var(--gold); border: none; padding: 10px 18px; border-radius: 20px; cursor: pointer; font-weight: bold; font-size: 14px; color: #000; }
+        .mode-toggle { display: block; text-align: center; margin-top: 10px; font-size: 11px; color: var(--blue); cursor: pointer; font-weight: bold; }
 
         @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -44,8 +43,8 @@
 
 <div class="mido-container">
     <div class="header">
-        <h1>ميدو AI (المحرك الهجين)</h1>
-        <span>CODENEST GOLD • VERSION 5.0 PRO</span>
+        <h1>ميدو AI</h1>
+        <span>CODENEST GOLD PRODUCTION</span>
     </div>
 
     <div id="display"></div>
@@ -54,37 +53,37 @@
         <div id="learn-panel" class="learn-panel">
             <input type="text" id="q-in" placeholder="س/ (السؤال المراد حفظه)">
             <input type="text" id="a-in" placeholder="ج/ (الإجابة المباشرة)">
-            <button class="btn-main" onclick="saveToBrain()">حفظ في ذاكرتي ✅</button>
+            <button class="btn-main" onclick="saveToBrain()">حفظ في ذاكرة Codenest Gold ✅</button>
         </div>
 
         <div id="chat-ui" class="input-row">
-            <input type="text" id="m-in" placeholder="اسألني أي شيء أو استرجع محفوظاتك..." onkeypress="if(event.key==='Enter') startLogic()">
+            <input type="text" id="m-in" placeholder="تحدث مع ميدو AI..." onkeypress="if(event.key==='Enter') startLogic()">
             <button class="btn-main" onclick="startLogic()">إرسال</button>
         </div>
 
-        <span class="mode-toggle" id="toggle-btn" onclick="toggleMode()">التبديل لوضع التعلم الذاتي 🎓</span>
+        <span class="mode-toggle" id="toggle-btn" onclick="toggleMode()">تبديل إلى وضع التعلم الذاتي 🎓</span>
     </div>
 </div>
 
 <script>
-    const API_KEY = "AIzaSyDO8qnXKN2cFHuIPbRQKmEqw9MVMzRGQBQ"; // تم دمج مفتاحك
+    const API_KEY = "AIzaSyDO8qnXKN2cFHuIPbRQKmEqw9MVMzRGQBQ";
     let db;
     let mode = "chat";
 
-    // فتح قاعدة البيانات المحلية
-    const request = indexedDB.open("MidoHybridDB", 1);
+    // إعداد قاعدة البيانات المحلية
+    const request = indexedDB.open("CodenestMidoDB", 1);
     request.onupgradeneeded = (e) => { e.target.result.createObjectStore("brain", { keyPath: "q" }); };
     request.onsuccess = (e) => { db = e.target.result; welcome(); };
 
     function welcome() {
-        addMsg("أشكرك علي موقع ميدو Ai.. كيف حالك اليوم؟ أنا ميدو AI، تم تحديثي بمحرك <b>Gemini Pro</b> وبإمكاني الآن فهمك بشكل بشري كامل وحفظ أسرارك بدقة.", "bot");
+        addMsg("أشكرك علي موقع ميدو Ai.. كيف حالك؟ أنا <b>ميدو AI</b> من تطوير شركة <b>Codenest Gold</b>، جاهز لحفظ بياناتك والدردشة معك بذكاء فائق.", "bot");
     }
 
     function toggleMode() {
         mode = (mode === "chat") ? "learn" : "chat";
         document.getElementById('chat-ui').style.display = (mode === "chat") ? "flex" : "none";
         document.getElementById('learn-panel').style.display = (mode === "learn") ? "flex" : "none";
-        document.getElementById('toggle-btn').innerText = (mode === "chat") ? "التبديل لوضع التعلم الذاتي 🎓" : "العودة للدردشة الذكية 💬";
+        document.getElementById('toggle-btn').innerText = (mode === "chat") ? "تبديل إلى وضع التعلم الذاتي 🎓" : "العودة للدردشة الذكية 💬";
     }
 
     function addMsg(txt, type) {
@@ -97,7 +96,7 @@
         return div;
     }
 
-    // --- حفظ المعلومات (وضع التعلم) ---
+    // حفظ في الذاكرة المحلية
     async function saveToBrain() {
         const q = document.getElementById('q-in').value.trim().toLowerCase();
         const a = document.getElementById('a-in').value.trim();
@@ -106,13 +105,13 @@
         const tx = db.transaction("brain", "readwrite");
         tx.objectStore("brain").put({ q: q, a: a });
         tx.oncomplete = () => {
-            addMsg(`تم حفظ المعلومة بنجاح. سأعطي الأولوية لـ "${a}" عند السؤال عن "${q}".`, "bot");
+            addMsg(`تم الحفظ بنجاح في قاعدة بيانات <b>Codenest Gold</b>.`, "bot");
             document.getElementById('q-in').value = ""; document.getElementById('a-in').value = "";
             toggleMode();
         };
     }
 
-    // --- المنطق الرئيسي للمعالجة ---
+    // معالجة الرسائل
     async function startLogic() {
         const field = document.getElementById('m-in');
         const val = field.value.trim();
@@ -125,16 +124,13 @@
         
         setTimeout(async () => {
             const lowerInput = val.toLowerCase();
-            
-            // 1. فحص المحفوظات أولاً (الأولوية للمحفوظ)
             const tx = db.transaction("brain", "readonly");
-            const store = tx.objectStore("brain");
-            const allReq = store.getAll();
+            const allReq = tx.objectStore("brain").getAll();
 
             allReq.onsuccess = async () => {
                 const data = allReq.result;
                 
-                // بحث عن تطابق كامل
+                // أولاً: البحث عن تطابق كامل في المحفوظات
                 const exactMatch = data.find(item => item.q === lowerInput);
                 if(exactMatch) {
                     thinking.remove();
@@ -142,11 +138,11 @@
                     return;
                 }
 
-                // بحث عن تطابق جزئي واقتراح
+                // ثانياً: البحث عن تطابق جزئي واقتراح أسئلة
                 const suggestions = data.filter(item => item.q.includes(lowerInput) || lowerInput.includes(item.q));
                 if(suggestions.length > 0 && lowerInput.length > 2) {
                     thinking.remove();
-                    addMsg("قصدك أي معلومة من دول؟", "bot");
+                    addMsg("قصدك أي سؤال من دول؟", "bot");
                     const sBox = document.createElement('div');
                     sBox.className = "sugg-box";
                     suggestions.forEach(s => {
@@ -164,27 +160,26 @@
                     return;
                 }
 
-                // 2. إذا لم يجد في المحفوظ، نستخدم الذكاء الاصطناعي الحقيقي (Gemini)
+                // ثالثاً: استخدام الذكاء الاصطناعي الحقيقي (Gemini)
                 try {
-                    const aiResponse = await callGemini(val);
+                    const aiResponse = await callGeminiAI(val);
                     thinking.remove();
                     addMsg(aiResponse, "bot");
                 } catch (err) {
                     thinking.remove();
-                    addMsg("عذراً، حدث خطأ في الاتصال بالذكاء الاصطناعي، لكن يمكنني حفظ المعلومات يدوياً.", "bot");
+                    addMsg("عذراً، حدث خطأ في الاتصال بالذكاء الاصطناعي.", "bot");
                 }
             };
         }, 2000);
     }
 
-    // --- استدعاء Google Gemini API ---
-    async function callGemini(prompt) {
+    async function callGeminiAI(prompt) {
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
         const response = await fetch(url, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                contents: [{ parts: [{ text: prompt + " (رد باللغة العربية بأسلوب ودود وذكاء)" }] }]
+                contents: [{ parts: [{ text: prompt + " (أجب باللغة العربية بذكاء بصفتك ميدو AI المطور من قبل شركة Codenest Gold)" }] }]
             })
         });
         const resData = await response.json();
