@@ -3,85 +3,161 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ميدو AI - نظام التعلم الذكي</title>
+    <title>ميدو AI - النسخة الذكية V3</title>
     <style>
-        :root {
-            --gold: #d4af37;
-            --dark-bg: #121212;
-            --chat-bg: #f5f7fb;
-            --user-blue: #0078ff;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, sans-serif;
-            background: var(--dark-bg);
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        .mido-container {
-            width: 420px;
-            height: 680px;
-            background: white;
-            border-radius: 25px;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
-            position: relative;
-            overflow: hidden;
-        }
-        /* Header */
-        .header {
-            background: #1a1a1a;
-            padding: 15px;
-            text-align: center;
-            border-bottom: 2px solid var(--gold);
-        }
-        .header h1 { margin: 0; color: var(--gold); font-size: 20px; }
-        .header span { font-size: 9px; color: #777; letter-spacing: 2px; }
-
-        /* Mode Indicator */
-        #mode-info {
-            background: #eee;
-            font-size: 11px;
-            padding: 5px;
-            text-align: center;
-            color: #555;
-            font-weight: bold;
-        }
-
-        /* Settings Overlay */
-        #settings {
-            position: absolute;
-            inset: 0;
-            background: #fff;
-            z-index: 100;
-            padding: 25px;
-            display: none;
-            overflow-y: auto;
-        }
-        .settings-active { display: block !important; }
-
-        /* Chat Display */
-        #chat-window {
-            flex: 1;
-            background: var(--chat-bg);
-            padding: 20px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        .bubble {
-            max-width: 80%;
-            padding: 12px 16px;
-            border-radius: 18px;
-            font-size: 14px;
-            line-height: 1.5;
-        }
+        :root { --gold: #d4af37; --dark: #1a1a1a; --blue: #0078ff; }
+        body { font-family: 'Segoe UI', sans-serif; background: #121212; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .app { width: 420px; height: 700px; background: #fff; border-radius: 25px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5); position: relative; }
+        .header { background: var(--dark); padding: 15px; text-align: center; border-bottom: 2px solid var(--gold); color: var(--gold); }
+        .header span { color: #888; font-size: 10px; display: block; margin-top: 5px; }
+        #chat { flex: 1; background: #f4f6f9; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .bubble { max-width: 85%; padding: 12px; border-radius: 15px; font-size: 14px; position: relative; line-height: 1.4; }
         .bot { background: white; align-self: flex-start; color: #333; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .user { background: var(--user-blue); color: white; align-self: flex-end; }
+        .user { background: var(--blue); color: white; align-self: flex-end; }
+        .thinking { font-style: italic; color: #888; font-size: 12px; margin-bottom: 5px; }
+        
+        .footer { padding: 15px; background: white; border-top: 1px solid #eee; }
+        .input-group { display: flex; gap: 8px; margin-bottom: 10px; }
+        input { flex: 1; padding: 12px; border-radius: 20px; border: 1px solid #ddd; outline: none; }
+        .learn-fields { display: none; flex-direction: column; gap: 5px; margin-bottom: 10px; }
+        .learn-fields input { border-color: var(--gold); }
+        
+        .btn { background: var(--gold); border: none; padding: 10px 15px; border-radius: 20px; cursor: pointer; font-weight: bold; }
+        .mode-toggle { font-size: 12px; color: var(--blue); cursor: pointer; text-align: center; display: block; margin-top: 5px; }
+        .confirm-btns { display: flex; gap: 10px; margin-top: 10px; }
+        .confirm-btns button { flex: 1; padding: 5px; border-radius: 10px; border: 1px solid #ddd; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="app">
+    <div class="header">
+        <strong>ميدو AI</strong>
+        <span>CODENEST GOLD PRODUCTION</span>
+    </div>
+
+    <div id="chat"></div>
+
+    <div class="footer">
+        <div id="learn-area" class="learn-fields">
+            <input type="text" id="q-in" placeholder="س/ (السؤال المراد حفظه)">
+            <input type="text" id="a-in" placeholder="ج/ (الإجابة)">
+            <button class="btn" onclick="saveLearning()">حفظ في الذاكرة</button>
+        </div>
+
+        <div id="chat-area" class="input-group">
+            <input type="text" id="m-in" placeholder="اسأل ميدو AI..." onkeypress="if(event.key==='Enter') startProcess()">
+            <button class="btn" onclick="startProcess()">إرسال</button>
+        </div>
+
+        <span class="mode-toggle" id="mode-btn" onclick="toggleMode()">التبديل لوضع التعلم 🎓</span>
+    </div>
+</div>
+
+<script>
+    let db;
+    let mode = "chat"; 
+    let lastMatch = null;
+
+    const req = indexedDB.open("MidoSmartDB", 3);
+    req.onupgradeneeded = (e) => {
+        let d = e.target.result;
+        d.createObjectStore("brain", { keyPath: "q" });
+    };
+    req.onsuccess = (e) => { db = e.target.result; welcome(); };
+
+    function welcome() { addMsg("أشكرك علي موقع ميدو Ai.. كيف حالك؟ أنا ميدو AI، جاهز لحفظ أسرارك وتعلم مهارات جديدة.", "bot"); }
+
+    function toggleMode() {
+        mode = (mode === "chat") ? "learn" : "chat";
+        document.getElementById('chat-area').style.display = (mode === "chat") ? "flex" : "none";
+        document.getElementById('learn-area').style.display = (mode === "learn") ? "flex" : "none";
+        document.getElementById('mode-btn').innerText = (mode === "chat") ? "التبديل لوضع التعلم 🎓" : "العودة لوضع المحادثة 💬";
+        if(mode === "learn") addMsg("أنت الآن في وضع التعلم. املأ حقل (س/) و (ج/) وسأحفظهما فوراً.", "bot");
+    }
+
+    function addMsg(txt, type) {
+        const chat = document.getElementById('chat');
+        const div = document.createElement('div');
+        div.className = `bubble ${type}`;
+        div.innerHTML = txt;
+        chat.appendChild(div);
+        chat.scrollTop = chat.scrollHeight;
+        return div;
+    }
+
+    async function startProcess() {
+        const input = document.getElementById('m-in');
+        const val = input.value.trim();
+        if(!val) return;
+
+        addMsg(val, "user");
+        input.value = "";
+
+        // حالة التأكيد (لو المستخدم قال اه)
+        if((val === "اه" || val === "نعم" || val === "ايوه") && lastMatch) {
+            showResult(lastMatch);
+            return;
+        }
+
+        // محاكاة التفكير
+        const thinking = addMsg("جاري التفكير...", "bot thinking");
+        setTimeout(() => {
+            thinking.remove();
+            searchBrain(val);
+        }, 2000);
+    }
+
+    async function saveLearning() {
+        const q = document.getElementById('q-in').value.trim();
+        const a = document.getElementById('a-in').value.trim();
+        if(!q || !a) return alert("برجاء ملء السين والجيم!");
+
+        const tx = db.transaction("brain", "readwrite");
+        tx.objectStore("brain").put({ q: q.toLowerCase(), a: a });
+        tx.oncomplete = () => {
+            addMsg(`تم! سأجيب بـ "${a}" عندما تسأل عن "${q}". كيف حالك الآن؟`, "bot");
+            document.getElementById('q-in').value = "";
+            document.getElementById('a-in').value = "";
+            toggleMode();
+        };
+    }
+
+    function searchBrain(word) {
+        const tx = db.transaction("brain", "readonly");
+        const store = tx.objectStore("brain");
+        const request = store.getAll();
+
+        request.onsuccess = () => {
+            const all = request.result;
+            const searchWord = word.toLowerCase();
+            
+            // بحث دقيق
+            let match = all.find(item => item.q === searchWord);
+            
+            if(match) {
+                showResult(match);
+            } else {
+                // بحث جزئي (لو قال كلمة واحدة)
+                let partial = all.find(item => item.q.includes(searchWord));
+                if(partial) {
+                    lastMatch = partial;
+                    addMsg(`قصدك: <b>"${partial.q}"</b>؟`, "bot");
+                } else {
+                    addMsg("لم أجد هذا في ذاكرتي، هل تريد تعليمي إياه؟ وكيف حالك بالمناسبة؟", "bot");
+                }
+            }
+        };
+    }
+
+    function showResult(item) {
+        addMsg(`تذكرت!<br>✅ <b>النتيجة:</b> ${item.a}<br><br>هل أنت بخير اليوم؟`, "bot");
+        lastMatch = null;
+    }
+</script>
+
+</body>
+</html>
 
         /* Footer */
         .controls {
