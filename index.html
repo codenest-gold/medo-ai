@@ -6,64 +6,60 @@
 <title>Medo plan</title>
 <style>
   :root{
-    --ui-bg:#0f1724;
-    --panel:#0b1220;
+    --ui-bg:#071428;
     --accent:#6ee7b7;
     --muted:#94a3b8;
     --page-bg:#f8fafc;
   }
   html,body{height:100%;margin:0;font-family:Inter, "Segoe UI", Tahoma, sans-serif;background:linear-gradient(180deg,#071029 0%, #0b1220 100%);color:#e6eef8}
-  header{display:flex;align-items:center;gap:12px;padding:14px 18px;background:linear-gradient(90deg, rgba(255,255,255,0.03), transparent);box-shadow:0 2px 8px rgba(2,6,23,0.6)}
+  header{display:flex;align-items:center;gap:12px;padding:12px 16px;background:linear-gradient(90deg, rgba(255,255,255,0.03), transparent);box-shadow:0 2px 8px rgba(2,6,23,0.6)}
   h1{margin:0;font-size:18px;color:var(--accent)}
-  .toolbar{display:flex;gap:8px;align-items:center;margin-left:auto}
+  .toolbar{display:flex;gap:8px;align-items:center;margin-left:auto;flex-wrap:wrap}
   .btn{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);padding:8px 10px;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
   .btn.active{border-color:var(--accent);color:var(--accent);box-shadow:0 4px 18px rgba(110,231,183,0.08)}
-  .controls{display:flex;gap:8px;align-items:center;padding:12px;background:rgba(255,255,255,0.02);border-top:1px solid rgba(255,255,255,0.02)}
-  main{display:flex;height:calc(100vh - 110px);gap:12px;padding:12px}
-  /* الصفحة (لوحة العمل) */
+  main{display:flex;flex-direction:column;height:calc(100vh - 110px);gap:8px;padding:8px}
+  /* لوحة الإعدادات العلوية */
+  .top-settings{display:flex;gap:12px;align-items:center;padding:10px;background:linear-gradient(180deg,#071428, #071a2a);border-radius:10px;box-shadow:0 8px 30px rgba(2,6,23,0.6);overflow:auto}
+  .settings-block{min-width:220px;max-width:420px}
+  label{display:block;font-size:13px;color:var(--muted);margin-top:6px}
+  input[type="color"], input[type="range"], input[type="text"], input[type="number"], select{width:100%;padding:6px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#e6eef8}
+  .small{display:flex;gap:8px}
+  .small > *{flex:1}
+  /* لوحة العمل */
   .canvas-wrap{flex:1;display:flex;justify-content:center;align-items:flex-start;padding:12px;overflow:auto}
   #page{
     width:1024px;height:640px;background:var(--page-bg);border-radius:12px;box-shadow:0 8px 30px rgba(2,6,23,0.6);
     position:relative;touch-action:none;overflow:hidden;
     transform-origin:top left;
   }
-  /* عناصر قابلة للتحريك */
   .elem{position:absolute;touch-action:none;user-select:none;display:flex;align-items:center;justify-content:center}
-  .rect{background:#ffffff;color:#0b1220;padding:8px 12px;border-radius:8px;box-shadow:0 2px 6px rgba(2,6,23,0.12);min-width:80px;min-height:40px}
-  .text-elem{font-size:18px;color:#0b1220;white-space:pre-wrap}
+  /* مركب: الآن بخط يحدد الحواف والنص في المنتصف */
+  .rect{background:transparent;color:#0b1220;padding:8px 12px;border-radius:8px;min-width:80px;min-height:40px;display:flex;align-items:center;justify-content:center;box-sizing:border-box}
+  .rect .rect-inner{display:flex;align-items:center;justify-content:center;width:100%;height:100%;border-radius:6px;padding:6px;box-sizing:border-box}
+  .text-elem{font-size:18px;color:#0b1220;white-space:pre-wrap;text-align:center}
   .img-elem img{max-width:100%;max-height:100%;display:block;border-radius:6px}
   .handle{width:12px;height:12px;border-radius:2px;background:var(--accent);position:absolute;right:-6px;bottom:-6px;touch-action:none;cursor:se-resize}
   .selected{outline:2px dashed rgba(99,102,241,0.9);outline-offset:6px}
-  /* لوحة الإعدادات الجانبية */
-  .side{width:320px;background:linear-gradient(180deg,#071428, #071a2a);border-radius:12px;padding:12px;box-shadow:0 8px 30px rgba(2,6,23,0.6);overflow:auto}
-  .panel h3{margin:6px 0 10px;color:var(--accent)}
-  label{display:block;font-size:13px;color:var(--muted);margin-top:8px}
-  input[type="color"], input[type="range"], input[type="text"], select{width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#e6eef8}
-  .small{display:flex;gap:8px}
-  .small > *{flex:1}
   footer{display:flex;gap:8px;align-items:center;padding:10px 18px;background:linear-gradient(90deg, rgba(255,255,255,0.02), transparent)}
   .muted{color:var(--muted);font-size:13px}
-  /* SVG arrow and hexagon sizing */
-  .arrow-svg{width:100%;height:100%}
-  .hex-svg{width:100%;height:100%}
-  /* mobile friendly */
+  .hidden{display:none}
   @media (max-width:900px){
-    main{flex-direction:column}
-    .side{width:100%;height:320px}
-    .canvas-wrap{order:2}
+    main{padding:8px}
+    .top-settings{flex-direction:column;align-items:stretch}
   }
 </style>
 </head>
 <body>
 <header>
   <h1>Medo plan</h1>
-  <div class="muted">لوحة تصميم تفاعلية — المس/انقر لإضافة أو تعديل العناصر</div>
+  <div class="muted">لوحة تصميم تفاعلية</div>
   <div class="toolbar" role="toolbar" aria-label="Toolbar">
     <button class="btn" id="tool-rect">مركب</button>
     <button class="btn" id="tool-text">نص</button>
     <button class="btn" id="tool-arrow">سهم</button>
     <button class="btn" id="tool-image">صورة</button>
     <button class="btn" id="tool-hex">سداسي</button>
+    <button class="btn" id="btn-undo">تراجع</button>
     <button class="btn" id="btn-export">تصدير صورة</button>
     <button class="btn" id="btn-save">تحميل المشروع</button>
     <button class="btn" id="btn-load">استيراد مشروع</button>
@@ -73,115 +69,120 @@
 </header>
 
 <main>
-  <div class="canvas-wrap">
-    <div id="page" tabindex="0" aria-label="لوحة العمل"></div>
-  </div>
-
-  <aside class="side">
-    <div class="panel">
-      <h3>إعدادات الصفحة</h3>
-      <label>حجم العرض (px)</label>
+  <!-- لوحة الإعدادات العلوية (التي طلبتها) -->
+  <div class="top-settings" id="top-settings">
+    <div class="settings-block">
+      <h3 style="margin:0;color:var(--accent)">إعدادات الصفحة</h3>
+      <label>عرض (px)</label>
       <input id="page-width" type="number" value="1024" />
-      <label>حجم الارتفاع (px)</label>
+      <label>ارتفاع (px)</label>
       <input id="page-height" type="number" value="640" />
       <label>لون الخلفية</label>
       <input id="page-bg" type="color" value="#f8fafc" />
-      <hr style="margin:12px 0;border:none;border-top:1px solid rgba(255,255,255,0.03)" />
-      <div id="elem-settings">
-        <h3>حدد عنصراً لتعديل إعداداته</h3>
-        <div id="no-selection" class="muted">لم يتم تحديد أي عنصر</div>
+    </div>
 
-        <!-- إعدادات عامة تظهر عند اختيار عنصر -->
-        <div id="settings-area" style="display:none">
-          <label>نوع العنصر: <span id="sel-type" class="muted"></span></label>
+    <div class="settings-block" id="elem-settings-top">
+      <h3 style="margin:0;color:var(--accent)">إعدادات العنصر المحدد</h3>
+      <div id="no-selection" class="muted">لم يتم تحديد أي عنصر</div>
 
-          <!-- مركب -->
-          <div id="settings-rect" style="display:none">
-            <label>نص المستطيل</label>
-            <input id="rect-text" type="text" />
-            <label>لون المستطيل</label>
-            <input id="rect-bg" type="color" value="#ffffff" />
-            <label>لون النص</label>
-            <input id="rect-color" type="color" value="#0b1220" />
-            <label>ظل المستطيل</label>
-            <select id="rect-shadow">
-              <option value="none">بدون</option>
-              <option value="soft">خفيف</option>
-              <option value="strong">قوي</option>
-            </select>
-            <div class="small">
-              <div>
-                <label>دوران (deg)</label>
-                <input id="rect-rotate" type="range" min="0" max="360" value="0" />
-              </div>
-              <div>
-                <label>الحجم (مقياس)</label>
-                <input id="rect-scale" type="range" min="0.3" max="3" step="0.01" value="1" />
-              </div>
+      <div id="settings-area" style="display:none">
+        <label>نوع العنصر: <span id="sel-type" class="muted"></span></label>
+
+        <!-- مركب -->
+        <div id="settings-rect" style="display:none">
+          <label>نص المستطيل</label>
+          <input id="rect-text" type="text" />
+          <label>لون المستطيل (الخلفية)</label>
+          <input id="rect-bg" type="color" value="#ffffff" />
+          <label>لون خط الحواف</label>
+          <input id="rect-border" type="color" value="#0b1220" />
+          <label>لون النص</label>
+          <input id="rect-color" type="color" value="#0b1220" />
+          <label>ظل المستطيل</label>
+          <select id="rect-shadow">
+            <option value="none">بدون</option>
+            <option value="soft">خفيف</option>
+            <option value="strong">قوي</option>
+          </select>
+          <div class="small">
+            <div>
+              <label>دوران (deg)</label>
+              <input id="rect-rotate" type="range" min="0" max="360" value="0" />
+            </div>
+            <div>
+              <label>الحجم (مقياس)</label>
+              <input id="rect-scale" type="range" min="0.3" max="3" step="0.01" value="1" />
             </div>
           </div>
+        </div>
 
-          <!-- نص -->
-          <div id="settings-text" style="display:none">
-            <label>محتوى النص</label>
-            <input id="text-content" type="text" />
-            <label>لون النص</label>
-            <input id="text-color" type="color" value="#0b1220" />
-            <div class="small">
-              <div>
-                <label>حجم الخط (px)</label>
-                <input id="text-size" type="range" min="8" max="120" value="18" />
-              </div>
-              <div>
-                <label>دوران (deg)</label>
-                <input id="text-rotate" type="range" min="0" max="360" value="0" />
-              </div>
+        <!-- نص -->
+        <div id="settings-text" style="display:none">
+          <label>محتوى النص</label>
+          <input id="text-content" type="text" />
+          <label>لون النص</label>
+          <input id="text-color" type="color" value="#0b1220" />
+          <div class="small">
+            <div>
+              <label>حجم الخط (px)</label>
+              <input id="text-size" type="range" min="8" max="120" value="18" />
+            </div>
+            <div>
+              <label>دوران (deg)</label>
+              <input id="text-rotate" type="range" min="0" max="360" value="0" />
             </div>
           </div>
+        </div>
 
-          <!-- سهم -->
-          <div id="settings-arrow" style="display:none">
-            <label>لون السهم</label>
-            <input id="arrow-color" type="color" value="#0b1220" />
-            <label>انحناء (0-100)</label>
-            <input id="arrow-curve" type="range" min="-100" max="100" value="0" />
-            <div class="small">
-              <div>
-                <label>دوران (deg)</label>
-                <input id="arrow-rotate" type="range" min="0" max="360" value="0" />
-              </div>
-              <div>
-                <label>الحجم (مقياس)</label>
-                <input id="arrow-scale" type="range" min="0.2" max="3" step="0.01" value="1" />
-              </div>
+        <!-- سهم -->
+        <div id="settings-arrow" style="display:none">
+          <label>لون السهم</label>
+          <input id="arrow-color" type="color" value="#0b1220" />
+          <label>انحناء (سالب/موجب)</label>
+          <input id="arrow-curve" type="range" min="-100" max="100" value="0" />
+          <div class="small">
+            <div>
+              <label>دوران (deg)</label>
+              <input id="arrow-rotate" type="range" min="0" max="360" value="0" />
+            </div>
+            <div>
+              <label>الحجم (مقياس)</label>
+              <input id="arrow-scale" type="range" min="0.2" max="3" step="0.01" value="1" />
             </div>
           </div>
+        </div>
 
-          <!-- صورة -->
-          <div id="settings-image" style="display:none">
-            <label>تحميل صورة جديدة</label>
-            <button class="btn" id="change-image">اختر صورة</button>
-            <label>عرض/ارتفاع (px)</label>
-            <div class="small">
-              <input id="img-w" type="number" value="200" />
-              <input id="img-h" type="number" value="120" />
-            </div>
+        <!-- صورة -->
+        <div id="settings-image" style="display:none">
+          <label>تحميل صورة جديدة</label>
+          <button class="btn" id="change-image">اختر صورة</button>
+          <label>عرض/ارتفاع (px)</label>
+          <div class="small">
+            <input id="img-w" type="number" value="200" />
+            <input id="img-h" type="number" value="120" />
           </div>
+        </div>
 
-          <!-- سداسي -->
-          <div id="settings-hex" style="display:none">
-            <label>لون السداسي</label>
-            <input id="hex-color" type="color" value="#ffd166" />
-            <label>حجم (px)</label>
-            <input id="hex-size" type="range" min="30" max="400" value="120" />
-          </div>
+        <!-- سداسي -->
+        <div id="settings-hex" style="display:none">
+          <label>لون السداسي</label>
+          <input id="hex-color" type="color" value="#ffd166" />
+          <label>حجم (px)</label>
+          <input id="hex-size" type="range" min="30" max="400" value="120" />
+        </div>
 
-          <hr style="margin:12px 0;border:none;border-top:1px solid rgba(255,255,255,0.03)" />
+        <div style="margin-top:8px;display:flex;gap:8px">
           <button class="btn" id="btn-delete" style="background:#7f1d1d;color:#fff">حذف العنصر</button>
+          <button class="btn" id="btn-center" title="مركز العنصر">مركز</button>
         </div>
       </div>
     </div>
-  </aside>
+  </div>
+
+  <!-- لوحة العمل -->
+  <div class="canvas-wrap">
+    <div id="page" tabindex="0" aria-label="لوحة العمل"></div>
+  </div>
 </main>
 
 <footer>
@@ -189,14 +190,67 @@
 </footer>
 
 <script>
-/* Medo plan - JavaScript */
-/* Helpers */
-const $ = sel => document.querySelector(sel);
-const $$ = sel => Array.from(document.querySelectorAll(sel));
+/* Medo plan - تحديثات */
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+
 let currentTool = null;
 let placing = false;
 let selectedElem = null;
 let elemIdCounter = 0;
+
+/* Undo history */
+const history = [];
+let historyIndex = -1;
+function pushHistory(label){
+  // serialize minimal project state
+  const state = {
+    page: {w: $('#page-width').value, h: $('#page-height').value, bg: $('#page-bg').value},
+    elems: $$('.elem').map(el=>{
+      return {
+        type: el.dataset.type,
+        left: el.style.left,
+        top: el.style.top,
+        width: el.style.width,
+        height: el.style.height,
+        dataset: {...el.dataset}
+      };
+    })
+  };
+  // if we undid and then make new change, drop forward states
+  history.splice(historyIndex+1);
+  history.push(state);
+  historyIndex = history.length - 1;
+  // optional: limit history length
+  if(history.length > 60) history.shift();
+}
+function restoreHistory(idx){
+  if(idx < 0 || idx >= history.length) return;
+  const state = history[idx];
+  // clear
+  $$('.elem').forEach(e=>e.remove());
+  $('#page-width').value = state.page.w;
+  $('#page-height').value = state.page.h;
+  $('#page-bg').value = state.page.bg;
+  applyPageSettings();
+  (state.elems || []).forEach(obj=>{
+    const left = parseFloat(obj.left) || 50;
+    const top = parseFloat(obj.top) || 50;
+    const el = createElement(obj.type, left, top, obj.dataset);
+    // restore dataset and sizes
+    for(const k in obj.dataset) el.dataset[k] = obj.dataset[k];
+    if(obj.width) el.style.width = obj.width;
+    if(obj.height) el.style.height = obj.height;
+    // apply styles
+    if(el.dataset.type === 'rect') applyRectStyles(el);
+    if(el.dataset.type === 'text') applyTextStyles(el);
+    if(el.dataset.type === 'arrow') applyArrowStyles(el);
+    if(el.dataset.type === 'image') applyImageStyles(el);
+    if(el.dataset.type === 'hex') applyHexStyles(el);
+  });
+  selectedElem = null;
+  selectElement(null);
+}
 
 /* Elements */
 const page = $('#page');
@@ -207,6 +261,7 @@ const tools = {
   image: $('#tool-image'),
   hex: $('#tool-hex')
 };
+const btnUndo = $('#btn-undo');
 const btnExport = $('#btn-export');
 const btnSave = $('#btn-save');
 const btnLoad = $('#btn-load');
@@ -229,7 +284,7 @@ const settings = {
 };
 
 /* Rect inputs */
-const rectText = $('#rect-text'), rectBg = $('#rect-bg'), rectColor = $('#rect-color'),
+const rectText = $('#rect-text'), rectBg = $('#rect-bg'), rectBorder = $('#rect-border'), rectColor = $('#rect-color'),
       rectShadow = $('#rect-shadow'), rectRotate = $('#rect-rotate'), rectScale = $('#rect-scale');
 
 /* Text inputs */
@@ -245,6 +300,7 @@ const changeImageBtn = $('#change-image'), imgW = $('#img-w'), imgH = $('#img-h'
 const hexColor = $('#hex-color'), hexSize = $('#hex-size');
 
 const btnDelete = $('#btn-delete');
+const btnCenter = $('#btn-center');
 
 /* Initialize page */
 function applyPageSettings(){
@@ -252,9 +308,9 @@ function applyPageSettings(){
   page.style.height = pageH.value + 'px';
   page.style.background = pageBg.value;
 }
-pageW.addEventListener('change', applyPageSettings);
-pageH.addEventListener('change', applyPageSettings);
-pageBg.addEventListener('change', applyPageSettings);
+pageW.addEventListener('change', ()=>{ applyPageSettings(); pushHistory('page-size'); });
+pageH.addEventListener('change', ()=>{ applyPageSettings(); pushHistory('page-size'); });
+pageBg.addEventListener('change', ()=>{ applyPageSettings(); pushHistory('page-bg'); });
 applyPageSettings();
 
 /* Tool selection */
@@ -285,15 +341,20 @@ function createElement(type, x=50, y=50, opts={}){
   el.style.height = (opts.h || 60) + 'px';
   el.tabIndex = 0;
 
-  // content per type
   if(type === 'rect'){
-    const inner = document.createElement('div');
-    inner.className = 'rect';
-    inner.contentEditable = false;
-    inner.innerText = opts.text || 'مركب';
-    el.appendChild(inner);
-    el.dataset.text = inner.innerText;
+    const innerWrap = document.createElement('div');
+    innerWrap.className = 'rect-inner';
+    innerWrap.style.background = opts.bg || '#ffffff';
+    innerWrap.style.border = `2px solid ${opts.border || '#0b1220'}`;
+    innerWrap.style.color = opts.color || '#0b1220';
+    innerWrap.innerText = opts.text || 'مركب';
+    const outer = document.createElement('div');
+    outer.className = 'rect';
+    outer.appendChild(innerWrap);
+    el.appendChild(outer);
+    el.dataset.text = innerWrap.innerText;
     el.dataset.bg = opts.bg || '#ffffff';
+    el.dataset.border = opts.border || '#0b1220';
     el.dataset.color = opts.color || '#0b1220';
     el.dataset.rotate = opts.rotate || 0;
     el.dataset.scale = opts.scale || 1;
@@ -314,16 +375,9 @@ function createElement(type, x=50, y=50, opts={}){
     const svg = document.createElementNS(svgNS,'svg');
     svg.setAttribute('viewBox','0 0 200 80');
     svg.classList.add('arrow-svg');
-    const path = document.createElementNS(svgNS,'path');
-    path.setAttribute('d','M10 40 C 80 40 120 40 190 40');
-    path.setAttribute('stroke','#0b1220');
-    path.setAttribute('stroke-width','6');
-    path.setAttribute('fill','none');
-    path.setAttribute('stroke-linecap','round');
-    path.setAttribute('marker-end','url(#arrowhead)');
     const defs = document.createElementNS(svgNS,'defs');
     const marker = document.createElementNS(svgNS,'marker');
-    marker.setAttribute('id','arrowhead');
+    marker.setAttribute('id','arrowhead-'+id);
     marker.setAttribute('markerWidth','10');
     marker.setAttribute('markerHeight','10');
     marker.setAttribute('refX','6');
@@ -331,9 +385,16 @@ function createElement(type, x=50, y=50, opts={}){
     marker.setAttribute('orient','auto');
     const poly = document.createElementNS(svgNS,'polygon');
     poly.setAttribute('points','0 0, 6 3, 0 6');
-    poly.setAttribute('fill','#0b1220');
+    poly.setAttribute('fill',opts.color || '#0b1220');
     marker.appendChild(poly);
     defs.appendChild(marker);
+    const path = document.createElementNS(svgNS,'path');
+    path.setAttribute('d','M10 40 C 80 40 120 40 190 40');
+    path.setAttribute('stroke',opts.color || '#0b1220');
+    path.setAttribute('stroke-width','6');
+    path.setAttribute('fill','none');
+    path.setAttribute('stroke-linecap','round');
+    path.setAttribute('marker-end','url(#arrowhead-'+id+')');
     svg.appendChild(defs);
     svg.appendChild(path);
     el.appendChild(svg);
@@ -360,7 +421,7 @@ function createElement(type, x=50, y=50, opts={}){
     svg.setAttribute('viewBox','0 0 200 200');
     svg.classList.add('hex-svg');
     const poly = document.createElementNS(svgNS,'polygon');
-    const cx=100, cy=100, r=80;
+    const cx=100, cy=100, r=90;
     const pts = [];
     for(let i=0;i<6;i++){
       const a = Math.PI/3*i - Math.PI/6;
@@ -370,48 +431,48 @@ function createElement(type, x=50, y=50, opts={}){
     poly.setAttribute('fill', opts.color || '#ffd166');
     poly.setAttribute('stroke','#0b1220');
     poly.setAttribute('stroke-width','2');
+    // inner circle smaller to create gap
     const circle = document.createElementNS(svgNS,'circle');
     circle.setAttribute('cx',100);
     circle.setAttribute('cy',100);
-    circle.setAttribute('r',28);
+    circle.setAttribute('r',60); // smaller than hex to leave gap
     circle.setAttribute('fill','#ffffff');
     circle.setAttribute('stroke','#0b1220');
     circle.setAttribute('stroke-width','2');
-    // simple fuel icon: small rectangle + nozzle
-    const rect = document.createElementNS(svgNS,'rect');
-    rect.setAttribute('x',88);rect.setAttribute('y',88);rect.setAttribute('width',24);rect.setAttribute('height',20);rect.setAttribute('fill','#0b1220');
-    const nozzle = document.createElementNS(svgNS,'rect');
-    nozzle.setAttribute('x',110);nozzle.setAttribute('y',86);nozzle.setAttribute('width',10);nozzle.setAttribute('height',6);nozzle.setAttribute('fill','#0b1220');
-    svg.appendChild(poly);svg.appendChild(circle);svg.appendChild(rect);svg.appendChild(nozzle);
+    svg.appendChild(poly);
+    svg.appendChild(circle);
     el.appendChild(svg);
     el.dataset.color = opts.color || '#ffd166';
     el.dataset.size = opts.size || 120;
     applyHexStyles(el);
   }
 
-  // add resize handle
   const handle = document.createElement('div');
   handle.className = 'handle';
   el.appendChild(handle);
 
-  // events
   el.addEventListener('pointerdown', elemPointerDown);
   el.addEventListener('touchstart', e=>e.stopPropagation());
-  el.addEventListener('dblclick', e=>{ e.stopPropagation(); if(el.dataset.type==='rect'){ const inner = el.querySelector('.rect'); inner.contentEditable = true; inner.focus(); } if(el.dataset.type==='text'){ const t = el.querySelector('.text-elem'); t.contentEditable = true; t.focus(); }});
+  el.addEventListener('dblclick', e=>{ e.stopPropagation(); if(el.dataset.type==='rect'){ const inner = el.querySelector('.rect-inner'); inner.contentEditable = true; inner.focus(); } if(el.dataset.type==='text'){ const t = el.querySelector('.text-elem'); t.contentEditable = true; t.focus(); }});
   page.appendChild(el);
   return el;
 }
 
 /* Apply style functions */
 function applyRectStyles(el){
-  const inner = el.querySelector('.rect');
-  inner.style.background = el.dataset.bg;
-  inner.style.color = el.dataset.color;
-  inner.style.boxShadow = el.dataset.shadow === 'none' ? 'none' : (el.dataset.shadow === 'soft' ? '0 6px 18px rgba(2,6,23,0.12)' : '0 10px 30px rgba(2,6,23,0.2)');
+  const innerWrap = el.querySelector('.rect-inner');
+  innerWrap.style.background = el.dataset.bg;
+  innerWrap.style.border = `2px solid ${el.dataset.border || '#0b1220'}`;
+  innerWrap.style.color = el.dataset.color;
+  innerWrap.style.boxShadow = el.dataset.shadow === 'none' ? 'none' : (el.dataset.shadow === 'soft' ? '0 6px 18px rgba(2,6,23,0.12)' : '0 10px 30px rgba(2,6,23,0.2)');
+  innerWrap.innerText = el.dataset.text || innerWrap.innerText;
   const r = el.dataset.rotate || 0;
   const s = el.dataset.scale || 1;
   el.style.transform = `translate(-50%,-50%) rotate(${r}deg) scale(${s})`;
-  inner.innerText = el.dataset.text || inner.innerText;
+  // ensure text centered
+  innerWrap.style.display = 'flex';
+  innerWrap.style.alignItems = 'center';
+  innerWrap.style.justifyContent = 'center';
 }
 function applyTextStyles(el){
   const t = el.querySelector('.text-elem');
@@ -426,15 +487,13 @@ function applyArrowStyles(el){
   const path = svg.querySelector('path');
   const color = el.dataset.color || '#0b1220';
   const curve = parseFloat(el.dataset.curve || 0);
-  const w = 200, h = 80;
-  // compute control points based on curve
   const cx1 = 50, cy1 = 40 + curve*0.2;
   const cx2 = 150, cy2 = 40 - curve*0.2;
   const d = `M10 40 C ${cx1} ${cy1} ${cx2} ${cy2} 190 40`;
   path.setAttribute('d', d);
   path.setAttribute('stroke', color);
-  const markerPoly = svg.querySelector('polygon');
-  if(markerPoly) markerPoly.setAttribute('fill', color);
+  const marker = svg.querySelector('marker polygon');
+  if(marker) marker.setAttribute('fill', color);
   const r = el.dataset.rotate || 0;
   const s = el.dataset.scale || 1;
   el.style.width = (200 * s) + 'px';
@@ -467,25 +526,27 @@ page.addEventListener('pointerdown', function(e){
   if(currentTool === 'text') el = createElement('text', x, y);
   if(currentTool === 'arrow') el = createElement('arrow', x, y);
   if(currentTool === 'image'){
-    // open image uploader then create element after selection
     imgUploader.onchange = function(ev){
       const f = ev.target.files[0];
       if(!f) return;
       const url = URL.createObjectURL(f);
       el = createElement('image', x, y, {src:url, w:200, h:120});
       selectElement(el);
+      pushHistory('add-image');
       imgUploader.value = '';
     };
     imgUploader.click();
     return;
   }
   if(currentTool === 'hex') el = createElement('hex', x, y);
-  if(el) selectElement(el);
+  if(el){
+    selectElement(el);
+    pushHistory('add-'+currentTool);
+  }
 });
 
 /* Selection handling */
 function selectElement(el){
-  // deselect previous
   if(selectedElem) selectedElem.classList.remove('selected');
   selectedElem = el;
   if(!el) {
@@ -495,12 +556,12 @@ function selectElement(el){
   noSelection.style.display='none';
   settingsArea.style.display='block';
   selType.textContent = el.dataset.type;
-  // show relevant settings
   Object.values(settings).forEach(s=>s.style.display='none');
   if(el.dataset.type === 'rect'){
     settings.rect.style.display='block';
     rectText.value = el.dataset.text || '';
     rectBg.value = el.dataset.bg || '#ffffff';
+    rectBorder.value = el.dataset.border || '#0b1220';
     rectColor.value = el.dataset.color || '#0b1220';
     rectShadow.value = el.dataset.shadow || 'soft';
     rectRotate.value = el.dataset.rotate || 0;
@@ -528,9 +589,8 @@ function selectElement(el){
   }
 }
 
-/* Deselect on page background click */
+/* Deselect on background click when not placing */
 page.addEventListener('pointerdown', function(e){
-  // if clicked empty area and not placing, deselect
   if(e.target === page && !placing){
     if(selectedElem){ selectedElem.classList.remove('selected'); selectedElem = null; selectElement(null); }
   }
@@ -554,16 +614,14 @@ function elemPointerDown(e){
 }
 function elemPointerMove(e){
   if(!dragState) return;
-  const {el, startX, startY, offsetX, offsetY, rect, isHandle} = dragState;
+  const {el, startX, startY, rect, isHandle} = dragState;
   const dx = e.clientX - startX;
   const dy = e.clientY - startY;
   if(isHandle){
-    // resize: change width/height
     const newW = Math.max(20, rect.width + dx);
     const newH = Math.max(20, rect.height + dy);
     el.style.width = newW + 'px';
     el.style.height = newH + 'px';
-    // update dataset for image
     if(el.dataset.type === 'image'){
       el.dataset.w = newW; el.dataset.h = newH;
       applyImageStyles(el);
@@ -574,11 +632,9 @@ function elemPointerMove(e){
     }
     return;
   } else {
-    // move
     const pageRect = page.getBoundingClientRect();
     let left = e.clientX - pageRect.left;
     let top = e.clientY - pageRect.top;
-    // keep inside page
     left = Math.max(0, Math.min(left, pageRect.width));
     top = Math.max(0, Math.min(top, pageRect.height));
     el.style.left = left + 'px';
@@ -589,25 +645,27 @@ function elemPointerUp(e){
   document.removeEventListener('pointermove', elemPointerMove);
   document.removeEventListener('pointerup', elemPointerUp);
   dragState = null;
+  pushHistory('move/resize');
 }
 
 /* Settings change handlers */
-rectText.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.text = rectText.value; applyRectStyles(selectedElem); });
-rectBg.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.bg = rectBg.value; applyRectStyles(selectedElem); });
-rectColor.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.color = rectColor.value; applyRectStyles(selectedElem); });
-rectShadow.addEventListener('change', ()=>{ if(!selectedElem) return; selectedElem.dataset.shadow = rectShadow.value; applyRectStyles(selectedElem); });
-rectRotate.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.rotate = rectRotate.value; applyRectStyles(selectedElem); });
-rectScale.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.scale = rectScale.value; applyRectStyles(selectedElem); });
+rectText.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.text = rectText.value; applyRectStyles(selectedElem); pushHistory('edit-rect'); });
+rectBg.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.bg = rectBg.value; applyRectStyles(selectedElem); pushHistory('edit-rect'); });
+rectBorder.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.border = rectBorder.value; applyRectStyles(selectedElem); pushHistory('edit-rect'); });
+rectColor.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.color = rectColor.value; applyRectStyles(selectedElem); pushHistory('edit-rect'); });
+rectShadow.addEventListener('change', ()=>{ if(!selectedElem) return; selectedElem.dataset.shadow = rectShadow.value; applyRectStyles(selectedElem); pushHistory('edit-rect'); });
+rectRotate.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.rotate = rectRotate.value; applyRectStyles(selectedElem); pushHistory('edit-rect'); });
+rectScale.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.scale = rectScale.value; applyRectStyles(selectedElem); pushHistory('edit-rect'); });
 
-textContent.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.text = textContent.value; applyTextStyles(selectedElem); });
-textColor.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.color = textColor.value; applyTextStyles(selectedElem); });
-textSize.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.size = textSize.value; applyTextStyles(selectedElem); });
-textRotate.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.rotate = textRotate.value; applyTextStyles(selectedElem); });
+textContent.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.text = textContent.value; applyTextStyles(selectedElem); pushHistory('edit-text'); });
+textColor.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.color = textColor.value; applyTextStyles(selectedElem); pushHistory('edit-text'); });
+textSize.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.size = textSize.value; applyTextStyles(selectedElem); pushHistory('edit-text'); });
+textRotate.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.rotate = textRotate.value; applyTextStyles(selectedElem); pushHistory('edit-text'); });
 
-arrowColor.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.color = arrowColor.value; applyArrowStyles(selectedElem); });
-arrowCurve.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.curve = arrowCurve.value; applyArrowStyles(selectedElem); });
-arrowRotate.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.rotate = arrowRotate.value; applyArrowStyles(selectedElem); });
-arrowScale.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.scale = arrowScale.value; applyArrowStyles(selectedElem); });
+arrowColor.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.color = arrowColor.value; applyArrowStyles(selectedElem); pushHistory('edit-arrow'); });
+arrowCurve.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.curve = arrowCurve.value; applyArrowStyles(selectedElem); pushHistory('edit-arrow'); });
+arrowRotate.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.rotate = arrowRotate.value; applyArrowStyles(selectedElem); pushHistory('edit-arrow'); });
+arrowScale.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.scale = arrowScale.value; applyArrowStyles(selectedElem); pushHistory('edit-arrow'); });
 
 changeImageBtn.addEventListener('click', ()=> imgUploader.click());
 imgUploader.addEventListener('change', function(e){
@@ -617,24 +675,34 @@ imgUploader.addEventListener('change', function(e){
   const url = URL.createObjectURL(f);
   selectedElem.dataset.src = url;
   applyImageStyles(selectedElem);
+  pushHistory('edit-image');
   imgUploader.value = '';
 });
-imgW.addEventListener('change', ()=>{ if(!selectedElem) return; selectedElem.dataset.w = imgW.value; selectedElem.dataset.h = imgH.value; applyImageStyles(selectedElem); });
-imgH.addEventListener('change', ()=>{ if(!selectedElem) return; selectedElem.dataset.w = imgW.value; selectedElem.dataset.h = imgH.value; applyImageStyles(selectedElem); });
+imgW.addEventListener('change', ()=>{ if(!selectedElem) return; selectedElem.dataset.w = imgW.value; selectedElem.dataset.h = imgH.value; applyImageStyles(selectedElem); pushHistory('edit-image'); });
+imgH.addEventListener('change', ()=>{ if(!selectedElem) return; selectedElem.dataset.w = imgW.value; selectedElem.dataset.h = imgH.value; applyImageStyles(selectedElem); pushHistory('edit-image'); });
 
-hexColor.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.color = hexColor.value; applyHexStyles(selectedElem); });
-hexSize.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.size = hexSize.value; applyHexStyles(selectedElem); });
+hexColor.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.color = hexColor.value; applyHexStyles(selectedElem); pushHistory('edit-hex'); });
+hexSize.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.size = hexSize.value; applyHexStyles(selectedElem); pushHistory('edit-hex'); });
 
 btnDelete.addEventListener('click', ()=>{
   if(!selectedElem) return;
   selectedElem.remove();
   selectedElem = null;
   selectElement(null);
+  pushHistory('delete');
+});
+
+btnCenter.addEventListener('click', ()=>{
+  if(!selectedElem) return;
+  const pw = page.clientWidth, ph = page.clientHeight;
+  selectedElem.style.left = (pw/2) + 'px';
+  selectedElem.style.top = (ph/2) + 'px';
+  pushHistory('center');
 });
 
 /* Keyboard support: delete key */
 document.addEventListener('keydown', (e)=>{
-  if(e.key === 'Delete' && selectedElem){ selectedElem.remove(); selectedElem = null; selectElement(null); }
+  if(e.key === 'Delete' && selectedElem){ selectedElem.remove(); selectedElem = null; selectElement(null); pushHistory('delete'); }
 });
 
 /* Save / Load project */
@@ -664,7 +732,6 @@ fileLoad.addEventListener('change', function(e){
   reader.onload = function(ev){
     try{
       const data = JSON.parse(ev.target.result);
-      // clear page
       $$('.elem').forEach(x=>x.remove());
       pageW.value = data.page.w || 1024;
       pageH.value = data.page.h || 640;
@@ -674,18 +741,16 @@ fileLoad.addEventListener('change', function(e){
         const left = parseFloat(obj.left) || 50;
         const top = parseFloat(obj.top) || 50;
         const el = createElement(obj.type, left, top, obj.data);
-        // restore dataset
         for(const k in obj.data) el.dataset[k] = obj.data[k];
-        // restore size
         if(obj.width) el.style.width = obj.width;
         if(obj.height) el.style.height = obj.height;
-        // apply styles
         if(el.dataset.type === 'rect') applyRectStyles(el);
         if(el.dataset.type === 'text') applyTextStyles(el);
         if(el.dataset.type === 'arrow') applyArrowStyles(el);
         if(el.dataset.type === 'image') applyImageStyles(el);
         if(el.dataset.type === 'hex') applyHexStyles(el);
       });
+      pushHistory('load');
     }catch(err){
       alert('ملف غير صالح');
     }
@@ -694,26 +759,21 @@ fileLoad.addEventListener('change', function(e){
   fileLoad.value = '';
 });
 
-/* Export page as high-quality image */
+/* Export page as image (same approach as before) */
 btnExport.addEventListener('click', async ()=>{
-  // create an SVG with foreignObject containing the page
-  const scale = 2; // for higher quality
+  const scale = 2;
   const w = parseInt(page.style.width);
   const h = parseInt(page.style.height);
-  // clone page node and inline styles
   const clone = page.cloneNode(true);
   clone.style.transform = 'none';
   clone.style.width = w + 'px';
   clone.style.height = h + 'px';
-  // remove selection outlines
   clone.querySelectorAll('.selected').forEach(s=>s.classList.remove('selected'));
-  // inline computed styles for each element to improve rendering
   function inlineStyles(node){
     if(node.nodeType !== 1) return;
     const cs = window.getComputedStyle(node);
     let styleStr = '';
-    // copy a subset of styles
-    const props = ['background','color','font-size','border-radius','box-shadow','padding','display','justify-content','align-items','width','height','left','top','transform','position','overflow','border','white-space'];
+    const props = ['background','color','font-size','border-radius','box-shadow','padding','display','justify-content','align-items','width','height','left','top','transform','position','overflow','border','white-space','text-align'];
     props.forEach(p=>{
       try{ if(cs.getPropertyValue(p)) styleStr += `${p}:${cs.getPropertyValue(p)};`; }catch(e){}
     });
@@ -721,7 +781,6 @@ btnExport.addEventListener('click', async ()=>{
     Array.from(node.children).forEach(inlineStyles);
   }
   inlineStyles(clone);
-
   const xmlns = "http://www.w3.org/2000/svg";
   const svg = document.createElementNS(xmlns,'svg');
   svg.setAttribute('xmlns', xmlns);
@@ -758,6 +817,13 @@ btnExport.addEventListener('click', async ()=>{
   img.src = url;
 });
 
+/* Undo button */
+btnUndo.addEventListener('click', ()=>{
+  if(historyIndex <= 0) return;
+  historyIndex--;
+  restoreHistory(historyIndex);
+});
+
 /* Click outside to cancel placing */
 document.addEventListener('pointerdown', (e)=>{
   if(!page.contains(e.target) && placing){
@@ -765,14 +831,15 @@ document.addEventListener('pointerdown', (e)=>{
   }
 });
 
-/* Touch friendly: ensure pointer events work for touch */
-page.addEventListener('touchstart', e=>{ /* noop to enable touch-action none */ });
+/* Touch friendly */
+page.addEventListener('touchstart', e=>{});
 
-/* Initial demo elements for convenience */
-createElement('rect', 200, 120, {text:'مركب', bg:'#ffffff', color:'#0b1220', shadow:'soft'});
+/* Initial demo elements and initial history snapshot */
+createElement('rect', 200, 120, {text:'مركب', bg:'#ffffff', border:'#0b1220', color:'#0b1220', shadow:'soft'});
 createElement('text', 420, 80, {text:'مرحبا Medo plan', color:'#0b1220', size:22});
 createElement('arrow', 300, 300, {color:'#0b1220', curve:20});
 createElement('hex', 700, 200, {color:'#ffd166', size:120});
+pushHistory('init');
 </script>
 </body>
 </html>
