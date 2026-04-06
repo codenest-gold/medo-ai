@@ -1,69 +1,255 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <title>ميدو AI | الإصدار المباشر</title>
-    <style>
-        body { font-family: Tahoma, sans-serif; background: #111; color: #fff; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; }
-        /* الطول هنا معقول ومش طويل أوي */
-        .app { width: 100%; max-width: 400px; background: #222; border-radius: 12px; display: flex; flex-direction: column; height: 65vh; border: 2px solid #d4af37; }
-        #chat { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-        .msg { padding: 10px 14px; border-radius: 8px; font-size: 14px; max-width: 85%; line-height: 1.5; }
-        .user { background: #007bff; align-self: flex-end; }
-        .bot { background: #333; align-self: flex-start; border-right: 3px solid #d4af37; }
-        .input-box { display: flex; padding: 10px; background: #1a1a1a; border-top: 1px solid #444; }
-        input { flex: 1; padding: 10px; border: none; border-radius: 5px; outline: none; background: #333; color: #fff; }
-        button { background: #d4af37; color: #000; border: none; padding: 10px 15px; margin-right: 8px; cursor: pointer; border-radius: 5px; font-weight: bold; }
-    </style>
+  <meta charset="utf-8" />
+  <title>ميدو AI — ملف واحد (HTML)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root{--bg:#0f0f10;--panel:#161616;--accent:#d4af37;--muted:#9aa0a6;--blue:#007bff}
+    html,body{height:100%;margin:0;font-family:Tahoma, Arial, sans-serif;background:linear-gradient(180deg,#070707 0%, #0f0f10 100%);color:#fff}
+    .wrap{max-width:720px;margin:28px auto;padding:18px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));box-shadow:0 6px 30px rgba(0,0,0,0.6);border:2px solid rgba(212,175,55,0.12)}
+    header{display:flex;align-items:center;gap:12px}
+    header h1{margin:0;font-size:18px;color:var(--accent)}
+    .note{font-size:13px;color:var(--muted);margin-top:6px}
+    .layout{display:grid;grid-template-columns:1fr 320px;gap:14px;margin-top:14px}
+    .panel{background:var(--panel);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03)}
+    #chat{height:56vh;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:10px;border-radius:8px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00))}
+    .msg{max-width:78%;padding:10px 12px;border-radius:10px;line-height:1.4}
+    .msg.user{align-self:flex-end;background:linear-gradient(90deg,#0b6df0,#007bff);color:#fff}
+    .msg.bot{align-self:flex-start;background:#222;border-right:3px solid var(--accent);color:#fff}
+    .controls{display:flex;gap:8px;margin-top:10px}
+    input[type="text"], textarea, select{width:100%;padding:8px;border-radius:6px;border:1px solid rgba(255,255,255,0.04);background:#0f0f12;color:#fff;outline:none}
+    textarea{min-height:90px;resize:vertical}
+    button{background:var(--accent);border:none;padding:9px 12px;border-radius:8px;cursor:pointer;font-weight:700}
+    .small{font-size:12px;color:var(--muted)}
+    .danger{color:#ff6b6b}
+    .row{display:flex;gap:8px;align-items:center}
+    .flex{display:flex;flex-direction:column;gap:8px}
+    footer{margin-top:12px;font-size:12px;color:var(--muted)}
+    .kbd{background:#0b0b0b;padding:4px 6px;border-radius:4px;border:1px solid rgba(255,255,255,0.02);font-family:monospace}
+    .hint{font-size:13px;color:var(--muted);margin-top:8px}
+    @media (max-width:820px){ .layout{grid-template-columns:1fr; } #chat{height:46vh} }
+  </style>
 </head>
 <body>
+  <div class="wrap" role="main">
+    <header>
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" style="filter:drop-shadow(0 2px 6px rgba(0,0,0,0.6))">
+        <rect x="1" y="1" width="22" height="22" rx="6" fill="#111"/>
+        <path d="M7 8h10M7 12h10M7 16h6" stroke="#d4af37" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+      <div>
+        <h1>ميدو AI — ملف واحد (HTML)</h1>
+        <div class="note">واجهة جاهزة للعمل محليًا. اقرأ التحذيرات الأمنية قبل الاستخدام.</div>
+      </div>
+    </header>
 
-<div class="app">
-    <div id="chat"><div class="msg bot">جاهز يا سيادة الملازم. الموديل اتحدث، هات أوامرك.</div></div>
-    <div class="input-box">
-        <input type="text" id="m-text" placeholder="اكتب هنا..." onkeypress="if(event.key==='Enter') sendMsg()">
-        <button onclick="sendMsg()">إرسال</button>
+    <div class="layout">
+      <!-- الشات والواجهة -->
+      <div class="panel">
+        <div id="chat" aria-live="polite">
+          <div class="msg bot">جاهز. أدخل مفتاح API مؤقت أو استخدم بروكسي ثم اكتب سؤالك.</div>
+        </div>
+
+        <div style="margin-top:10px;display:flex;gap:8px">
+          <input id="inputText" type="text" placeholder="اكتب سؤالك هنا..." onkeypress="if(event.key==='Enter') sendMessage()" />
+          <button onclick="sendMessage()">إرسال</button>
+        </div>
+
+        <div class="hint">نصيحة: يمكنك الضغط <span class="kbd">Enter</span> لإرسال. الردود تظهر هنا مباشرة.</div>
+      </div>
+
+      <!-- إعدادات المفتاح والتحذيرات -->
+      <div class="panel">
+        <div class="flex">
+          <label class="small">1) مفتاح API (لن يُخزن — يبقى في الذاكرة فقط أثناء الجلسة)</label>
+          <input id="apiKey" type="text" placeholder="أدخل API Key هنا (مثال: AIz...)" autocomplete="off" />
+          <div class="small">أدخل مفتاح Google Generative API أو مفتاح آخر. <strong class="danger">لا تنشر المفتاح علنًا.</strong></div>
+
+          <label class="small">2) نقطة بروكسي (اختياري)</label>
+          <input id="proxyUrl" type="text" placeholder="مثال: https://my-proxy.example.com/api/generate" />
+          <div class="small">إذا كان لديك بروكسي آمن على الخادم، ضع عنوانه هنا. إن لم يكن، اتركه فارغًا وسيتم الاتصال مباشرة إلى Google (قد يفشل بسبب CORS).</div>
+
+          <label class="small">3) إعدادات الطلب</label>
+          <select id="modelSelect">
+            <option value="gemini-pro">gemini-pro</option>
+            <option value="gemini-1.5">gemini-1.5</option>
+          </select>
+
+          <label class="small">4) خيارات أمان</label>
+          <div class="row">
+            <input id="rememberKey" type="checkbox" />
+            <label for="rememberKey" class="small">ابقِ المفتاح في الذاكرة خلال الجلسة (غير آمن على حواسب عامة)</label>
+          </div>
+
+          <div style="display:flex;gap:8px;margin-top:6px">
+            <button id="revokeBtn" onclick="revokeKey()">إبطال المفتاح (مسح)</button>
+            <button onclick="showLogs()">عرض السجل</button>
+          </div>
+
+          <div class="hint small" id="warn">
+            تحذير أمني: أفضل ممارسة هي تشغيل خادم وسيط (proxy) وحفظ المفتاح في متغير بيئة على الخادم. هذا الملف مخصص للاختبار المحلي فقط.
+          </div>
+        </div>
+      </div>
     </div>
-</div>
 
-<script>
-    const KEY = "AIzaSyDV-fIADKtlDtSGY9FBp7ZKyETpDvIf_So"; 
+    <footer>
+      <div class="small">ملاحظة: إذا ظهر خطأ CORS أو رفض 401/403، فذلك يعني أن المتصفح لا يسمح بالاتصال المباشر أو أن المفتاح غير صالح. في هذه الحالة استخدم بروكسي على الخادم.</div>
+    </footer>
+  </div>
 
-    async function sendMsg() {
-        const inp = document.getElementById('m-text');
-        const val = inp.value.trim();
-        if(!val) return;
-        
-        const chat = document.getElementById('chat');
-        chat.innerHTML += `<div class="msg user">${val}</div>`;
-        inp.value = "";
-        
-        const botMsg = document.createElement('div');
-        botMsg.className = 'msg bot';
-        botMsg.innerHTML = "جاري التنفيذ...";
-        chat.appendChild(botMsg);
+  <script>
+    // ملف واحد: هذا الكود ينفذ الطلبات مباشرة من المتصفح.
+    // تحذير: الاتصال المباشر قد يفشل بسبب CORS أو سياسات Google. استخدم بروكسي آمن إن أمكن.
+    (function(){
+      const chat = document.getElementById('chat');
+      const apiKeyInput = document.getElementById('apiKey');
+      const proxyInput = document.getElementById('proxyUrl');
+      const modelSelect = document.getElementById('modelSelect');
+      const rememberKey = document.getElementById('rememberKey');
+      const inputText = document.getElementById('inputText');
+      const revokeBtn = document.getElementById('revokeBtn');
+
+      // في الذاكرة فقط (لا تخزن في localStorage افتراضيًا)
+      let sessionApiKey = '';
+      let logs = [];
+
+      // تحميل مفتاح مؤقت من الحقل إذا اختار المستخدم ذلك
+      apiKeyInput.addEventListener('input', () => {
+        if (rememberKey.checked) sessionApiKey = apiKeyInput.value.trim();
+      });
+
+      function appendMsg(text, cls='bot') {
+        const d = document.createElement('div');
+        d.className = 'msg ' + cls;
+        d.innerHTML = escapeHtml(text).replace(/\n/g,'<br>');
+        chat.appendChild(d);
+        chat.scrollTop = chat.scrollHeight;
+      }
+
+      function escapeHtml(s) {
+        return String(s)
+          .replace(/&/g,'&amp;')
+          .replace(/</g,'&lt;')
+          .replace(/>/g,'&gt;')
+          .replace(/"/g,'&quot;')
+          .replace(/'/g,'&#039;');
+      }
+
+      window.sendMessage = async function() {
+        const text = inputText.value.trim();
+        if (!text) return;
+        appendMsg(text, 'user');
+        inputText.value = '';
+        const loading = document.createElement('div');
+        loading.className = 'msg bot';
+        loading.textContent = 'جاري التنفيذ...';
+        chat.appendChild(loading);
         chat.scrollTop = chat.scrollHeight;
 
-        try {
-            // التعديل هنا: استخدام gemini-pro بدل 1.5-flash
-            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${KEY}`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ contents: [{ parts: [{ text: val + " (أجب باختصار بصفتك ميدو AI)" }] }] })
-            });
-            
-            const data = await res.json();
-            
-            if (data.error) {
-                botMsg.innerHTML = `<span style="color:#ff4444">خطأ:</span> ${data.error.message}`;
-            } else {
-                botMsg.innerHTML = data.candidates[0].content.parts[0].text.replace(/\n/g, "<br>");
-            }
-        } catch (e) {
-            botMsg.innerHTML = `<span style="color:#ff4444">خطأ في الشبكة:</span> تأكد من اتصالك.`;
-        }
-    }
-</script>
+        // احصل على المفتاح: من الحقل أو من الذاكرة
+        const key = (sessionApiKey || apiKeyInput.value || '').trim();
+        const proxy = proxyInput.value.trim();
+        const model = modelSelect.value || 'gemini-pro';
 
+        if (!key && !proxy) {
+          loading.remove();
+          appendMsg('مطلوب مفتاح API أو عنوان بروكسي صالح في الإعدادات.', 'bot');
+          return;
+        }
+
+        try {
+          let responseData = null;
+          if (proxy) {
+            // استدعاء بروكسي خارجي (المستخدم مسؤول عن أمانه)
+            const resp = await fetch(proxy, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ text, model })
+            });
+            responseData = await resp.json();
+            if (!resp.ok) throw new Error(responseData.error?.message || ('Proxy error: ' + resp.status));
+          } else {
+            // استدعاء مباشر إلى Google Generative API (قد يفشل بسبب CORS أو قيود المفتاح)
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(key)}`;
+            const payload = {
+              contents: [{ parts: [{ text: text + " (أجب باختصار بصفتك ميدو AI)" }] }]
+            };
+            const resp = await fetch(url, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
+            });
+            // قد تحصل على خطأ CORS قبل أن يصل الرد؛ في هذه الحالة سيُرمى استثناء.
+            responseData = await resp.json();
+            if (!resp.ok) throw new Error(responseData.error?.message || ('API error: ' + resp.status));
+          }
+
+          // استخراج النص من استجابة Google أو من البروكسي
+          let outText = '';
+          if (responseData == null) outText = 'لا توجد استجابة.';
+          else if (typeof responseData === 'string') outText = responseData;
+          else if (responseData.outputText) outText = responseData.outputText;
+          else if (responseData.candidates && responseData.candidates[0] && responseData.candidates[0].content && responseData.candidates[0].content.parts && responseData.candidates[0].content.parts[0]) {
+            outText = responseData.candidates[0].content.parts[0].text || JSON.stringify(responseData);
+          } else {
+            outText = JSON.stringify(responseData);
+          }
+
+          loading.remove();
+          appendMsg(outText, 'bot');
+          logs.push({ time: new Date().toISOString(), req: text, resp: outText });
+        } catch (err) {
+          loading.remove();
+          const msg = (err && err.message) ? err.message : String(err);
+          // تمييز أخطاء CORS و401/403
+          let friendly = msg;
+          if (/CORS|Access-Control-Allow-Origin/i.test(msg)) {
+            friendly = 'خطأ CORS: المتصفح منع الطلب. استخدم بروكسي على الخادم أو فعّل إعدادات CORS في الخادم المستهدف.';
+          } else if (/401|403|permission|permission_denied/i.test(msg)) {
+            friendly = 'خطأ صلاحيات: المفتاح غير صالح أو ليس لديه صلاحية الوصول. تأكد من تفعيل الخدمة ووجود فوترة.';
+          } else if (/429|quota/i.test(msg)) {
+            friendly = 'تم تجاوز الحصة أو حد الطلبات. انتظر أو راجع إعدادات الكوتا في Google Cloud.';
+          }
+          appendMsg('خطأ: ' + friendly, 'bot');
+          logs.push({ time: new Date().toISOString(), req: text, error: friendly });
+        }
+      };
+
+      window.revokeKey = function() {
+        sessionApiKey = '';
+        apiKeyInput.value = '';
+        rememberKey.checked = false;
+        appendMsg('تم مسح المفتاح من الذاكرة.', 'bot');
+      };
+
+      window.showLogs = function() {
+        const s = logs.length ? logs.map(l => `${l.time} — طلب: ${l.req}\nاستجابة: ${l.resp || l.error}`).join('\n\n') : 'لا سجلات بعد.';
+        // عرض في نافذة منبثقة بسيطة
+        const w = window.open('', '_blank', 'noopener,noreferrer,width=700,height=600');
+        if (!w) {
+          alert(s);
+          return;
+        }
+        w.document.write('<pre style="white-space:pre-wrap;font-family:monospace;padding:12px;background:#0b0b0b;color:#fff;">' + escapeHtml(s) + '</pre>');
+        w.document.title = 'سجل المحادثة';
+      };
+
+      // منع حفظ المفتاح في localStorage تلقائيًا — خيار المستخدم
+      rememberKey.addEventListener('change', () => {
+        if (!rememberKey.checked) sessionApiKey = '';
+        else sessionApiKey = apiKeyInput.value.trim();
+      });
+
+      // اختصار: لصق مفتاح سريعًا من الحافظة (اختياري)
+      apiKeyInput.addEventListener('paste', (e) => {
+        setTimeout(()=>{ if (rememberKey.checked) sessionApiKey = apiKeyInput.value.trim(); }, 50);
+      });
+
+      // تجربة: إذا فتح المستخدم الملف محليًا عبر file:// قد يمنع المتصفح بعض الطلبات
+      // لا نستخدم localStorage تلقائيًا حفاظًا على الأمان.
+    })();
+  </script>
 </body>
 </html>
