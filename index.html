@@ -5,7 +5,8 @@
     <title>ميدو AI | الإصدار المباشر</title>
     <style>
         body { font-family: Tahoma, sans-serif; background: #111; color: #fff; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; }
-        .app { width: 100%; max-width: 400px; background: #222; border-radius: 12px; display: flex; flex-direction: column; height: 80vh; border: 2px solid #d4af37; }
+        /* الطول هنا معقول ومش طويل أوي */
+        .app { width: 100%; max-width: 400px; background: #222; border-radius: 12px; display: flex; flex-direction: column; height: 65vh; border: 2px solid #d4af37; }
         #chat { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
         .msg { padding: 10px 14px; border-radius: 8px; font-size: 14px; max-width: 85%; line-height: 1.5; }
         .user { background: #007bff; align-self: flex-end; }
@@ -18,7 +19,7 @@
 <body>
 
 <div class="app">
-    <div id="chat"><div class="msg bot">جاهز يا سيادة الملازم. المفتاح سليم، هات أوامرك.</div></div>
+    <div id="chat"><div class="msg bot">جاهز يا سيادة الملازم. الموديل اتحدث، هات أوامرك.</div></div>
     <div class="input-box">
         <input type="text" id="m-text" placeholder="اكتب هنا..." onkeypress="if(event.key==='Enter') sendMsg()">
         <button onclick="sendMsg()">إرسال</button>
@@ -26,7 +27,7 @@
 </div>
 
 <script>
-    const KEY = "AIzaSyDV-fIADKtlDtSGY9FBp7ZKyETpDvIf_So"; // مفتاحك المباشر
+    const KEY = "AIzaSyDV-fIADKtlDtSGY9FBp7ZKyETpDvIf_So"; 
 
     async function sendMsg() {
         const inp = document.getElementById('m-text');
@@ -44,7 +45,8 @@
         chat.scrollTop = chat.scrollHeight;
 
         try {
-            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${KEY}`, {
+            // التعديل هنا: استخدام gemini-pro بدل 1.5-flash
+            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${KEY}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ contents: [{ parts: [{ text: val + " (أجب باختصار بصفتك ميدو AI)" }] }] })
@@ -53,8 +55,7 @@
             const data = await res.json();
             
             if (data.error) {
-                // الكود هنا هيعرض الخطأ الحقيقي من جوجل مباشرة
-                botMsg.innerHTML = `<span style="color:#ff4444">خطأ من السيرفر:</span> ${data.error.message}`;
+                botMsg.innerHTML = `<span style="color:#ff4444">خطأ:</span> ${data.error.message}`;
             } else {
                 botMsg.innerHTML = data.candidates[0].content.parts[0].text.replace(/\n/g, "<br>");
             }
