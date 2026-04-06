@@ -3,349 +3,194 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ميدو AI - النسخة الذكية V3</title>
+    <title>ميدو AI - العقل الهجين</title>
     <style>
-        :root { --gold: #d4af37; --dark: #1a1a1a; --blue: #0078ff; }
-        body { font-family: 'Segoe UI', sans-serif; background: #121212; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; }
-        .app { width: 420px; height: 700px; background: #fff; border-radius: 25px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5); position: relative; }
-        .header { background: var(--dark); padding: 15px; text-align: center; border-bottom: 2px solid var(--gold); color: var(--gold); }
-        .header span { color: #888; font-size: 10px; display: block; margin-top: 5px; }
-        #chat { flex: 1; background: #f4f6f9; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-        .bubble { max-width: 85%; padding: 12px; border-radius: 15px; font-size: 14px; position: relative; line-height: 1.4; }
-        .bot { background: white; align-self: flex-start; color: #333; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .user { background: var(--blue); color: white; align-self: flex-end; }
-        .thinking { font-style: italic; color: #888; font-size: 12px; margin-bottom: 5px; }
+        :root { --gold: #d4af37; --dark: #121212; --blue: #0078ff; --bot-msg: #ffffff; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--dark); margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; color: #fff; }
+        .mido-container { width: 450px; height: 750px; background: #fff; border-radius: 20px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 25px 60px rgba(0,0,0,0.8); position: relative; }
         
+        /* Header */
+        .header { background: #1a1a1a; padding: 15px; text-align: center; border-bottom: 2px solid var(--gold); }
+        .header h1 { margin: 0; color: var(--gold); font-size: 20px; text-shadow: 0 0 10px rgba(212,175,55,0.3); }
+        .header span { color: #666; font-size: 9px; letter-spacing: 1px; display: block; }
+
+        /* Chat Display */
+        #display { flex: 1; background: #f0f2f5; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+        .msg { max-width: 85%; padding: 12px; border-radius: 15px; font-size: 14px; color: #333; line-height: 1.5; animation: slideUp 0.3s ease; position: relative; }
+        .bot { background: var(--bot-msg); align-self: flex-start; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-right: 4px solid var(--gold); }
+        .user { background: var(--blue); color: white; align-self: flex-end; border-left: 4px solid #0056b3; }
+        .thinking { font-size: 12px; color: #888; font-style: italic; }
+
+        /* Suggestion Buttons */
+        .sugg-box { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 5px; }
+        .sugg-btn { background: #fff; border: 1px solid var(--gold); color: #8a6d0a; padding: 6px 12px; border-radius: 12px; cursor: pointer; font-size: 12px; transition: 0.2s; }
+        .sugg-btn:hover { background: var(--gold); color: #000; }
+
+        /* Footer & Inputs */
         .footer { padding: 15px; background: white; border-top: 1px solid #eee; }
-        .input-group { display: flex; gap: 8px; margin-bottom: 10px; }
-        input { flex: 1; padding: 12px; border-radius: 20px; border: 1px solid #ddd; outline: none; }
-        .learn-fields { display: none; flex-direction: column; gap: 5px; margin-bottom: 10px; }
-        .learn-fields input { border-color: var(--gold); }
+        .input-row { display: flex; gap: 8px; }
+        input { flex: 1; padding: 12px; border-radius: 20px; border: 1px solid #ddd; outline: none; font-size: 14px; }
+        input:focus { border-color: var(--gold); box-shadow: 0 0 5px rgba(212,175,55,0.2); }
         
-        .btn { background: var(--gold); border: none; padding: 10px 15px; border-radius: 20px; cursor: pointer; font-weight: bold; }
-        .mode-toggle { font-size: 12px; color: var(--blue); cursor: pointer; text-align: center; display: block; margin-top: 5px; }
-        .confirm-btns { display: flex; gap: 10px; margin-top: 10px; }
-        .confirm-btns button { flex: 1; padding: 5px; border-radius: 10px; border: 1px solid #ddd; cursor: pointer; }
-    </style>
-</head>
-<body>
+        .learn-panel { display: none; background: #fffcf0; padding: 15px; border-radius: 15px; border: 1px dashed var(--gold); margin-bottom: 10px; flex-direction: column; gap: 8px; }
+        
+        .btn-main { background: var(--gold); border: none; padding: 10px 18px; border-radius: 20px; cursor: pointer; font-weight: bold; font-size: 14px; }
+        .mode-toggle { display: block; text-align: center; margin-top: 10px; font-size: 11px; color: var(--blue); cursor: pointer; font-weight: bold; text-decoration: underline; }
 
-<div class="app">
-    <div class="header">
-        <strong>ميدو AI</strong>
-        <span>CODENEST GOLD PRODUCTION</span>
-    </div>
-
-    <div id="chat"></div>
-
-    <div class="footer">
-        <div id="learn-area" class="learn-fields">
-            <input type="text" id="q-in" placeholder="س/ (السؤال المراد حفظه)">
-            <input type="text" id="a-in" placeholder="ج/ (الإجابة)">
-            <button class="btn" onclick="saveLearning()">حفظ في الذاكرة</button>
-        </div>
-
-        <div id="chat-area" class="input-group">
-            <input type="text" id="m-in" placeholder="اسأل ميدو AI..." onkeypress="if(event.key==='Enter') startProcess()">
-            <button class="btn" onclick="startProcess()">إرسال</button>
-        </div>
-
-        <span class="mode-toggle" id="mode-btn" onclick="toggleMode()">التبديل لوضع التعلم 🎓</span>
-    </div>
-</div>
-
-<script>
-    let db;
-    let mode = "chat"; 
-    let lastMatch = null;
-
-    const req = indexedDB.open("MidoSmartDB", 3);
-    req.onupgradeneeded = (e) => {
-        let d = e.target.result;
-        d.createObjectStore("brain", { keyPath: "q" });
-    };
-    req.onsuccess = (e) => { db = e.target.result; welcome(); };
-
-    function welcome() { addMsg("أشكرك علي موقع ميدو Ai.. كيف حالك؟ أنا ميدو AI، جاهز لحفظ أسرارك وتعلم مهارات جديدة.", "bot"); }
-
-    function toggleMode() {
-        mode = (mode === "chat") ? "learn" : "chat";
-        document.getElementById('chat-area').style.display = (mode === "chat") ? "flex" : "none";
-        document.getElementById('learn-area').style.display = (mode === "learn") ? "flex" : "none";
-        document.getElementById('mode-btn').innerText = (mode === "chat") ? "التبديل لوضع التعلم 🎓" : "العودة لوضع المحادثة 💬";
-        if(mode === "learn") addMsg("أنت الآن في وضع التعلم. املأ حقل (س/) و (ج/) وسأحفظهما فوراً.", "bot");
-    }
-
-    function addMsg(txt, type) {
-        const chat = document.getElementById('chat');
-        const div = document.createElement('div');
-        div.className = `bubble ${type}`;
-        div.innerHTML = txt;
-        chat.appendChild(div);
-        chat.scrollTop = chat.scrollHeight;
-        return div;
-    }
-
-    async function startProcess() {
-        const input = document.getElementById('m-in');
-        const val = input.value.trim();
-        if(!val) return;
-
-        addMsg(val, "user");
-        input.value = "";
-
-        // حالة التأكيد (لو المستخدم قال اه)
-        if((val === "اه" || val === "نعم" || val === "ايوه") && lastMatch) {
-            showResult(lastMatch);
-            return;
-        }
-
-        // محاكاة التفكير
-        const thinking = addMsg("جاري التفكير...", "bot thinking");
-        setTimeout(() => {
-            thinking.remove();
-            searchBrain(val);
-        }, 2000);
-    }
-
-    async function saveLearning() {
-        const q = document.getElementById('q-in').value.trim();
-        const a = document.getElementById('a-in').value.trim();
-        if(!q || !a) return alert("برجاء ملء السين والجيم!");
-
-        const tx = db.transaction("brain", "readwrite");
-        tx.objectStore("brain").put({ q: q.toLowerCase(), a: a });
-        tx.oncomplete = () => {
-            addMsg(`تم! سأجيب بـ "${a}" عندما تسأل عن "${q}". كيف حالك الآن؟`, "bot");
-            document.getElementById('q-in').value = "";
-            document.getElementById('a-in').value = "";
-            toggleMode();
-        };
-    }
-
-    function searchBrain(word) {
-        const tx = db.transaction("brain", "readonly");
-        const store = tx.objectStore("brain");
-        const request = store.getAll();
-
-        request.onsuccess = () => {
-            const all = request.result;
-            const searchWord = word.toLowerCase();
-            
-            // بحث دقيق
-            let match = all.find(item => item.q === searchWord);
-            
-            if(match) {
-                showResult(match);
-            } else {
-                // بحث جزئي (لو قال كلمة واحدة)
-                let partial = all.find(item => item.q.includes(searchWord));
-                if(partial) {
-                    lastMatch = partial;
-                    addMsg(`قصدك: <b>"${partial.q}"</b>؟`, "bot");
-                } else {
-                    addMsg("لم أجد هذا في ذاكرتي، هل تريد تعليمي إياه؟ وكيف حالك بالمناسبة؟", "bot");
-                }
-            }
-        };
-    }
-
-    function showResult(item) {
-        addMsg(`تذكرت!<br>✅ <b>النتيجة:</b> ${item.a}<br><br>هل أنت بخير اليوم؟`, "bot");
-        lastMatch = null;
-    }
-</script>
-
-</body>
-</html>
-
-        /* Footer */
-        .controls {
-            padding: 15px;
-            background: white;
-            border-top: 1px solid #eee;
-        }
-        .input-row { display: flex; gap: 10px; margin-bottom: 10px; }
-        input {
-            flex: 1;
-            padding: 12px;
-            border-radius: 25px;
-            border: 1px solid #ddd;
-            outline: none;
-        }
-        .btn {
-            background: var(--gold);
-            border: none;
-            padding: 10px 18px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .action-bar {
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-            border-top: 1px solid #f0f0f0;
-            padding-top: 10px;
-        }
-        .mode-btn { color: var(--user-blue); cursor: pointer; text-decoration: underline; }
-        .time-stamp { font-size: 10px; opacity: 0.6; display: block; margin-top: 4px; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
 <div class="mido-container">
     <div class="header">
-        <h1>ميدو AI</h1>
-        <span>CODENEST GOLD PRODUCTION</span>
+        <h1>ميدو AI (المحرك الهجين)</h1>
+        <span>CODENEST GOLD • VERSION 5.0 PRO</span>
     </div>
 
-    <div id="mode-info">الوضع الحالي: المحادثة والحفظ الذكي 💬</div>
+    <div id="display"></div>
 
-    <div id="settings">
-        <h2 style="color:var(--gold)">⚙️ تعليمات التشغيل</h2>
-        <p><b>1. وضع المحادثة:</b> اسأل عن أي شيء حفظته (مثل: فيسبوك) وسيجيبك ميدو.</p>
-        <p><b>2. وضع التعلم:</b> استخدم صيغة محددة لتعليم الروبوت ردوداً جديدة:<br>
-           <code style="background:#eee; padding:2px;">س/كيف حالك ج/بخير والحمد لله</code></p>
-        <p><b>3. التخزين:</b> كل البيانات مشفرة محلياً في متصفحك عبر IndexedDB.</p>
-        <hr>
-        <p>المطور: Codenest Gold<br>واتساب: <a href="https://wa.me/201124680211">+201124680211</a></p>
-        <button onclick="closeSettings()" class="btn" style="width:100%">فهمت، ابدأ الآن</button>
-    </div>
-
-    <div id="chat-window"></div>
-
-    <div class="controls">
-        <div class="input-row">
-            <input type="text" id="mido-in" placeholder="اكتب شيئاً..." onkeypress="if(event.key==='Enter') mainProcess()">
-            <button class="btn" onclick="mainProcess()">إرسال</button>
+    <div class="footer">
+        <div id="learn-panel" class="learn-panel">
+            <input type="text" id="q-in" placeholder="س/ (السؤال المراد حفظه)">
+            <input type="text" id="a-in" placeholder="ج/ (الإجابة المباشرة)">
+            <button class="btn-main" onclick="saveToBrain()">حفظ في ذاكرتي ✅</button>
         </div>
-        <div class="action-bar">
-            <span class="mode-btn" id="toggle-btn" onclick="switchMode()">التبديل إلى وضع التعلم 🎓</span>
-            <span onclick="openSettings()" style="cursor:pointer">شرح الاستخدام 📖</span>
+
+        <div id="chat-ui" class="input-row">
+            <input type="text" id="m-in" placeholder="اسألني أي شيء أو استرجع محفوظاتك..." onkeypress="if(event.key==='Enter') startLogic()">
+            <button class="btn-main" onclick="startLogic()">إرسال</button>
         </div>
+
+        <span class="mode-toggle" id="toggle-btn" onclick="toggleMode()">التبديل لوضع التعلم الذاتي 🎓</span>
     </div>
 </div>
 
 <script>
+    const API_KEY = "AIzaSyDO8qnXKN2cFHuIPbRQKmEqw9MVMzRGQBQ"; // تم دمج مفتاحك
     let db;
-    let currentMode = "chat"; // "chat" or "learn"
-    const dbReq = indexedDB.open("MidoAI_Pro", 2);
+    let mode = "chat";
 
-    dbReq.onupgradeneeded = (e) => {
-        let database = e.target.result;
-        if (!database.objectStoreNames.contains("memories")) database.createObjectStore("memories", { keyPath: "key" });
-        if (!database.objectStoreNames.contains("brain")) database.createObjectStore("brain", { keyPath: "question" });
-    };
+    // فتح قاعدة البيانات المحلية
+    const request = indexedDB.open("MidoHybridDB", 1);
+    request.onupgradeneeded = (e) => { e.target.result.createObjectStore("brain", { keyPath: "q" }); };
+    request.onsuccess = (e) => { db = e.target.result; welcome(); };
 
-    dbReq.onsuccess = (e) => {
-        db = e.target.result;
-        bootAI();
-    };
-
-    function bootAI() {
-        addMsg("أهلاً بك في <b>ميدو AI</b> الذكي.<br>أشكرك علي موقع ميدو Ai.. كيف حالك اليوم؟ 😊", "bot");
+    function welcome() {
+        addMsg("أشكرك علي موقع ميدو Ai.. كيف حالك اليوم؟ أنا ميدو AI، تم تحديثي بمحرك <b>Gemini Pro</b> وبإمكاني الآن فهمك بشكل بشري كامل وحفظ أسرارك بدقة.", "bot");
     }
 
-    function switchMode() {
-        currentMode = (currentMode === "chat") ? "learn" : "chat";
-        const info = document.getElementById('mode-info');
-        const btn = document.getElementById('toggle-btn');
-        if(currentMode === "learn") {
-            info.innerText = "الوضع الحالي: وضع التعلم النشط 🎓";
-            btn.innerText = "العودة لوضع المحادثة 💬";
-            addMsg("لقد دخلت <b>وضع التعلم</b>. علمني شيئاً جديداً باستخدام صيغة (س/ ج/)", "bot");
-        } else {
-            info.innerText = "الوضع الحالي: المحادثة والحفظ الذكي 💬";
-            btn.innerText = "التبديل إلى وضع التعلم 🎓";
-        }
+    function toggleMode() {
+        mode = (mode === "chat") ? "learn" : "chat";
+        document.getElementById('chat-ui').style.display = (mode === "chat") ? "flex" : "none";
+        document.getElementById('learn-panel').style.display = (mode === "learn") ? "flex" : "none";
+        document.getElementById('toggle-btn').innerText = (mode === "chat") ? "التبديل لوضع التعلم الذاتي 🎓" : "العودة للدردشة الذكية 💬";
     }
 
-    function addMsg(text, sender, time = "") {
-        const win = document.getElementById('chat-window');
+    function addMsg(txt, type) {
+        const d = document.getElementById('display');
         const div = document.createElement('div');
-        div.className = `bubble ${sender}`;
-        div.innerHTML = text + (time ? `<span class="time-stamp">${time}</span>` : "");
-        win.appendChild(div);
-        win.scrollTop = win.scrollHeight;
+        div.className = `msg ${type}`;
+        div.innerHTML = txt;
+        d.appendChild(div);
+        d.scrollTop = d.scrollHeight;
+        return div;
     }
 
-    function openSettings() { document.getElementById('settings').classList.add('settings-active'); }
-    function closeSettings() { document.getElementById('settings').classList.remove('settings-active'); }
+    // --- حفظ المعلومات (وضع التعلم) ---
+    async function saveToBrain() {
+        const q = document.getElementById('q-in').value.trim().toLowerCase();
+        const a = document.getElementById('a-in').value.trim();
+        if(!q || !a) return;
 
-    async function mainProcess() {
-        const input = document.getElementById('mido-in');
-        const val = input.value.trim();
+        const tx = db.transaction("brain", "readwrite");
+        tx.objectStore("brain").put({ q: q, a: a });
+        tx.oncomplete = () => {
+            addMsg(`تم حفظ المعلومة بنجاح. سأعطي الأولوية لـ "${a}" عند السؤال عن "${q}".`, "bot");
+            document.getElementById('q-in').value = ""; document.getElementById('a-in').value = "";
+            toggleMode();
+        };
+    }
+
+    // --- المنطق الرئيسي للمعالجة ---
+    async function startLogic() {
+        const field = document.getElementById('m-in');
+        const val = field.value.trim();
         if(!val) return;
 
         addMsg(val, "user");
-        input.value = "";
+        field.value = "";
 
-        if(currentMode === "learn") {
-            handleLearning(val);
-        } else {
-            handleChat(val);
-        }
-    }
+        const thinking = addMsg("جاري التفكير...", "bot thinking");
+        
+        setTimeout(async () => {
+            const lowerInput = val.toLowerCase();
+            
+            // 1. فحص المحفوظات أولاً (الأولوية للمحفوظ)
+            const tx = db.transaction("brain", "readonly");
+            const store = tx.objectStore("brain");
+            const allReq = store.getAll();
 
-    // --- محرك التعلم ---
-    function handleLearning(text) {
-        if(text.includes("س/") && text.includes("ج/")) {
-            const parts = text.split("ج/");
-            const q = parts[0].replace("س/", "").trim().toLowerCase();
-            const a = parts[1].trim();
-
-            const tx = db.transaction("brain", "readwrite");
-            tx.objectStore("brain").put({ question: q, answer: a });
-            tx.oncomplete = () => addMsg("تمت العملية بنجاح! سأجيب بهذا الرد عندما تسألني مستقبلاً.", "bot");
-        } else {
-            addMsg("عفواً، يجب أن تكون الصيغة مثل:<br>س/كيف حالك ج/أنا بخير", "bot");
-        }
-    }
-
-    // --- محرك المحادثة والحفظ ---
-    async function handleChat(text) {
-        // أولاً: التحقق من الردود المتعلمة
-        const txBrain = db.transaction("brain", "readonly");
-        const brainReq = txBrain.objectStore("brain").get(text.toLowerCase());
-
-        brainReq.onsuccess = () => {
-            if(brainReq.result) {
-                addMsg(brainReq.result.answer, "bot");
-            } else {
-                // ثانياً: إذا لم يكن رداً متعلم، ابحث في الحافظة (باسوردات)
-                if(text.includes("حفظ") || text.includes("باسورد")) {
-                    saveInfo(text);
-                } else {
-                    searchInfo(text);
+            allReq.onsuccess = async () => {
+                const data = allReq.result;
+                
+                // بحث عن تطابق كامل
+                const exactMatch = data.find(item => item.q === lowerInput);
+                if(exactMatch) {
+                    thinking.remove();
+                    addMsg(exactMatch.a, "bot");
+                    return;
                 }
-            }
-        };
+
+                // بحث عن تطابق جزئي واقتراح
+                const suggestions = data.filter(item => item.q.includes(lowerInput) || lowerInput.includes(item.q));
+                if(suggestions.length > 0 && lowerInput.length > 2) {
+                    thinking.remove();
+                    addMsg("قصدك أي معلومة من دول؟", "bot");
+                    const sBox = document.createElement('div');
+                    sBox.className = "sugg-box";
+                    suggestions.forEach(s => {
+                        const btn = document.createElement('button');
+                        btn.className = "sugg-btn";
+                        btn.innerText = s.q;
+                        btn.onclick = () => {
+                            addMsg(s.q, "user");
+                            const t = addMsg("لحظة...", "bot thinking");
+                            setTimeout(() => { t.remove(); addMsg(s.a, "bot"); }, 1000);
+                        };
+                        sBox.appendChild(btn);
+                    });
+                    document.getElementById('display').appendChild(sBox);
+                    return;
+                }
+
+                // 2. إذا لم يجد في المحفوظ، نستخدم الذكاء الاصطناعي الحقيقي (Gemini)
+                try {
+                    const aiResponse = await callGemini(val);
+                    thinking.remove();
+                    addMsg(aiResponse, "bot");
+                } catch (err) {
+                    thinking.remove();
+                    addMsg("عذراً، حدث خطأ في الاتصال بالذكاء الاصطناعي، لكن يمكنني حفظ المعلومات يدوياً.", "bot");
+                }
+            };
+        }, 2000);
     }
 
-    function saveInfo(text) {
-        let key = text.match(/(فيسبوك|جوجل|انستا|تيك|ايميل)/)?.[0] || "عام";
-        const tx = db.transaction("memories", "readwrite");
-        tx.objectStore("memories").put({
-            key: key,
-            content: text,
-            date: new Date().toLocaleString('ar-EG')
+    // --- استدعاء Google Gemini API ---
+    async function callGemini(prompt) {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+        const response = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: prompt + " (رد باللغة العربية بأسلوب ودود وذكاء)" }] }]
+            })
         });
-        tx.oncomplete = () => addMsg(`تم الحفظ في ذاكرة Codenest Gold تحت تصنيف (${key}). كيف حالك الآن؟`, "bot");
-    }
-
-    function searchInfo(word) {
-        const tx = db.transaction("memories", "readonly");
-        const req = tx.objectStore("memories").getAll();
-        req.onsuccess = () => {
-            const found = req.result.find(r => word.includes(r.key) || r.key.includes(word));
-            if(found) {
-                addMsg(`تذكرت ذلك!<br>🔒: ${found.content}<br>📅: ${found.date}<br><br>هل أنت بخير اليوم؟`, "bot", found.date);
-            } else {
-                addMsg("لم أجد معلومة بهذا الاسم، هل جربت تعليمي إياها في وضع التعلم؟ وكيف حالك؟", "bot");
-            }
-        };
+        const resData = await response.json();
+        return resData.candidates[0].content.parts[0].text;
     }
 </script>
+
 </body>
 </html>
