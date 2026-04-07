@@ -1,1104 +1,212 @@
-<!doctype html>
-<html lang="ar">
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1.0" />
-<title>Medo plan</title>
-<style>
-  :root{
-    --ui-bg:#071428;
-    --accent:#6ee7b7;
-    --muted:#94a3b8;
-    --page-bg:#f8fafc;
-    --panel:#0b1220;
-  }
-  html,body{height:100%;margin:0;font-family:Inter, "Segoe UI", Tahoma, sans-serif;background:linear-gradient(180deg,#071029 0%, #0b1220 100%);color:#e6eef8}
-  header{display:flex;align-items:center;gap:12px;padding:12px 16px;background:linear-gradient(90deg, rgba(255,255,255,0.03), transparent);box-shadow:0 2px 8px rgba(2,6,23,0.6)}
-  h1{margin:0;font-size:18px;color:var(--accent)}
-  .toolbar{display:flex;gap:8px;align-items:center;margin-left:auto;flex-wrap:wrap}
-  .btn{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);padding:8px 10px;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
-  .btn.active{border-color:var(--accent);color:var(--accent);box-shadow:0 4px 18px rgba(110,231,183,0.08)}
-  main{display:flex;flex-direction:column;height:calc(100vh - 110px);gap:8px;padding:8px}
-  .top-settings{display:flex;gap:12px;align-items:flex-start;padding:10px;background:linear-gradient(180deg,#071428, #071a2a);border-radius:10px;box-shadow:0 8px 30px rgba(2,6,23,0.6);overflow:auto}
-  .settings-block{min-width:220px;max-width:420px;color:#e6eef8}
-  label{display:block;font-size:13px;color:var(--muted);margin-top:6px}
-  input[type="color"], input[type="range"], input[type="text"], input[type="number"], select{width:100%;padding:6px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#e6eef8}
-  .small{display:flex;gap:8px}
-  .small > *{flex:1}
-  .canvas-wrap{flex:1;display:flex;justify-content:center;align-items:flex-start;padding:12px;overflow:auto;touch-action:none}
-  #page{
-    width:1024px;height:640px;background:var(--page-bg);border-radius:12px;box-shadow:0 8px 30px rgba(2,6,23,0.6);
-    position:relative;touch-action:none;overflow:auto;
-    transform-origin:top left;
-    -webkit-overflow-scrolling:touch;
-    scroll-behavior:smooth;
-  }
-  .elem{position:absolute;touch-action:none;user-select:none;display:flex;align-items:center;justify-content:center}
-  /* مركب: خط يحدد الحواف، ونص في المنتصف */
-  .rect{background:transparent;color:#0b1220;padding:0;border-radius:8px;min-width:80px;min-height:40px;display:flex;align-items:center;justify-content:center;box-sizing:border-box}
-  .rect-inner{display:flex;align-items:center;justify-content:center;width:100%;height:100%;border-radius:6px;padding:6px;box-sizing:border-box}
-  .text-elem{font-size:18px;color:#0b1220;white-space:pre-wrap;text-align:center}
-  .img-elem img{max-width:100%;max-height:100%;display:block;border-radius:6px}
-  /* المربع الصغير يظهر فقط أثناء التحديد (selected) */
-  .handle{width:12px;height:12px;border-radius:2px;background:var(--accent);position:absolute;right:-6px;bottom:-6px;touch-action:none;cursor:se-resize;display:none}
-  .elem.selected .handle{display:block}
-  .selected{outline:2px dashed rgba(99,102,241,0.9);outline-offset:6px}
-  .muted{color:var(--muted);font-size:13px}
-  .value-badge{display:inline-block;min-width:44px;text-align:center;background:rgba(0,0,0,0.25);padding:4px 6px;border-radius:6px;color:#e6eef8;margin-top:6px;font-size:13px}
-  .overlay-info{position:absolute;pointer-events:none;background:rgba(11,18,32,0.8);color:#e6eef8;padding:6px 8px;border-radius:8px;font-size:12px;border:1px solid rgba(255,255,255,0.04)}
-  .controls-row{display:flex;gap:8px;align-items:center}
-  footer{display:flex;gap:8px;align-items:center;padding:10px 18px;background:linear-gradient(90deg, rgba(255,255,255,0.02), transparent)}
-  @media (max-width:900px){
-    main{padding:8px}
-    .top-settings{flex-direction:column;align-items:stretch}
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mido AI - Secret Edition</title>
+    <style>
+        :root {
+            --gold: #d4af37;
+            --dark-bg: #121212;
+            --chat-bg: #f5f7fb;
+            --user-blue: #0078ff;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: var(--dark-bg);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .mido-container {
+            width: 420px;
+            height: 680px;
+            background: white;
+            border-radius: 25px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            overflow: hidden;
+            border: 2px solid var(--gold);
+            position: relative;
+        }
+        
+        .header {
+            background: #1a1a1a;
+            padding: 15px;
+            text-align: center;
+            border-bottom: 2px solid var(--gold);
+        }
+        .header h1 { margin: 0; color: var(--gold); font-size: 22px; }
+        .header span { font-size: 10px; color: #aaa; }
+
+        #chat-window {
+            flex: 1;
+            background: var(--chat-bg);
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .bubble {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+        .bot { background: white; align-self: flex-start; color: #333; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-right: 4px solid var(--gold); }
+        .user { background: var(--user-blue); color: white; align-self: flex-end; }
+        .system { background: #fff3cd; color: #856404; align-self: center; font-size: 12px; padding: 8px; border-radius: 10px; text-align: center; width: 80%; }
+
+        .controls { padding: 15px; background: white; border-top: 1px solid #eee; }
+        input { padding: 12px; border-radius: 20px; border: 1px solid #ccc; outline: none; font-family: inherit; margin-bottom: 5px; }
+        
+        .btn { background: var(--gold); border: none; padding: 10px; border-radius: 20px; cursor: pointer; font-weight: bold; }
+
+        /* تنسيق واجهة التعلم */
+        #learn-mode-ui { display: none; flex-direction: column; gap: 8px; border: 1px solid #ddd; padding: 10px; border-radius: 15px; background: #fafafa; }
+        
+        /* الزر الشفاف تماماً */
+        .secret-trigger {
+            height: 20px;
+            width: 100%;
+            background: transparent;
+            cursor: default;
+            text-align: center;
+            font-size: 10px;
+            color: transparent; /* مخفي تماماً */
+            user-select: none;
+        }
+    </style>
 </head>
 <body>
-<header>
-  <h1>Medo plan</h1>
-  <div class="muted">لوحة تصميم تفاعلية</div>
-  <div class="toolbar" role="toolbar" aria-label="Toolbar">
-    <button class="btn" id="tool-rect">مركب</button>
-    <button class="btn" id="tool-text">نص</button>
-    <button class="btn" id="tool-arrow">سهم</button>
-    <button class="btn" id="tool-image">صورة</button>
-    <button class="btn" id="tool-hex">سداسي</button>
-    <button class="btn" id="btn-undo">تراجع</button>
-    <button class="btn" id="btn-export">تصدير ورفع</button>
-    <button class="btn" id="btn-save">تحميل المشروع</button>
-    <button class="btn" id="btn-load">استيراد مشروع</button>
-    <input type="file" id="file-load" accept=".json,image/*" style="display:none" />
-    <input type="file" id="img-uploader" accept="image/*" style="display:none" />
-  </div>
-</header>
 
-<main>
-  <div class="top-settings" id="top-settings">
-    <div class="settings-block">
-      <h3 style="margin:0;color:var(--accent)">إعدادات الصفحة</h3>
-      <label>عرض (px)</label>
-      <input id="page-width" type="number" value="1024" />
-      <label>ارتفاع (px)</label>
-      <input id="page-height" type="number" value="640" />
-      <label>لون الخلفية</label>
-      <input id="page-bg" type="color" value="#f8fafc" />
+<div class="mido-container">
+    <div class="header">
+        <h1>ميدو AI</h1>
+        <span>CODENEST GOLD PRODUCTION</span>
     </div>
 
-    <div class="settings-block" id="elem-settings-top">
-      <h3 style="margin:0;color:var(--accent)">إعدادات العنصر المحدد</h3>
-      <div id="no-selection" class="muted">لم يتم تحديد أي عنصر</div>
+    <div id="chat-window"></div>
 
-      <div id="settings-area" style="display:none">
-        <label>نوع العنصر: <span id="sel-type" class="muted"></span></label>
-
-        <!-- مركب -->
-        <div id="settings-rect" style="display:none">
-          <label>نص المستطيل</label>
-          <input id="rect-text" type="text" />
-          <label>لون خلفية المستطيل</label>
-          <input id="rect-bg" type="color" value="#ffffff" />
-          <label>لون خط الحواف</label>
-          <input id="rect-border" type="color" value="#0b1220" />
-          <label>لون النص</label>
-          <input id="rect-color" type="color" value="#0b1220" />
-          <label>ظل المستطيل</label>
-          <select id="rect-shadow">
-            <option value="none">بدون</option>
-            <option value="soft">خفيف</option>
-            <option value="strong">قوي</option>
-          </select>
-          <div class="small">
-            <div>
-              <label>دوران (deg)</label>
-              <input id="rect-rotate" type="range" min="0" max="360" value="0" />
-              <div class="value-badge" id="rect-rotate-val">0°</div>
-            </div>
-            <div>
-              <label>الحجم (مقياس)</label>
-              <input id="rect-scale" type="range" min="0.3" max="3" step="0.01" value="1" />
-              <div class="value-badge" id="rect-scale-val">1.00x</div>
-            </div>
-          </div>
-          <div style="margin-top:6px" class="muted">أبعاد العنصر: <span id="rect-size-val">—</span></div>
+    <div class="controls">
+        <div id="chat-mode-ui" style="display: flex; gap: 8px;">
+            <input type="text" id="chat-in" style="flex:1" placeholder="اسأل ميدو..." onkeypress="if(event.key==='Enter') processInput()">
+            <button class="btn" onclick="processInput()">إرسال</button>
         </div>
 
-        <!-- نص -->
-        <div id="settings-text" style="display:none">
-          <label>محتوى النص</label>
-          <input id="text-content" type="text" />
-          <label>لون النص</label>
-          <input id="text-color" type="color" value="#0b1220" />
-          <div class="small">
-            <div>
-              <label>حجم الخط (px)</label>
-              <input id="text-size" type="range" min="8" max="120" value="18" />
-              <div class="value-badge" id="text-size-val">18px</div>
-            </div>
-            <div>
-              <label>دوران (deg)</label>
-              <input id="text-rotate" type="range" min="0" max="360" value="0" />
-              <div class="value-badge" id="text-rotate-val">0°</div>
-            </div>
-          </div>
-          <div style="margin-top:6px" class="muted">أبعاد العنصر: <span id="text-size-box">—</span></div>
+        <div id="learn-mode-ui">
+            <b style="font-size: 12px; color: var(--gold);">وضع التعلم السري 🔐</b>
+            <input type="text" id="learn-q" placeholder="السؤال الكامل...">
+            <input type="text" id="learn-a" placeholder="الإجابة...">
+            <button class="btn" style="background:#28a745; color:white" onclick="saveKnowledge()">حفظ وإغلاق</button>
         </div>
 
-        <!-- سهم -->
-        <div id="settings-arrow" style="display:none">
-          <label>لون السهم</label>
-          <input id="arrow-color" type="color" value="#0b1220" />
-          <label>انحناء (اعوجاج)</label>
-          <input id="arrow-curve" type="range" min="-100" max="100" value="0" />
-          <div class="value-badge" id="arrow-curve-val">0</div>
-          <label><input type="checkbox" id="arrow-arc-mode" /> اجعل الانحناء قوس دائري (دائرة)</label>
-          <div class="small">
-            <div>
-              <label>دوران (deg)</label>
-              <input id="arrow-rotate" type="range" min="0" max="360" value="0" />
-              <div class="value-badge" id="arrow-rotate-val">0°</div>
-            </div>
-            <div>
-              <label>الحجم (مقياس)</label>
-              <input id="arrow-scale" type="range" min="0.2" max="3" step="0.01" value="1" />
-              <div class="value-badge" id="arrow-scale-val">1.00x</div>
-            </div>
-          </div>
-          <div style="margin-top:6px" class="muted">أبعاد العنصر: <span id="arrow-size-box">—</span></div>
-        </div>
-
-        <!-- صورة -->
-        <div id="settings-image" style="display:none">
-          <label>تحميل صورة جديدة</label>
-          <button class="btn" id="change-image">اختر صورة</button>
-          <label>عرض/ارتفاع (px)</label>
-          <div class="small">
-            <input id="img-w" type="number" value="200" />
-            <input id="img-h" type="number" value="120" />
-          </div>
-          <div style="margin-top:6px" class="muted">أبعاد الصورة: <span id="img-size-box">200 × 120</span></div>
-        </div>
-
-        <!-- سداسي -->
-        <div id="settings-hex" style="display:none">
-          <label>لون السداسي</label>
-          <input id="hex-color" type="color" value="#ffd166" />
-          <label>حجم (px)</label>
-          <input id="hex-size" type="range" min="30" max="400" value="120" />
-          <div class="value-badge" id="hex-size-val">120px</div>
-        </div>
-
-        <div style="margin-top:8px;display:flex;gap:8px">
-          <button class="btn" id="btn-delete" style="background:#7f1d1d;color:#fff">حذف العنصر</button>
-          <button class="btn" id="btn-center" title="مركز العنصر">مركز</button>
-        </div>
-      </div>
+        <div class="secret-trigger" onclick="toggleSecretMode()">Secret Access</div>
     </div>
-  </div>
-
-  <div class="canvas-wrap">
-    <div id="page" tabindex="0" aria-label="لوحة العمل"></div>
-  </div>
-</main>
-
-<footer>
-  <div class="muted">اسحب العناصر لتغيير مكانها. اضغط على زر ثم اضغط في الصفحة لإضافة العنصر. اسحب الصفحة بمؤشر واحد على الخلفية للتنقل بسلاسة.</div>
-</footer>
+</div>
 
 <script>
-/* Medo plan - نهائي مع التعديلات المطلوبة */
-const $ = s => document.querySelector(s);
-const $$ = s => Array.from(document.querySelectorAll(s));
+    let db;
+    let lastSuggestion = null; // لحفظ السؤال الذي اقترحه الروبوت
 
-let currentTool = null;
-let placing = false;
-let selectedElem = null;
-let elemIdCounter = 0;
-
-/* Undo history */
-const history = [];
-let historyIndex = -1;
-function pushHistory(label){
-  const state = {
-    page: {w: $('#page-width').value, h: $('#page-height').value, bg: $('#page-bg').value},
-    elems: $$('.elem').map(el=>{
-      return {
-        type: el.dataset.type,
-        left: el.style.left,
-        top: el.style.top,
-        width: el.style.width,
-        height: el.style.height,
-        dataset: {...el.dataset}
-      };
-    })
-  };
-  history.splice(historyIndex+1);
-  history.push(state);
-  historyIndex = history.length - 1;
-  if(history.length > 120) history.shift();
-}
-function restoreHistory(idx){
-  if(idx < 0 || idx >= history.length) return;
-  const state = history[idx];
-  $$('.elem').forEach(e=>e.remove());
-  $('#page-width').value = state.page.w;
-  $('#page-height').value = state.page.h;
-  $('#page-bg').value = state.page.bg;
-  applyPageSettings();
-  (state.elems || []).forEach(obj=>{
-    const left = parseFloat(obj.left) || 50;
-    const top = parseFloat(obj.top) || 50;
-    const el = createElement(obj.type, left, top, obj.dataset);
-    for(const k in obj.dataset) el.dataset[k] = obj.dataset[k];
-    if(obj.width) el.style.width = obj.width;
-    if(obj.height) el.style.height = obj.height;
-    if(el.dataset.type === 'rect') applyRectStyles(el);
-    if(el.dataset.type === 'text') applyTextStyles(el);
-    if(el.dataset.type === 'arrow') applyArrowStyles(el);
-    if(el.dataset.type === 'image') applyImageStyles(el);
-    if(el.dataset.type === 'hex') applyHexStyles(el);
-  });
-  selectedElem = null;
-  selectElement(null);
-}
-
-/* Elements */
-const page = $('#page');
-const tools = {
-  rect: $('#tool-rect'),
-  text: $('#tool-text'),
-  arrow: $('#tool-arrow'),
-  image: $('#tool-image'),
-  hex: $('#tool-hex')
-};
-const btnUndo = $('#btn-undo');
-const btnExport = $('#btn-export');
-const btnSave = $('#btn-save');
-const btnLoad = $('#btn-load');
-const fileLoad = $('#file-load');
-const imgUploader = $('#img-uploader');
-
-/* Page controls */
-const pageW = $('#page-width'), pageH = $('#page-height'), pageBg = $('#page-bg');
-
-/* Settings UI */
-const settingsArea = $('#settings-area');
-const noSelection = $('#no-selection');
-const selType = $('#sel-type');
-const settings = {
-  rect: $('#settings-rect'),
-  text: $('#settings-text'),
-  arrow: $('#settings-arrow'),
-  image: $('#settings-image'),
-  hex: $('#settings-hex')
-};
-
-/* Rect inputs */
-const rectText = $('#rect-text'), rectBg = $('#rect-bg'), rectBorder = $('#rect-border'), rectColor = $('#rect-color'),
-      rectShadow = $('#rect-shadow'), rectRotate = $('#rect-rotate'), rectScale = $('#rect-scale');
-const rectRotateVal = $('#rect-rotate-val'), rectScaleVal = $('#rect-scale-val'), rectSizeVal = $('#rect-size-val');
-
-/* Text inputs */
-const textContent = $('#text-content'), textColor = $('#text-color'), textSize = $('#text-size'), textRotate = $('#text-rotate');
-const textSizeVal = $('#text-size-val'), textRotateVal = $('#text-rotate-val'), textBoxVal = $('#text-size-box');
-
-/* Arrow inputs */
-const arrowColor = $('#arrow-color'), arrowCurve = $('#arrow-curve'), arrowRotate = $('#arrow-rotate'), arrowScale = $('#arrow-scale');
-const arrowCurveVal = $('#arrow-curve-val'), arrowRotateVal = $('#arrow-rotate-val'), arrowScaleVal = $('#arrow-scale-val'), arrowSizeBox = $('#arrow-size-box');
-const arrowArcMode = $('#arrow-arc-mode');
-
-/* Image inputs */
-const changeImageBtn = $('#change-image'), imgW = $('#img-w'), imgH = $('#img-h'), imgSizeBox = $('#img-size-box');
-
-/* Hex inputs */
-const hexColor = $('#hex-color'), hexSize = $('#hex-size'), hexSizeVal = $('#hex-size-val');
-
-const btnDelete = $('#btn-delete');
-const btnCenter = $('#btn-center');
-
-/* Initialize page */
-function applyPageSettings(){
-  page.style.width = pageW.value + 'px';
-  page.style.height = pageH.value + 'px';
-  page.style.background = pageBg.value;
-}
-pageW.addEventListener('change', ()=>{ applyPageSettings(); pushHistory('page-size'); });
-pageH.addEventListener('change', ()=>{ applyPageSettings(); pushHistory('page-size'); });
-pageBg.addEventListener('change', ()=>{ applyPageSettings(); pushHistory('page-bg'); });
-applyPageSettings();
-
-/* Tool selection */
-function setTool(tool){
-  currentTool = tool;
-  Object.values(tools).forEach(b=>b.classList.remove('active'));
-  if(tool && tools[tool]) tools[tool].classList.add('active');
-  placing = !!tool;
-}
-tools.rect.addEventListener('click', ()=>setTool('rect'));
-tools.text.addEventListener('click', ()=>setTool('text'));
-tools.arrow.addEventListener('click', ()=>setTool('arrow'));
-tools.image.addEventListener('click', ()=>setTool('image'));
-tools.hex.addEventListener('click', ()=>setTool('hex'));
-
-/* Subscript replacement: H~2o -> H₂o etc. */
-const subMap = {'0':'₀','1':'₁','2':'₂','3':'₃','4':'₄','5':'₅','6':'₆','7':'₇','8':'₈','9':'₉'};
-function applySubscripts(str){
-  return str.replace(/~([0-9]+)/g, (m, digits) => digits.split('').map(d=>subMap[d]||d).join(''));
-}
-
-/* Create element factory */
-function createElement(type, x=50, y=50, opts={}){
-  elemIdCounter++;
-  const id = 'e'+elemIdCounter;
-  const el = document.createElement('div');
-  el.className = 'elem';
-  el.dataset.type = type;
-  el.dataset.id = id;
-  el.style.left = x + 'px';
-  el.style.top = y + 'px';
-  el.style.transform = 'translate(-50%,-50%)';
-  el.style.width = (opts.w || 120) + 'px';
-  el.style.height = (opts.h || 60) + 'px';
-  el.tabIndex = 0;
-
-  if(type === 'rect'){
-    const innerWrap = document.createElement('div');
-    innerWrap.className = 'rect-inner';
-    innerWrap.style.background = opts.bg || '#ffffff';
-    innerWrap.style.border = `2px solid ${opts.border || '#0b1220'}`; // خط يحدد الحواف
-    innerWrap.style.color = opts.color || '#0b1220';
-    innerWrap.innerText = applySubscripts(opts.text || 'مركب');
-    const outer = document.createElement('div');
-    outer.className = 'rect';
-    outer.appendChild(innerWrap);
-    el.appendChild(outer);
-    el.dataset.text = innerWrap.innerText;
-    el.dataset.bg = opts.bg || '#ffffff';
-    el.dataset.border = opts.border || '#0b1220';
-    el.dataset.color = opts.color || '#0b1220';
-    el.dataset.rotate = opts.rotate || 0;
-    el.dataset.scale = opts.scale || 1;
-    el.dataset.shadow = opts.shadow || 'soft';
-    applyRectStyles(el);
-  } else if(type === 'text'){
-    const t = document.createElement('div');
-    t.className = 'text-elem';
-    t.innerText = applySubscripts(opts.text || 'نص قابل للتعديل');
-    el.appendChild(t);
-    el.dataset.text = t.innerText;
-    el.dataset.color = opts.color || '#0b1220';
-    el.dataset.size = opts.size || 18;
-    el.dataset.rotate = opts.rotate || 0;
-    applyTextStyles(el);
-  } else if(type === 'arrow'){
-    const svgNS = 'http://www.w3.org/2000/svg';
-    const svg = document.createElementNS(svgNS,'svg');
-    svg.setAttribute('viewBox','0 0 200 80');
-    svg.classList.add('arrow-svg');
-    const defs = document.createElementNS(svgNS,'defs');
-    const marker = document.createElementNS(svgNS,'marker');
-    marker.setAttribute('id','arrowhead-'+id);
-    marker.setAttribute('markerWidth','10');
-    marker.setAttribute('markerHeight','10');
-    marker.setAttribute('refX','0'); // remove short stub by aligning head flush
-    marker.setAttribute('refY','3');
-    marker.setAttribute('orient','auto');
-    const poly = document.createElementNS(svgNS,'polygon');
-    poly.setAttribute('points','0 0, 6 3, 0 6');
-    poly.setAttribute('fill',opts.color || '#0b1220');
-    marker.appendChild(poly);
-    defs.appendChild(marker);
-    const path = document.createElementNS(svgNS,'path');
-    path.setAttribute('d','M10 40 C 80 40 120 40 190 40');
-    path.setAttribute('stroke',opts.color || '#0b1220');
-    path.setAttribute('stroke-width','6');
-    path.setAttribute('fill','none');
-    path.setAttribute('stroke-linecap','round');
-    path.setAttribute('marker-end','url(#arrowhead-'+id+')');
-    svg.appendChild(defs);
-    svg.appendChild(path);
-    el.appendChild(svg);
-    el.dataset.color = opts.color || '#0b1220';
-    el.dataset.curve = opts.curve || 0;
-    el.dataset.rotate = opts.rotate || 0;
-    el.dataset.scale = opts.scale || 1;
-    el.dataset.arc = opts.arc || 'false';
-    applyArrowStyles(el);
-  } else if(type === 'image'){
-    const wrap = document.createElement('div');
-    wrap.className = 'img-elem';
-    const img = document.createElement('img');
-    img.src = opts.src || '';
-    img.alt = 'image';
-    wrap.appendChild(img);
-    el.appendChild(wrap);
-    el.dataset.src = opts.src || '';
-    el.dataset.w = opts.w || 200;
-    el.dataset.h = opts.h || 120;
-    applyImageStyles(el);
-  } else if(type === 'hex'){
-    const svgNS = 'http://www.w3.org/2000/svg';
-    const svg = document.createElementNS(svgNS,'svg');
-    svg.setAttribute('viewBox','0 0 200 200');
-    svg.classList.add('hex-svg');
-    const poly = document.createElementNS(svgNS,'polygon');
-    const cx=100, cy=100, r=90;
-    const pts = [];
-    for(let i=0;i<6;i++){
-      const a = Math.PI/3*i - Math.PI/6;
-      pts.push((cx + r*Math.cos(a)) + ',' + (cy + r*Math.sin(a)));
-    }
-    poly.setAttribute('points', pts.join(' '));
-    poly.setAttribute('fill', opts.color || '#ffd166');
-    poly.setAttribute('stroke','#0b1220');
-    poly.setAttribute('stroke-width','2');
-    // دائرة داخلية أصغر لترك فراغ بين الحواف والدائرة
-    const circle = document.createElementNS(svgNS,'circle');
-    circle.setAttribute('cx',100);
-    circle.setAttribute('cy',100);
-    circle.setAttribute('r',60);
-    circle.setAttribute('fill','#ffffff');
-    circle.setAttribute('stroke','#0b1220');
-    circle.setAttribute('stroke-width','2');
-    svg.appendChild(poly);
-    svg.appendChild(circle);
-    el.appendChild(svg);
-    el.dataset.color = opts.color || '#ffd166';
-    el.dataset.size = opts.size || 120;
-    applyHexStyles(el);
-  }
-
-  const handle = document.createElement('div');
-  handle.className = 'handle';
-  el.appendChild(handle);
-
-  el.addEventListener('pointerdown', elemPointerDown);
-  el.addEventListener('touchstart', e=>e.stopPropagation());
-  el.addEventListener('dblclick', e=>{ e.stopPropagation(); if(el.dataset.type==='rect'){ const inner = el.querySelector('.rect-inner'); inner.contentEditable = true; inner.focus(); } if(el.dataset.type==='text'){ const t = el.querySelector('.text-elem'); t.contentEditable = true; t.focus(); }});
-  // overlay for angle/size
-  const overlay = document.createElement('div');
-  overlay.className = 'overlay-info hidden';
-  overlay.dataset.for = id;
-  document.body.appendChild(overlay);
-  page.appendChild(el);
-  return el;
-}
-
-/* Apply style functions */
-function applyRectStyles(el){
-  const innerWrap = el.querySelector('.rect-inner');
-  innerWrap.style.background = el.dataset.bg;
-  innerWrap.style.border = `2px solid ${el.dataset.border || '#0b1220'}`; // خط الحواف واضح
-  innerWrap.style.color = el.dataset.color;
-  innerWrap.style.boxShadow = el.dataset.shadow === 'none' ? 'none' : (el.dataset.shadow === 'soft' ? '0 6px 18px rgba(2,6,23,0.12)' : '0 10px 30px rgba(2,6,23,0.2)');
-  innerWrap.innerText = el.dataset.text || innerWrap.innerText;
-  const r = el.dataset.rotate || 0;
-  const s = el.dataset.scale || 1;
-  el.style.transform = `translate(-50%,-50%) rotate(${r}deg) scale(${s})`;
-  innerWrap.style.display = 'flex';
-  innerWrap.style.alignItems = 'center';
-  innerWrap.style.justifyContent = 'center';
-  updateOverlay(el);
-}
-function applyTextStyles(el){
-  const t = el.querySelector('.text-elem');
-  t.style.color = el.dataset.color;
-  t.style.fontSize = (el.dataset.size || 18) + 'px';
-  const r = el.dataset.rotate || 0;
-  el.style.transform = `translate(-50%,-50%) rotate(${r}deg)`;
-  t.innerText = el.dataset.text || t.innerText;
-  updateOverlay(el);
-}
-function applyArrowStyles(el){
-  const svg = el.querySelector('svg');
-  const path = svg.querySelector('path');
-  const color = el.dataset.color || '#0b1220';
-  const curve = parseFloat(el.dataset.curve || 0);
-  const arcMode = (el.dataset.arc === 'true');
-  // start/end
-  const x1 = 10, y1 = 40, x2 = 190, y2 = 40;
-  let d = '';
-  if(arcMode){
-    // compute arc parameters: use midpoint offset by curve to determine radius and sweep
-    const mx = (x1 + x2)/2;
-    const my = (y1 + y2)/2;
-    const offset = curve * 0.6;
-    const cx = mx;
-    const cy = my - offset;
-    // radius as distance from center to start
-    const rx = Math.abs(cx - x1);
-    const ry = Math.abs(cy - y1);
-    // ensure non-zero
-    const r = Math.max(1, Math.hypot(x1 - cx, y1 - cy));
-    // large-arc flag based on magnitude
-    const laf = Math.abs(curve) > 50 ? 1 : 0;
-    const sweep = curve >= 0 ? 0 : 1;
-    // use elliptical arc A rx ry x-axis-rotation large-arc-flag sweep-flag x y
-    d = `M ${x1} ${y1} A ${r} ${r} 0 ${laf} ${sweep} ${x2} ${y2}`;
-  } else {
-    const cx1 = 50, cy1 = 40 + curve*0.2;
-    const cx2 = 150, cy2 = 40 - curve*0.2;
-    d = `M${x1} ${y1} C ${cx1} ${cy1} ${cx2} ${cy2} ${x2} ${y2}`;
-  }
-  path.setAttribute('d', d);
-  path.setAttribute('stroke', color);
-  const marker = svg.querySelector('marker polygon');
-  if(marker) marker.setAttribute('fill', color);
-  const r = el.dataset.rotate || 0;
-  const s = el.dataset.scale || 1;
-  el.style.width = (200 * s) + 'px';
-  el.style.height = (80 * s) + 'px';
-  el.style.transform = `translate(-50%,-50%) rotate(${r}deg)`;
-  updateOverlay(el);
-}
-function applyImageStyles(el){
-  const img = el.querySelector('img');
-  img.src = el.dataset.src || '';
-  el.style.width = (el.dataset.w || 200) + 'px';
-  el.style.height = (el.dataset.h || 120) + 'px';
-  updateOverlay(el);
-}
-function applyHexStyles(el){
-  const svg = el.querySelector('svg');
-  const poly = svg.querySelector('polygon');
-  poly.setAttribute('fill', el.dataset.color || '#ffd166');
-  const size = parseInt(el.dataset.size || 120);
-  el.style.width = size + 'px';
-  el.style.height = size + 'px';
-  updateOverlay(el);
-}
-
-/* Overlay update: show angle and size near element */
-function updateOverlay(el){
-  const id = el.dataset.id;
-  const overlay = document.querySelector(`.overlay-info[data-for="${id}"]`);
-  if(!overlay) return;
-  const rect = el.getBoundingClientRect();
-  const pageRect = page.getBoundingClientRect();
-  const angle = el.dataset.rotate || 0;
-  // compute scale or size
-  const w = Math.round(parseFloat(el.style.width) || el.offsetWidth);
-  const h = Math.round(parseFloat(el.style.height) || el.offsetHeight);
-  const scale = (el.dataset.scale ? parseFloat(el.dataset.scale).toFixed(2) : '1.00');
-  overlay.textContent = `زاوية: ${angle}°  |  حجم: ${w}×${h}  |  مقياس: ${scale}x`;
-  overlay.style.left = (pageRect.left + rect.left - pageRect.left + rect.width + 12) + 'px';
-  overlay.style.top = (pageRect.top + rect.top - pageRect.top) + 'px';
-  overlay.classList.remove('hidden');
-}
-
-/* Hide overlay */
-function hideOverlay(el){
-  const id = el.dataset.id;
-  const overlay = document.querySelector(`.overlay-info[data-for="${id}"]`);
-  if(overlay) overlay.classList.add('hidden');
-}
-
-/* Page click to place element */
-page.addEventListener('pointerdown', function(e){
-  // if placing mode, add element
-  if(placing){
-    const rect = page.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    let el;
-    if(currentTool === 'rect') el = createElement('rect', x, y);
-    if(currentTool === 'text') el = createElement('text', x, y);
-    if(currentTool === 'arrow') el = createElement('arrow', x, y);
-    if(currentTool === 'image'){
-      imgUploader.onchange = function(ev){
-        const f = ev.target.files[0];
-        if(!f) return;
-        const url = URL.createObjectURL(f);
-        el = createElement('image', x, y, {src:url, w:200, h:120});
-        selectElement(el);
-        pushHistory('add-image');
-        imgUploader.value = '';
-      };
-      imgUploader.click();
-      return;
-    }
-    if(currentTool === 'hex') el = createElement('hex', x, y);
-    if(el){
-      selectElement(el);
-      pushHistory('add-'+currentTool);
-    }
-    return;
-  }
-  // if clicked background (not on element) start panning
-  if(e.target === page){
-    startPan(e);
-  }
-});
-
-/* Selection handling */
-function selectElement(el){
-  if(selectedElem) {
-    selectedElem.classList.remove('selected');
-    hideOverlay(selectedElem);
-  }
-  selectedElem = el;
-  if(!el) {
-    settingsArea.style.display='none'; noSelection.style.display='block'; return;
-  }
-  el.classList.add('selected');
-  noSelection.style.display='none';
-  settingsArea.style.display='block';
-  selType.textContent = el.dataset.type;
-  Object.values(settings).forEach(s=>s.style.display='none');
-  if(el.dataset.type === 'rect'){
-    settings.rect.style.display='block';
-    rectText.value = el.dataset.text || '';
-    rectBg.value = el.dataset.bg || '#ffffff';
-    rectBorder.value = el.dataset.border || '#0b1220';
-    rectColor.value = el.dataset.color || '#0b1220';
-    rectShadow.value = el.dataset.shadow || 'soft';
-    rectRotate.value = el.dataset.rotate || 0;
-    rectScale.value = el.dataset.scale || 1;
-    rectRotateVal.textContent = `${el.dataset.rotate}°`;
-    rectScaleVal.textContent = `${parseFloat(el.dataset.scale).toFixed(2)}x`;
-    rectSizeVal.textContent = `${Math.round(parseFloat(el.style.width))} × ${Math.round(parseFloat(el.style.height))}`;
-  } else if(el.dataset.type === 'text'){
-    settings.text.style.display='block';
-    textContent.value = el.dataset.text || '';
-    textColor.value = el.dataset.color || '#0b1220';
-    textSize.value = el.dataset.size || 18;
-    textRotate.value = el.dataset.rotate || 0;
-    textSizeVal.textContent = `${el.dataset.size}px`;
-    textRotateVal.textContent = `${el.dataset.rotate}°`;
-    textBoxVal.textContent = `${Math.round(parseFloat(el.style.width))} × ${Math.round(parseFloat(el.style.height))}`;
-  } else if(el.dataset.type === 'arrow'){
-    settings.arrow.style.display='block';
-    arrowColor.value = el.dataset.color || '#0b1220';
-    arrowCurve.value = el.dataset.curve || 0;
-    arrowRotate.value = el.dataset.rotate || 0;
-    arrowScale.value = el.dataset.scale || 1;
-    arrowArcMode.checked = (el.dataset.arc === 'true');
-    arrowCurveVal.textContent = el.dataset.curve || 0;
-    arrowRotateVal.textContent = `${el.dataset.rotate}°`;
-    arrowScaleVal.textContent = `${parseFloat(el.dataset.scale).toFixed(2)}x`;
-    arrowSizeBox.textContent = `${Math.round(parseFloat(el.style.width))} × ${Math.round(parseFloat(el.style.height))}`;
-  } else if(el.dataset.type === 'image'){
-    settings.image.style.display='block';
-    imgW.value = parseInt(el.dataset.w || 200);
-    imgH.value = parseInt(el.dataset.h || 120);
-    imgSizeBox.textContent = `${Math.round(el.dataset.w)} × ${Math.round(el.dataset.h)}`;
-  } else if(el.dataset.type === 'hex'){
-    settings.hex.style.display='block';
-    hexColor.value = el.dataset.color || '#ffd166';
-    hexSize.value = el.dataset.size || 120;
-    hexSizeVal.textContent = `${el.dataset.size}px`;
-  }
-  updateOverlay(el);
-}
-
-/* Deselect on background click when not placing */
-page.addEventListener('pointerdown', function(e){
-  if(e.target === page && !placing){
-    if(selectedElem){ selectedElem.classList.remove('selected'); selectedElem = null; selectElement(null); }
-  }
-});
-
-/* Pointer drag & resize */
-let dragState = null;
-function elemPointerDown(e){
-  e.stopPropagation();
-  const el = e.currentTarget;
-  selectElement(el);
-  const rect = el.getBoundingClientRect();
-  const startX = e.clientX, startY = e.clientY;
-  const isHandle = e.target.classList.contains('handle');
-  dragState = {el, startX, startY, rect, isHandle};
-  document.addEventListener('pointermove', elemPointerMove);
-  document.addEventListener('pointerup', elemPointerUp);
-}
-function elemPointerMove(e){
-  if(!dragState) return;
-  const {el, startX, startY, rect, isHandle} = dragState;
-  const dx = e.clientX - startX;
-  const dy = e.clientY - startY;
-  if(isHandle){
-    const newW = Math.max(20, rect.width + dx);
-    const newH = Math.max(20, rect.height + dy);
-    el.style.width = newW + 'px';
-    el.style.height = newH + 'px';
-    if(el.dataset.type === 'image'){
-      el.dataset.w = newW; el.dataset.h = newH;
-      applyImageStyles(el);
-    }
-    if(el.dataset.type === 'hex'){
-      el.dataset.size = Math.max(30, newW);
-      applyHexStyles(el);
-    }
-    updateOverlay(el);
-    return;
-  } else {
-    const pageRect = page.getBoundingClientRect();
-    let left = e.clientX - pageRect.left;
-    let top = e.clientY - pageRect.top;
-    left = Math.max(0, Math.min(left, pageRect.width));
-    top = Math.max(0, Math.min(top, pageRect.height));
-    el.style.left = left + 'px';
-    el.style.top = top + 'px';
-    updateOverlay(el);
-  }
-}
-function elemPointerUp(e){
-  document.removeEventListener('pointermove', elemPointerMove);
-  document.removeEventListener('pointerup', elemPointerUp);
-  dragState = null;
-  pushHistory('move/resize');
-}
-
-/* Settings change handlers with numeric displays and subscript handling */
-rectText.addEventListener('input', ()=>{
-  if(!selectedElem) return;
-  selectedElem.dataset.text = applySubscripts(rectText.value);
-  applyRectStyles(selectedElem);
-  pushHistory('edit-rect');
-});
-rectBg.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.bg = rectBg.value; applyRectStyles(selectedElem); pushHistory('edit-rect'); });
-rectBorder.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.border = rectBorder.value; applyRectStyles(selectedElem); pushHistory('edit-rect'); });
-rectColor.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.color = rectColor.value; applyRectStyles(selectedElem); pushHistory('edit-rect'); });
-rectShadow.addEventListener('change', ()=>{ if(!selectedElem) return; selectedElem.dataset.shadow = rectShadow.value; applyRectStyles(selectedElem); pushHistory('edit-rect'); });
-rectRotate.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.rotate = rectRotate.value; applyRectStyles(selectedElem); rectRotateVal.textContent = `${rectRotate.value}°`; });
-rectScale.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.scale = rectScale.value; applyRectStyles(selectedElem); rectScaleVal.textContent = `${parseFloat(rectScale.value).toFixed(2)}x`; });
-
-textContent.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.text = applySubscripts(textContent.value); applyTextStyles(selectedElem); pushHistory('edit-text'); });
-textColor.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.color = textColor.value; applyTextStyles(selectedElem); pushHistory('edit-text'); });
-textSize.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.size = textSize.value; applyTextStyles(selectedElem); textSizeVal.textContent = `${textSize.value}px`; });
-textRotate.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.rotate = textRotate.value; applyTextStyles(selectedElem); textRotateVal.textContent = `${textRotate.value}°`; });
-
-arrowColor.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.color = arrowColor.value; applyArrowStyles(selectedElem); pushHistory('edit-arrow'); });
-arrowCurve.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.curve = arrowCurve.value; applyArrowStyles(selectedElem); arrowCurveVal.textContent = arrowCurve.value; pushHistory('edit-arrow'); });
-arrowArcMode.addEventListener('change', ()=>{ if(!selectedElem) return; selectedElem.dataset.arc = arrowArcMode.checked ? 'true' : 'false'; applyArrowStyles(selectedElem); pushHistory('edit-arrow'); });
-arrowRotate.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.rotate = arrowRotate.value; applyArrowStyles(selectedElem); arrowRotateVal.textContent = `${arrowRotate.value}°`; });
-arrowScale.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.scale = arrowScale.value; applyArrowStyles(selectedElem); arrowScaleVal.textContent = `${parseFloat(arrowScale.value).toFixed(2)}x`; });
-
-changeImageBtn.addEventListener('click', ()=> imgUploader.click());
-imgUploader.addEventListener('change', function(e){
-  if(!selectedElem || selectedElem.dataset.type !== 'image') return;
-  const f = e.target.files[0];
-  if(!f) return;
-  const url = URL.createObjectURL(f);
-  selectedElem.dataset.src = url;
-  applyImageStyles(selectedElem);
-  pushHistory('edit-image');
-  imgUploader.value = '';
-});
-imgW.addEventListener('change', ()=>{ if(!selectedElem) return; selectedElem.dataset.w = imgW.value; selectedElem.dataset.h = imgH.value; applyImageStyles(selectedElem); pushHistory('edit-image'); });
-imgH.addEventListener('change', ()=>{ if(!selectedElem) return; selectedElem.dataset.w = imgW.value; selectedElem.dataset.h = imgH.value; applyImageStyles(selectedElem); pushHistory('edit-image'); });
-
-hexColor.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.color = hexColor.value; applyHexStyles(selectedElem); pushHistory('edit-hex'); });
-hexSize.addEventListener('input', ()=>{ if(!selectedElem) return; selectedElem.dataset.size = hexSize.value; applyHexStyles(selectedElem); hexSizeVal.textContent = `${hexSize.value}px`; pushHistory('edit-hex'); });
-
-btnDelete.addEventListener('click', ()=>{
-  if(!selectedElem) return;
-  selectedElem.remove();
-  selectedElem = null;
-  selectElement(null);
-  pushHistory('delete');
-});
-
-btnCenter.addEventListener('click', ()=>{
-  if(!selectedElem) return;
-  const pw = page.clientWidth, ph = page.clientHeight;
-  selectedElem.style.left = (pw/2) + 'px';
-  selectedElem.style.top = (ph/2) + 'px';
-  pushHistory('center');
-});
-
-/* Keyboard support: delete key */
-document.addEventListener('keydown', (e)=>{
-  if(e.key === 'Delete' && selectedElem){ selectedElem.remove(); selectedElem = null; selectElement(null); pushHistory('delete'); }
-});
-
-/* Save / Load project */
-btnSave.addEventListener('click', ()=>{
-  const data = {
-    page: {w: pageW.value, h: pageH.value, bg: pageBg.value},
-    elems: []
-  };
-  $$('.elem').forEach(el=>{
-    const obj = {type: el.dataset.type, left: el.style.left, top: el.style.top, width: el.style.width, height: el.style.height, data: {}};
-    for(const k in el.dataset) obj.data[k] = el.dataset[k];
-    data.elems.push(obj);
-  });
-  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'medo-plan-project.json';
-  a.click();
-});
-
-/* Load project */
-btnLoad.addEventListener('click', ()=> fileLoad.click());
-fileLoad.addEventListener('change', function(e){
-  const f = e.target.files[0];
-  if(!f) return;
-  const reader = new FileReader();
-  reader.onload = function(ev){
-    try{
-      const data = JSON.parse(ev.target.result);
-      $$('.elem').forEach(x=>x.remove());
-      pageW.value = data.page.w || 1024;
-      pageH.value = data.page.h || 640;
-      pageBg.value = data.page.bg || '#ffffff';
-      applyPageSettings();
-      (data.elems || []).forEach(obj=>{
-        const left = parseFloat(obj.left) || 50;
-        const top = parseFloat(obj.top) || 50;
-        const el = createElement(obj.type, left, top, obj.data);
-        for(const k in obj.data) el.dataset[k] = obj.data[k];
-        if(obj.width) el.style.width = obj.width;
-        if(obj.height) el.style.height = obj.height;
-        if(el.dataset.type === 'rect') applyRectStyles(el);
-        if(el.dataset.type === 'text') applyTextStyles(el);
-        if(el.dataset.type === 'arrow') applyArrowStyles(el);
-        if(el.dataset.type === 'image') applyImageStyles(el);
-        if(el.dataset.type === 'hex') applyHexStyles(el);
-      });
-      pushHistory('load');
-    }catch(err){
-      alert('ملف غير صالح');
-    }
-  };
-  reader.readAsText(f);
-  fileLoad.value = '';
-});
-
-/* Export page as high-quality image and attempt upload to catbox.moe (gives copyable link) */
-async function exportAndUpload(){
-  const scale = 3; // جودة أعلى
-  const w = parseInt(page.style.width);
-  const h = parseInt(page.style.height);
-  // clone page and inline styles
-  const clone = page.cloneNode(true);
-  clone.style.transform = 'none';
-  clone.style.width = w + 'px';
-  clone.style.height = h + 'px';
-  clone.querySelectorAll('.selected').forEach(s=>s.classList.remove('selected'));
-  // hide overlays and controls that shouldn't appear
-  clone.querySelectorAll('.overlay-info').forEach(o=>o.remove());
-  // inline computed styles
-  function inlineStyles(node){
-    if(node.nodeType !== 1) return;
-    const cs = window.getComputedStyle(node);
-    let styleStr = '';
-    const props = ['background','color','font-size','border-radius','box-shadow','padding','display','justify-content','align-items','width','height','left','top','transform','position','overflow','border','white-space','text-align'];
-    props.forEach(p=>{
-      try{ const v = cs.getPropertyValue(p); if(v) styleStr += `${p}:${v};`; }catch(e){}
-    });
-    node.setAttribute('style', (node.getAttribute('style')||'') + styleStr);
-    Array.from(node.children).forEach(inlineStyles);
-  }
-  inlineStyles(clone);
-  const xmlns = "http://www.w3.org/2000/svg";
-  const svg = document.createElementNS(xmlns,'svg');
-  svg.setAttribute('xmlns', xmlns);
-  svg.setAttribute('width', w*scale);
-  svg.setAttribute('height', h*scale);
-  svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
-  const foreign = document.createElementNS(xmlns,'foreignObject');
-  foreign.setAttribute('width', w);
-  foreign.setAttribute('height', h);
-  foreign.appendChild(clone);
-  svg.appendChild(foreign);
-  const svgStr = new XMLSerializer().serializeToString(svg);
-  const img = new Image();
-  const svgBlob = new Blob([svgStr], {type:'image/svg+xml;charset=utf-8'});
-  const url = URL.createObjectURL(svgBlob);
-  return new Promise((resolve, reject)=>{
-    img.onload = async function(){
-      try{
-        const canvas = document.createElement('canvas');
-        canvas.width = w*scale;
-        canvas.height = h*scale;
-        const ctx = canvas.getContext('2d');
-        ctx.fillStyle = pageBg.value || '#ffffff';
-        ctx.fillRect(0,0,canvas.width,canvas.height);
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        URL.revokeObjectURL(url);
-        canvas.toBlob(async function(blob){
-          if(!blob){ reject('تعذر إنشاء الصورة'); return; }
-          // محاولة رفع الملف إلى catbox.moe (يعطي رابط يمكن نسخه يدوياً)
-          try{
-            const form = new FormData();
-            form.append('reqtype','fileupload');
-            form.append('userhash','');
-            form.append('fileToUpload', blob, 'medo-plan-export.png');
-            const resp = await fetch('https://catbox.moe/user/api.php', { method:'POST', body: form });
-            if(!resp.ok) throw new Error('upload-failed');
-            const text = await resp.text();
-            resolve({success:true, url:text.trim()});
-          }catch(err){
-            // فشل الرفع: نعيد تنزيل الملف محلياً كنسخة احتياطية
-            const a = document.createElement('a');
-            const localUrl = URL.createObjectURL(blob);
-            a.href = localUrl;
-            a.download = 'medo-plan-export.png';
-            a.click();
-            resolve({success:false, message:'تم تنزيل الصورة محلياً. رفع catbox فشل أو محظور (CORS).'});
-          }
-        }, 'image/png');
-      }catch(err){
-        reject(err);
-      }
+    const dbReq = indexedDB.open("MidoAI_Smart_DB", 1);
+    dbReq.onupgradeneeded = (e) => {
+        db = e.target.result;
+        db.createObjectStore("brain", { keyPath: "question" });
     };
-    img.onerror = function(){
-      URL.revokeObjectURL(url);
-      reject('تعذر تحميل SVG كصورة. جرب متصفح آخر.');
-    };
-    img.src = url;
-  });
-}
+    dbReq.onsuccess = (e) => { db = e.target.result; addMsg("مرحباً بك.. كيف حالك اليوم؟", "bot"); };
 
-btnExport.addEventListener('click', async ()=>{
-  btnExport.disabled = true;
-  btnExport.textContent = 'جاري التصدير...';
-  try{
-    const res = await exportAndUpload();
-    if(res.success){
-      const link = res.url;
-      const container = document.createElement('div');
-      container.style.position = 'fixed';
-      container.style.left = '50%';
-      container.style.top = '50%';
-      container.style.transform = 'translate(-50%,-50%)';
-      container.style.background = '#0b1220';
-      container.style.padding = '16px';
-      container.style.borderRadius = '10px';
-      container.style.boxShadow = '0 8px 30px rgba(0,0,0,0.6)';
-      container.style.zIndex = 9999;
-      container.innerHTML = `<div style="color:#e6eef8;margin-bottom:8px">تم الرفع بنجاح — انسخ الرابط يدوياً:</div>
-        <input id="export-link" style="width:520px;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:#e6eef8" value="${link}" />
-        <div style="margin-top:8px;display:flex;gap:8px">
-          <button id="copy-link" class="btn">نسخ</button>
-          <button id="close-link" class="btn">إغلاق</button>
-        </div>`;
-      document.body.appendChild(container);
-      $('#copy-link').addEventListener('click', ()=>{
-        const inp = $('#export-link');
-        inp.select();
-        try{ document.execCommand('copy'); alert('تم النسخ'); }catch(e){ alert('انسخ الرابط يدوياً'); }
-      });
-      $('#close-link').addEventListener('click', ()=> container.remove());
-    }else{
-      alert(res.message || 'تم التصدير لكن لم يتم رفع الملف.');
+    function addMsg(text, sender) {
+        const win = document.getElementById('chat-window');
+        const div = document.createElement('div');
+        div.className = `bubble ${sender}`;
+        div.innerHTML = text;
+        win.appendChild(div);
+        win.scrollTop = win.scrollHeight;
     }
-  }catch(err){
-    alert('حدث خطأ أثناء التصدير: ' + err);
-  }finally{
-    btnExport.disabled = false;
-    btnExport.textContent = 'تصدير ورفع';
-  }
-});
 
-/* Undo button */
-btnUndo.addEventListener('click', ()=>{
-  if(historyIndex <= 0) return;
-  historyIndex--;
-  restoreHistory(historyIndex);
-});
-
-/* Click outside to cancel placing */
-document.addEventListener('pointerdown', (e)=>{
-  if(!page.contains(e.target) && placing){
-    setTool(null);
-  }
-});
-
-/* Touch & mouse panning with smooth inertia */
-let isPanning = false;
-let panStart = null;
-let panVelocity = {x:0,y:0};
-let panAnim = null;
-
-function startPan(e){
-  // only start pan if clicked on background (not on element)
-  if(e.target !== page) return;
-  isPanning = true;
-  cancelInertia();
-  panStart = {x: e.clientX, y: e.clientY, scrollLeft: page.scrollLeft, scrollTop: page.scrollTop, time: performance.now()};
-  document.addEventListener('pointermove', panMove);
-  document.addEventListener('pointerup', panEnd);
-}
-function panMove(e){
-  if(!isPanning || !panStart) return;
-  const dx = e.clientX - panStart.x;
-  const dy = e.clientY - panStart.y;
-  page.scrollLeft = panStart.scrollLeft - dx;
-  page.scrollTop = panStart.scrollTop - dy;
-  const now = performance.now();
-  const dt = Math.max(1, now - panStart.time);
-  panVelocity.x = ( -dx ) / dt * 16; // normalized per frame
-  panVelocity.y = ( -dy ) / dt * 16;
-  panStart.time = now;
-  panStart.x = e.clientX;
-  panStart.y = e.clientY;
-}
-function panEnd(e){
-  document.removeEventListener('pointermove', panMove);
-  document.removeEventListener('pointerup', panEnd);
-  isPanning = false;
-  startInertia();
-}
-function startInertia(){
-  const friction = 0.95;
-  function step(){
-    panVelocity.x *= friction;
-    panVelocity.y *= friction;
-    if(Math.abs(panVelocity.x) < 0.05 && Math.abs(panVelocity.y) < 0.05){
-      cancelInertia();
-      return;
+    // تبديل الوضع السري
+    function toggleSecretMode() {
+        const ui = document.getElementById('learn-mode-ui');
+        const chat = document.getElementById('chat-mode-ui');
+        if(ui.style.display === "none" || ui.style.display === "") {
+            ui.style.display = "flex";
+            chat.style.display = "none";
+        } else {
+            ui.style.display = "none";
+            chat.style.display = "flex";
+        }
     }
-    page.scrollLeft += panVelocity.x;
-    page.scrollTop += panVelocity.y;
-    panAnim = requestAnimationFrame(step);
-  }
-  panAnim = requestAnimationFrame(step);
-}
-function cancelInertia(){
-  if(panAnim) cancelAnimationFrame(panAnim);
-  panAnim = null;
-}
 
-/* Keyboard: space to pan (hold) */
-let spaceDown = false;
-document.addEventListener('keydown', (e)=>{ if(e.code === 'Space'){ spaceDown = true; document.body.style.cursor = 'grab'; }});
-document.addEventListener('keyup', (e)=>{ if(e.code === 'Space'){ spaceDown = false; document.body.style.cursor = ''; }});
+    function processInput() {
+        const input = document.getElementById('chat-in');
+        let val = input.value.trim().toLowerCase();
+        if(!val) return;
 
-/* Subscript in inputs and contenteditable */
-document.addEventListener('input', (e)=>{
-  const t = e.target;
-  if(t === rectText || t === textContent){
-    // replace ~digits with subscript live
-    const pos = t.selectionStart || 0;
-    const newVal = applySubscripts(t.value);
-    if(newVal !== t.value){
-      t.value = newVal;
-      try{ t.setSelectionRange(pos, pos); }catch(err){}
+        addMsg(val, "user");
+        input.value = "";
+
+        // 1. التعامل مع التأكيد (آه / نعم)
+        const confirmWords = ["اه", "آه", "نعم", "ايوه", "ايوة", "تمام"];
+        if(confirmWords.includes(val) && lastSuggestion) {
+            addMsg(lastSuggestion.answer, "bot");
+            lastSuggestion = null;
+            return;
+        }
+
+        // 2. البحث عن السؤال الكامل
+        const tx = db.transaction("brain", "readonly");
+        const store = tx.objectStore("brain");
+        
+        const getReq = store.get(val);
+        getReq.onsuccess = () => {
+            if(getReq.result) {
+                addMsg(getReq.result.answer, "bot");
+            } else {
+                // 3. نظام التوقع الذكي (البحث بكلمة واحدة)
+                searchSuggestions(val);
+            }
+        };
     }
-  }
-  // contenteditable editing for inner rect or text
-  if(t.isContentEditable){
-    // replace pattern in innerText
-    const txt = t.innerText;
-    const replaced = applySubscripts(txt);
-    if(replaced !== txt){
-      // preserve caret by simple replace (may move caret slightly)
-      t.innerText = replaced;
+
+    function searchSuggestions(word) {
+        const tx = db.transaction("brain", "readonly");
+        const store = tx.objectStore("brain");
+        const req = store.getAll();
+
+        req.onsuccess = () => {
+            const allRecords = req.result;
+            // البحث عن سؤال يحتوي على الكلمة المدخلة
+            const match = allRecords.find(r => r.question.includes(word));
+
+            if(match) {
+                lastSuggestion = match;
+                addMsg(`هل تقصد أن تقول: "<b>${match.question}</b>"؟`, "bot");
+            } else {
+                addMsg("لم أفهم ما تقصده، هل يمكنك توضيح أكثر؟ وكيف حالك؟", "bot");
+            }
+        };
     }
-  }
-});
 
-/* Remove short front line of arrow handled by marker refX=0 above */
+    function saveKnowledge() {
+        const q = document.getElementById('learn-q').value.trim().toLowerCase();
+        const a = document.getElementById('learn-a').value.trim();
+        if(!q || !a) return alert("اكمل البيانات");
 
-/* Initial demo elements and initial history snapshot */
-createElement('rect', 200, 120, {text:'مركب', bg:'#ffffff', border:'#0b1220', color:'#0b1220', shadow:'soft'});
-createElement('text', 420, 80, {text:'مرحبا H~2o', color:'#0b1220', size:22});
-createElement('arrow', 300, 300, {color:'#0b1220', curve:20, arc:'false'});
-createElement('hex', 700, 200, {color:'#ffd166', size:120});
-pushHistory('init');
+        const tx = db.transaction("brain", "readwrite");
+        tx.objectStore("brain").put({ question: q, answer: a });
+        tx.oncomplete = () => {
+            addMsg("تم الحفظ في الذاكرة بنجاح!", "system");
+            document.getElementById('learn-q').value = "";
+            document.getElementById('learn-a').value = "";
+            toggleSecretMode(); // العودة للدردشة
+        };
+    }
 </script>
 </body>
 </html>
