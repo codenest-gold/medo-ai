@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MIDO AI - THE LEGEND</title>
+    
+    <meta name="theme-color" content="#8b5cf6">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIk1JRE8gQUkgLSBUSEUgTEVHRU5EIiwKICAic2hvcnRfbmFtZSI6ICJNSURPIEFJIiwKICAic3RhcnRfdXJsIjogIi4iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiMwNTA1MDgiLAogICJ0aGVtZV9jb2xvciI6ICIjOGI1Y2Y2IiwKICAiaWNvbnMiOiBbCiAgICB7CiAgICAgICJzcmMiOiAiaHR0cHM6Ly9jZG4taWNvbnMtcG5nLmZsaXRpY29uLmNvbS81MTIvMjEwOC8yMTA4NjQyLnBuZyIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIgogICAgfQogIF0KfQ==">
+
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -11,40 +17,26 @@
             --pattern: radial-gradient(#8b5cf61a 1px, transparent 1px);
         }
 
-        /* الثيمات الـ 20 */
-        body.theme-1 { --bg: #050508; --primary: #8b5cf6; --pattern: radial-gradient(#8b5cf633 1px, transparent 1px); }
-        body.theme-2 { --bg: #000a00; --primary: #00ff41; --pattern: linear-gradient(rgba(0,255,65,0.05) 1px, transparent 1px); }
-        body.theme-3 { --bg: #0a001a; --primary: #ff00ff; --pattern: repeating-linear-gradient(45deg, #ff00ff05 0px, #ff00ff05 10px, transparent 10px, transparent 20px); }
-        body.theme-4 { --bg: #000814; --primary: #0088ff; --pattern: radial-gradient(circle, #0088ff15 0%, transparent 70%); }
-        body.theme-5 { --bg: #0f0500; --primary: #ff4400; --pattern: linear-gradient(30deg, #ff440005 12%, transparent 12.5%); }
-        body.theme-6 { --bg: #0d0d0d; --primary: #ffd700; --pattern: repeating-radial-gradient(circle, #ffd70005, #ffd70005 10px, transparent 10px, transparent 20px); }
-        body.theme-7 { --bg: #001111; --primary: #00ffff; --pattern: linear-gradient(90deg, #00ffff05 1px, transparent 1px); }
-        body.theme-8 { --bg: #1a0000; --primary: #ff0000; --pattern: radial-gradient(#ff00001a 2px, transparent 2px); }
-        body.theme-9 { --bg: #051a05; --primary: #adff2f; --pattern: repeating-radial-gradient(#adff2f05 0, #adff2f05 5px, transparent 5px, transparent 10px); }
-        body.theme-10{ --bg: #1a1a00; --primary: #ffff00; --pattern: linear-gradient(#ffff0005 1px, transparent 1px); }
-        body.theme-11{ --bg: #00001a; --primary: #4169e1; --pattern: radial-gradient(circle at 50% 50%, #4169e115 0%, transparent 50%); }
-        body.theme-12{ --bg: #1a000d; --primary: #ff69b4; --pattern: repeating-linear-gradient(-45deg, #ff69b405 0px, transparent 10px); }
-        body.theme-13{ --bg: #140a00; --primary: #d2691e; --pattern: radial-gradient(circle, #d2691e10 1px, transparent 1px); }
-        body.theme-14{ --bg: #0a0a0a; --primary: #c0c0c0; --pattern: linear-gradient(45deg, #c0c0c005 25%, transparent 25%); }
-        body.theme-15{ --bg: #1a0800; --primary: #ff8c00; --pattern: radial-gradient(#ff8c0015 1px, transparent 1px); }
-        body.theme-16{ --bg: #000000; --primary: #ffffff; --pattern: radial-gradient(circle, #ffffff15 1px, transparent 1px); }
-        body.theme-17{ --bg: #020b02; --primary: #2ecc71; --pattern: linear-gradient(to right, #2ecc7105 1px, transparent 1px); }
-        body.theme-18{ --bg: #0a0e14; --primary: #5dade2; --pattern: radial-gradient(circle at top right, #5dade21a, transparent); }
-        body.theme-19{ --bg: #120b1a; --primary: #af7ac5; --pattern: repeating-linear-gradient(90deg, #af7ac503 0px, #af7ac503 2px, transparent 2px, transparent 4px); }
-        body.theme-20{ --bg: #17202a; --primary: #e74c3c; --pattern: radial-gradient(#e74c3c15 1px, transparent 0); background-size: 20px 20px; }
+        /* Themes (Same as before) */
+        body.theme-1 { --bg: #050508; --primary: #8b5cf6; }
+        body.theme-2 { --bg: #000a00; --primary: #00ff41; }
+        body.theme-3 { --bg: #0a001a; --primary: #ff00ff; }
+        body.theme-4 { --bg: #000814; --primary: #0088ff; }
+        body.theme-5 { --bg: #0f0500; --primary: #ff4400; }
+        body.theme-8 { --bg: #1a0000; --primary: #ff0000; }
+        body.theme-16{ --bg: #000000; --primary: #ffffff; }
 
         html, body { 
             height: 100dvh; margin: 0; padding: 0; overflow: hidden; 
             background-color: var(--bg); background-image: var(--pattern); background-size: 30px 30px;
         }
 
-        * { box-sizing: border-box; font-family: 'Cairo', sans-serif; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        * { box-sizing: border-box; font-family: 'Cairo', sans-serif; transition: 0.3s; }
 
         .app-container { display: flex; height: 100dvh; width: 100vw; }
         
-        /* Sidebar */
         .sidebar { 
-            width: 320px; background: rgba(10,10,15,0.98); backdrop-filter: blur(20px); 
+            width: 300px; background: rgba(10,10,15,0.98); backdrop-filter: blur(20px); 
             border-left: 1px solid var(--border); display: flex; flex-direction: column; padding: 15px; z-index: 1000;
         }
         @media (max-width: 900px) { 
@@ -52,71 +44,52 @@
             .sidebar.active { transform: translateX(0); }
         }
 
-        .brand h1 { font-size: 32px; color: var(--primary); text-align: center; margin-bottom: 25px; text-shadow: 0 0 20px var(--primary); font-weight: 900; }
+        .brand h1 { font-size: 28px; color: var(--primary); text-align: center; margin-bottom: 20px; text-shadow: 0 0 15px var(--primary); }
         
-        .chat-history { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .chat-history { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin: 15px 0; }
         .chat-item { 
-            padding: 15px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); 
-            border-radius: 12px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; color: var(--text);
+            padding: 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); 
+            border-radius: 12px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; color: var(--text); font-size: 14px;
         }
         .chat-item.active { border-color: var(--primary); background: rgba(139, 92, 246, 0.2); }
-        .del-chat { color: #ff4444; font-size: 18px; padding: 5px; }
 
-        /* Main Chat */
         .main-chat { flex: 1; display: flex; flex-direction: column; height: 100dvh; position: relative; }
+        
+        /* Header & Select Personality */
         .header { 
             height: 70px; background: rgba(15,15,21,0.9); backdrop-filter: blur(10px); 
-            border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; 
+            border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 15px; 
         }
-        .chat-window { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 20px; }
+        .persona-selector {
+            background: #1a1a2e; color: var(--primary); border: 1px solid var(--primary);
+            padding: 5px 10px; border-radius: 10px; font-weight: bold; outline: none; cursor: pointer;
+        }
+
+        .chat-window { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
         
-        /* Bubbles */
         .bubble { 
-            max-width: 85%; padding: 15px; border-radius: 20px; font-size: 16px; line-height: 1.6;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3); position: relative; animation: slideUp 0.3s ease;
+            max-width: 85%; padding: 12px 18px; border-radius: 18px; font-size: 15px; line-height: 1.5;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2); animation: slide 0.3s ease;
         }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .bot { background: var(--surface); border: 1px solid var(--border); align-self: flex-start; color: #fff; border-bottom-right-radius: 2px; }
-        .user { background: linear-gradient(135deg, var(--primary), #4c1d95); align-self: flex-end; color: #fff; border-bottom-left-radius: 2px; }
+        @keyframes slide { from { opacity: 0; transform: translateY(10px); } }
+        .bot { background: var(--surface); border: 1px solid var(--border); align-self: flex-start; border-bottom-right-radius: 2px; }
+        .user { background: linear-gradient(135deg, var(--primary), #4c1d95); align-self: flex-end; border-bottom-left-radius: 2px; }
 
-        /* Image Display */
-        .img-container { margin-top: 10px; border-radius: 15px; overflow: hidden; border: 2px solid var(--primary); position: relative; }
-        .img-container img { width: 100%; display: block; cursor: zoom-in; }
-        .img-actions { 
-            display: flex; gap: 10px; background: rgba(0,0,0,0.7); padding: 8px; 
-            justify-content: center; border-top: 1px solid var(--primary);
-        }
-        .btn-img { 
-            background: var(--primary); border: none; color: white; padding: 5px 15px; 
-            border-radius: 8px; font-size: 12px; cursor: pointer; font-weight: bold;
-        }
-
-        /* Input Area */
-        .footer { padding: 20px; }
+        .footer { padding: 15px; background: transparent; }
         .input-bar { 
             background: rgba(30,30,45,0.95); border: 2px solid var(--border); 
-            border-radius: 18px; padding: 10px 15px; display: flex; align-items: center; gap: 10px;
+            border-radius: 15px; padding: 8px 15px; display: flex; align-items: center; gap: 10px;
         }
-        textarea { flex: 1; background: transparent; border: none; color: #fff; resize: none; outline: none; font-size: 16px; height: 30px; }
+        textarea { flex: 1; background: transparent; border: none; color: #fff; resize: none; outline: none; height: 24px; font-size: 16px; }
 
-        /* Theme Gallery Grid */
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; justify-content: center; align-items: center; z-index: 2000; }
-        .modal-content { background: #111; width: 95%; max-width: 700px; padding: 25px; border-radius: 25px; border: 2px solid var(--primary); }
-        .theme-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; max-height: 500px; overflow-y: auto; padding: 10px; }
-        .theme-box { 
-            aspect-ratio: 1/1; border-radius: 15px; cursor: pointer; display: flex; flex-direction: column; 
-            justify-content: flex-end; padding: 10px; font-weight: 900; border: 3px solid transparent; position: relative;
-        }
-        .theme-box:hover { transform: scale(1.05); border-color: #fff; }
-        .theme-box span { 
-            background: rgba(0,0,0,0.8); color: white; padding: 4px; border-radius: 6px; 
-            font-size: 13px; text-align: center; width: 100%; border: 1px solid rgba(255,255,255,0.2);
-        }
+        .img-container { margin-top: 10px; border-radius: 12px; overflow: hidden; border: 1px solid var(--primary); }
+        .img-container img { width: 100%; display: block; }
 
-        .icon-btn { font-size: 28px; cursor: pointer; background: none; border: none; color: var(--text); }
-        #typing { color: var(--primary); font-size: 14px; display: none; margin: 5px 20px; font-weight: bold; }
-        .btn-action { background: var(--primary); padding: 12px; border: none; border-radius: 12px; color: #fff; font-weight: bold; cursor: pointer; width: 100%; }
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: center; z-index: 2000; }
+        .modal-content { background: #111; width: 90%; max-width: 500px; padding: 20px; border-radius: 20px; border: 1px solid var(--primary); }
+        
+        .btn-action { background: var(--primary); padding: 10px; border: none; border-radius: 10px; color: #fff; font-weight: bold; cursor: pointer; width: 100%; }
+        #typing { color: var(--primary); font-size: 13px; display: none; margin-left: 20px; }
     </style>
 </head>
 <body class="theme-1">
@@ -126,25 +99,31 @@
         <div class="brand"><h1>MIDO AI</h1></div>
         <button class="btn-action" onclick="createNewChat()">+ محادثة جديدة</button>
         <div class="chat-history" id="chat-history"></div>
-        <button class="btn-action" style="background: rgba(255,255,255,0.1); margin-top: 10px;" onclick="openThemes()">🎨 معرض الثيمات</button>
+        <button class="btn-action" style="background: rgba(255,255,255,0.05);" onclick="openThemes()">🎨 تغيير الثيم</button>
     </aside>
 
     <main class="main-chat">
         <header class="header">
-            <div style="display: flex; align-items: center; gap: 15px;">
-                <button class="icon-btn" onclick="toggleSidebar()">☰</button>
-                <h2 id="current-title" style="font-size: 20px; color: var(--primary); margin: 0;">ميدو برو</h2>
-            </div>
-            <button class="icon-btn" onclick="openTeach()">🤡</button>
+            <button class="icon-btn" style="background:none; border:none; color:white; font-size:24px;" onclick="toggleSidebar()">☰</button>
+            <select id="persona-select" class="persona-selector" onchange="updatePersona()">
+                <option value="general">🤖 ميدو (عام)</option>
+                <option value="gym">💪 مدرب جيم</option>
+                <option value="nutrition">🍎 أخصائي تغذية</option>
+                <option value="friend">❤️ صاحبي الانتيم</option>
+                <option value="saye">😎 ميدو الصايع</option>
+                <option value="dealer">🚬 الديلر</option>
+                <option value="teacher">👨‍🏫 المدرس</option>
+            </select>
+            <button class="icon-btn" style="background:none; border:none; font-size:24px;" onclick="openTeach()">🤡</button>
         </header>
 
         <div class="chat-window" id="chat-win"></div>
-        <div id="typing">ميدو بيرسم/بيفكر... ✨</div>
+        <div id="typing">ميدو بيجهز الرد... ✨</div>
 
         <footer class="footer">
             <div class="input-bar">
-                <textarea id="msg-input" placeholder="اطلب صورة أو دردش مع ميدو..." rows="1"></textarea>
-                <button class="icon-btn" style="color: var(--primary);" onclick="sendMessage()">
+                <textarea id="msg-input" placeholder="اكتب رسالتك هنا..." rows="1"></textarea>
+                <button onclick="sendMessage()" style="background:none; border:none; color:var(--primary); cursor:pointer;">
                     <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
                 </button>
             </div>
@@ -154,17 +133,17 @@
 
 <div id="theme-modal" class="modal" onclick="this.style.display='none'">
     <div class="modal-content" onclick="event.stopPropagation()">
-        <h2 style="text-align: center; color: var(--primary); margin-bottom: 20px;">اختر ثيم "طرش" 🔥</h2>
-        <div class="theme-grid" id="theme-grid"></div>
+        <h3 style="color:var(--primary); text-align:center;">اختر الثيم</h3>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;" id="theme-list"></div>
     </div>
 </div>
 
 <div id="teach-modal" class="modal" onclick="this.style.display='none'">
     <div class="modal-content" onclick="event.stopPropagation()">
-        <h2 style="text-align: center; color: var(--primary); margin-bottom: 20px;">علم ميدو (رد تلقائي) 🤡</h2>
-        <input type="text" id="teach-q" style="width:100%; padding:15px; background:#1a1a1a; color:#fff; border-radius:10px; border:1px solid var(--primary); margin-bottom:10px;" placeholder="لو قولتلك كذا...">
-        <textarea id="teach-a" style="width:100%; padding:15px; background:#1a1a1a; color:#fff; border-radius:10px; border:1px solid var(--primary); margin-bottom:10px;" rows="3" placeholder="رد عليا بـ كذا..."></textarea>
-        <button class="btn-action" onclick="saveMemory()">حفظ في عقل ميدو</button>
+        <h3 style="color:var(--primary); text-align:center;">علم ميدو ردود جديدة</h3>
+        <input type="text" id="teach-q" placeholder="لو قولتلك..." style="width:100%; margin-bottom:10px; padding:10px; background:#222; border:1px solid var(--border); color:#fff; border-radius:10px;">
+        <textarea id="teach-a" placeholder="رد عليا بـ..." style="width:100%; margin-bottom:10px; padding:10px; background:#222; border:1px solid var(--border); color:#fff; border-radius:10px;"></textarea>
+        <button class="btn-action" onclick="saveMemory()">حفظ في الذاكرة</button>
     </div>
 </div>
 
@@ -172,24 +151,44 @@
     let db;
     let currentChatId = null;
     let brainMemory = [];
-    const SYSTEM_PROMPT = "أنت ميدو (MIDO AI). برنس ومصري. لو حد طلب صورة، ابدأ الرد بـ 'خد دي يا وحش...'. صانعك هو المطور ميدو (+201124680211).";
+    
+    // تعريف الشخصيات
+    const personas = {
+        general: "أنت ميدو (MIDO AI). شخص ذكي، مصري، برنس في نفسك. ساعد المستخدم بأي طريقة.",
+        gym: "أنت كوتش جيم مصري عاش وحش. كلامك كله تحفيز وعن الفورمة والبروتين والعدات. شجع المستخدم يتحرك!",
+        nutrition: "أنت دكتور تغذية مصري شاطر. بتكره السكر والزيوت المهدرجة. أي حد يسألك عن أكل انصحه بالصحي بس بلهجة مصرية.",
+        friend: "أنت صاحب المستخدم الانتيم. اتكلم بلهجة شوارع مصرية لذيذة، اسمع منه وواسييه أو اضحك معاه.",
+        saye: "أنت ميدو الصايع. لسانك زفر شوية، فاهم الدنيا، بتتعامل بمبدأ 'خلصانة بشياكة' ومحدش بياكل عليك حق.",
+        dealer: "أنت ديلر معلومات (بشكل كوميدي). كلامك فيه غموض وسرية، بتتعامل كأنك بتسلم بضاعة 'ممنوعة' وهي مجرد معلومات.",
+        teacher: "أنت مدرس مصري برنس. بتشرح الحاجة بضمير بس بتبسطها جداً وبتستخدم أمثلة من حياتنا اليومية."
+    };
 
-    const request = indexedDB.open("MidoLegendDB", 1);
+    const request = indexedDB.open("MidoLegendPWA", 2);
     request.onupgradeneeded = (e) => {
         db = e.target.result;
-        db.createObjectStore('chats', { keyPath: 'id' });
-        db.createObjectStore('brain', { keyPath: 'q' });
-        db.createObjectStore('config', { keyPath: 'key' });
+        if(!db.objectStoreNames.contains('chats')) db.createObjectStore('chats', { keyPath: 'id' });
+        if(!db.objectStoreNames.contains('brain')) db.createObjectStore('brain', { keyPath: 'q' });
+        if(!db.objectStoreNames.contains('config')) db.createObjectStore('config', { keyPath: 'key' });
     };
     request.onsuccess = (e) => { db = e.target.result; initApp(); };
 
     function initApp() {
+        // تحميل الثيم المفضل
         db.transaction("config").objectStore("config").get("theme").onsuccess = (e) => {
             if(e.target.result) document.body.className = e.target.result.value;
+        };
+        // تحميل الشخصية المفضلة
+        db.transaction("config").objectStore("config").get("persona").onsuccess = (e) => {
+            if(e.target.result) document.getElementById('persona-select').value = e.target.result.value;
         };
         db.transaction("brain").objectStore("brain").getAll().onsuccess = (e) => { brainMemory = e.target.result; };
         loadChats();
         renderThemes();
+    }
+
+    function updatePersona() {
+        const val = document.getElementById('persona-select').value;
+        db.transaction("config", "readwrite").objectStore("config").put({key: "persona", value: val});
     }
 
     function loadChats() {
@@ -201,7 +200,7 @@
                 const div = document.createElement('div');
                 div.className = `chat-item ${chat.id === currentChatId ? 'active' : ''}`;
                 div.onclick = () => openChat(chat.id);
-                div.innerHTML = `<span>${chat.title}</span><span class="del-chat" onclick="deleteChat(${chat.id}, event)">🗑️</span>`;
+                div.innerHTML = `<span>${chat.title}</span><span onclick="deleteChat(${chat.id}, event)">🗑️</span>`;
                 history.appendChild(div);
             });
             if(chats.length > 0 && !currentChatId) openChat(chats[0].id);
@@ -211,7 +210,7 @@
 
     function createNewChat() {
         const id = Date.now();
-        const chat = { id, title: "محادثة جديدة", messages: [{ role: 'assistant', content: "أنا ميدو يا زميلي.. اؤمرني!" }] };
+        const chat = { id, title: "محادثة جديدة", messages: [{ role: 'assistant', content: "أنا ميدو معاك.. أؤمر يا وحش!" }] };
         db.transaction("chats", "readwrite").objectStore("chats").add(chat).oncomplete = () => {
             currentChatId = id;
             loadChats();
@@ -223,15 +222,10 @@
         db.transaction("chats").objectStore("chats").get(id).onsuccess = (e) => {
             const chat = e.target.result;
             if(!chat) return;
-            document.getElementById('current-title').innerText = chat.title;
             const win = document.getElementById('chat-win');
             win.innerHTML = '';
-            chat.messages.forEach(m => {
-                if(m.image) appendImageUI(m.content, m.image, m.role === 'user' ? 'user' : 'bot');
-                else appendBubbleUI(m.content, m.role === 'user' ? 'user' : 'bot');
-            });
+            chat.messages.forEach(m => appendBubbleUI(m.content, m.role === 'user' ? 'user' : 'bot', m.image));
             loadChats();
-            if(window.innerWidth <= 900) toggleSidebar();
         };
     }
 
@@ -249,120 +243,81 @@
         store.get(currentChatId).onsuccess = async (e) => {
             const chat = e.target.result;
             chat.messages.push({ role: 'user', content: text });
-            if(chat.title === "محادثة جديدة") chat.title = text.substring(0, 20);
+            if(chat.title === "محادثة جديدة") chat.title = text.substring(0, 15);
 
-            // تشييك التعلم
+            // تشييك الذاكرة الشخصية
             const learned = brainMemory.find(m => text.toLowerCase().includes(m.q));
             if(learned) {
                 setTimeout(() => botResponse(chat, learned.a), 500);
                 return;
             }
 
-            // تشييك الصور
-            if(['ارسملي', 'تخيل', 'ارسم', 'صورة ل'].some(k => text.includes(k))) {
-                const prompt = text.replace(/ارسملي|تخيل|ارسم|صورة ل/g, '').trim();
-                const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=1024&height=1024&nologo=true`;
-                botResponse(chat, `أحلى صورة ${prompt} ليك يا برنس:`, url);
+            // تشييك طلب الصور
+            if(['ارسملي', 'صورة لـ', 'تخيل'].some(k => text.includes(k))) {
+                const p = text.replace(/ارسملي|صورة لـ|تخيل/g, '').trim();
+                const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(p)}?width=1024&height=1024&nologo=true`;
+                botResponse(chat, "خد دي يا وحش...", url);
             } else {
+                // طلب الرد من AI مع الشخصية المختار
+                const currentPersona = document.getElementById('persona-select').value;
                 try {
                     const res = await fetch('https://text.pollinations.ai/', {
                         method: 'POST',
                         headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify({
-                            messages: [{role: 'system', content: SYSTEM_PROMPT}, ...chat.messages.slice(-5)],
+                            messages: [
+                                {role: 'system', content: personas[currentPersona] + " رد بالعامية المصرية دائماً وبشكل مختصر وجذاب."},
+                                ...chat.messages.slice(-6)
+                            ],
                             model: 'openai'
                         })
                     });
                     botResponse(chat, await res.text());
-                } catch { botResponse(chat, "النت واقع يا زميلي!"); }
+                } catch { botResponse(chat, "النت بعافية شوية يا زميلي!"); }
             }
         };
     }
 
-    function botResponse(chat, text, imageUrl = null) {
+    function botResponse(chat, text, img = null) {
         document.getElementById('typing').style.display = 'none';
         const msg = { role: 'assistant', content: text };
-        if(imageUrl) msg.image = imageUrl;
+        if(img) msg.image = img;
         chat.messages.push(msg);
-        
-        if(imageUrl) appendImageUI(text, imageUrl, 'bot');
-        else appendBubbleUI(text, 'bot');
-
+        appendBubbleUI(text, 'bot', img);
         db.transaction("chats", "readwrite").objectStore("chats").put(chat).oncomplete = loadChats;
     }
 
-    function appendBubbleUI(text, type) {
+    function appendBubbleUI(text, type, img = null) {
         const win = document.getElementById('chat-win');
         const div = document.createElement('div');
         div.className = `bubble ${type}`;
         div.innerText = text;
+        if(img) {
+            const imgDiv = document.createElement('div');
+            imgDiv.className = 'img-container';
+            imgDiv.innerHTML = `<img src="${img}" loading="lazy">`;
+            div.appendChild(imgDiv);
+        }
         win.appendChild(div);
         win.scrollTop = win.scrollHeight;
-    }
-
-    function appendImageUI(text, url, type) {
-        const win = document.getElementById('chat-win');
-        const div = document.createElement('div');
-        div.className = `bubble ${type}`;
-        div.innerHTML = `<div>${text}</div>
-            <div class="img-container">
-                <img src="${url}" id="img-${Date.now()}">
-                <div class="img-actions">
-                    <button class="btn-img" onclick="downloadImg('${url}')">تحميل ⬇️</button>
-                    <button class="btn-img" onclick="shareImg('${url}')">مشاركة 📤</button>
-                </div>
-            </div>`;
-        win.appendChild(div);
-        win.scrollTop = win.scrollHeight;
-    }
-
-    // وظيفة إرسال الصورة كـ "صورة" حقيقية
-    async function shareImg(url) {
-        try {
-            const response = await fetch(url);
-            const blob = await response.blob();
-            const file = new File([blob], 'mido_image.jpg', { type: blob.type });
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                await navigator.share({ files: [file], title: 'صورة من ميدو AI', text: 'بص ميدو رسملي إيه!' });
-            } else { alert("جهازك مش بيدعم مشاركة الملفات، حملها وابعتها يدوي."); }
-        } catch (e) { alert("حدث خطأ في المشاركة."); }
-    }
-
-    async function downloadImg(url) {
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `MIDO_${Date.now()}.jpg`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
     }
 
     function renderThemes() {
         const themes = [
-            {id:1, n:"البنفسجي", c:"#8b5cf6", b:"#050508"}, {id:2, n:"ماتريكس", c:"#00ff41", b:"#000a00"},
-            {id:3, n:"سايبر", c:"#ff00ff", b:"#0a001a"}, {id:4, n:"محيط", c:"#0088ff", b:"#000814"},
-            {id:5, n:"بركان", c:"#ff4400", b:"#0f0500"}, {id:6, n:"ذهب", c:"#ffd700", b:"#0d0d0d"},
-            {id:7, n:"سيان", c:"#00ffff", b:"#001111"}, {id:8, n:"دموي", c:"#ff0000", b:"#1a0000"},
-            {id:9, n:"غابة", c:"#adff2f", b:"#051a05"}, {id:10, n:"كهربا", c:"#ffff00", b:"#1a1a00"},
-            {id:11, n:"ملكي", c:"#4169e1", b:"#00001a"}, {id:12, n:"وردي", c:"#ff69b4", b:"#1a000d"},
-            {id:13, n:"قهوة", c:"#d2691e", b:"#140a00"}, {id:14, n:"فضي", c:"#c0c0c0", b:"#0a0a0a"},
-            {id:15, n:"نار", c:"#ff8c00", b:"#1a0800"}, {id:16, n:"فضاء", c:"#ffffff", b:"#000000"},
-            {id:17, n:"زمرد", c:"#2ecc71", b:"#020b02"}, {id:18, n:"سماوي", c:"#5dade2", b:"#0a0e14"},
-            {id:19, n:"لافندر", c:"#af7ac5", b:"#120b1a"}, {id:20, n:"تنين", c:"#e74c3c", b:"#17202a"}
+            {id:1, n:"بنفسجي", c:"#8b5cf6"}, {id:2, n:"ماتريكس", c:"#00ff41"},
+            {id:3, n:"سايبر", c:"#ff00ff"}, {id:8, n:"دموي", c:"#ff0000"}
         ];
-        const grid = document.getElementById('theme-grid');
-        grid.innerHTML = '';
+        const list = document.getElementById('theme-list');
         themes.forEach(t => {
-            const box = document.createElement('div');
-            box.className = 'theme-box';
-            box.style.backgroundColor = t.b;
-            box.style.borderColor = t.c;
-            box.innerHTML = `<span style="color:${t.c}">${t.n}</span>`;
-            box.onclick = () => {
+            const btn = document.createElement('button');
+            btn.className = 'btn-action';
+            btn.style.background = t.c;
+            btn.innerText = t.n;
+            btn.onclick = () => {
                 document.body.className = `theme-${t.id}`;
                 db.transaction("config", "readwrite").objectStore("config").put({key: "theme", value: `theme-${t.id}`});
             };
-            grid.appendChild(box);
+            list.appendChild(btn);
         });
     }
 
@@ -371,24 +326,29 @@
         const a = document.getElementById('teach-a').value.trim();
         if(!q || !a) return;
         db.transaction("brain", "readwrite").objectStore("brain").put({q, a}).oncomplete = () => {
-            db.transaction("brain").objectStore("brain").getAll().onsuccess = (e) => brainMemory = e.target.result;
-            document.getElementById('teach-modal').style.display = 'none';
-            alert("ميدو اتعلم!");
+            alert("ميدو فهم اللعبة!");
+            location.reload();
         };
     }
 
     function deleteChat(id, e) {
         e.stopPropagation();
-        if(!confirm("تمسح المحادثة؟")) return;
-        db.transaction("chats", "readwrite").objectStore("chats").delete(id).oncomplete = () => {
-            if(currentChatId === id) currentChatId = null;
-            loadChats();
-        };
+        db.transaction("chats", "readwrite").objectStore("chats").delete(id).oncomplete = loadChats;
     }
 
     function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
     function openThemes() { document.getElementById('theme-modal').style.display='flex'; }
     function openTeach() { document.getElementById('teach-modal').style.display='flex'; }
+
+    // ملف الـ Service Worker (للتشغيل كـ تطبيق)
+    if ('serviceWorker' in navigator) {
+        const sw = `
+            self.addEventListener('install', e => self.skipWaiting());
+            self.addEventListener('fetch', e => e.respondWith(fetch(e.request)));
+        `;
+        const blob = new Blob([sw], {type: 'text/javascript'});
+        navigator.serviceWorker.register(URL.createObjectURL(blob));
+    }
 </script>
 </body>
 </html>
