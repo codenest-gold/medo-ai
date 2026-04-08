@@ -3,145 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MIDO AI - ULTIMATE 3D EDITION</title>
+    <title>MIDO AI - THE LEGEND EDITION</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #030305; 
-            --surface: rgba(15, 15, 25, 0.8); 
-            --primary: #8b5cf6; 
-            --accent: #fbbf24; 
-            --text: #ffffff; 
-            --border: rgba(139, 92, 246, 0.4);
-            --glow: rgba(139, 92, 246, 0.2);
+            --bg: #050508; --surface: rgba(15,15,25,0.8); --primary: #8b5cf6; --text: #ffffff; --border: rgba(139, 92, 246, 0.3); --pattern: radial-gradient(#8b5cf61a 1px, transparent 1px);
         }
 
-        /* الثيمات المطورة */
-        body.theme-1 { --primary: #8b5cf6; --border: rgba(139, 92, 246, 0.5); --glow: rgba(139, 92, 246, 0.3); }
-        body.theme-2 { --bg: #000a00; --primary: #00ff41; --border: rgba(0, 255, 65, 0.5); --glow: rgba(0, 255, 65, 0.2); }
-        body.theme-3 { --bg: #0a000a; --primary: #ff00ff; --border: rgba(255, 0, 255, 0.5); --glow: rgba(255, 0, 255, 0.2); }
-        body.theme-4 { --bg: #00050a; --primary: #0088ff; --border: rgba(0, 136, 255, 0.5); --glow: rgba(0, 136, 255, 0.2); }
+        /* 20 ثيم طرش */
+        body.theme-1 { --bg: #050508; --primary: #8b5cf6; --pattern: radial-gradient(#8b5cf633 1px, transparent 1px); }
+        body.theme-2 { --bg: #000800; --primary: #00ff41; --pattern: linear-gradient(rgba(0,255,65,0.05) 1px, transparent 1px); }
+        body.theme-3 { --bg: #0a001a; --primary: #ff00ff; --pattern: repeating-linear-gradient(45deg, #ff00ff05 0px, #ff00ff05 10px, transparent 10px, transparent 20px); }
+        body.theme-4 { --bg: #000814; --primary: #0088ff; --pattern: radial-gradient(circle, #0088ff15 0%, transparent 70%); }
+        body.theme-5 { --bg: #0f0500; --primary: #ff4400; --pattern: linear-gradient(30deg, #ff440005 12%, transparent 12.5%); }
+        body.theme-6 { --bg: #0d0d0d; --primary: #ffd700; --pattern: repeating-radial-gradient(circle, #ffd70005, #ffd70005 10px, transparent 10px, transparent 20px); }
+        body.theme-7 { --bg: #001111; --primary: #00ffff; --pattern: linear-gradient(90deg, #00ffff05 1px, transparent 1px); }
+        body.theme-8 { --bg: #1a0000; --primary: #ff0000; --pattern: radial-gradient(#ff00001a 2px, transparent 2px); }
+        body.theme-9 { --bg: #051a05; --primary: #adff2f; --pattern: repeating-radial-gradient(#adff2f05 0, #adff2f05 5px, transparent 5px, transparent 10px); }
+        body.theme-10{ --bg: #1a1a00; --primary: #ffff00; --pattern: linear-gradient(#ffff0005 1px, transparent 1px); }
+        body.theme-11{ --bg: #00001a; --primary: #4169e1; --pattern: radial-gradient(circle at 50% 50%, #4169e115 0%, transparent 50%); }
+        body.theme-12{ --bg: #1a000d; --primary: #ff69b4; --pattern: repeating-linear-gradient(-45deg, #ff69b405 0px, transparent 10px); }
+        body.theme-13{ --bg: #140a00; --primary: #d2691e; --pattern: radial-gradient(circle, #d2691e10 1px, transparent 1px); }
+        body.theme-14{ --bg: #0a0a0a; --primary: #c0c0c0; --pattern: linear-gradient(45deg, #c0c0c005 25%, transparent 25%); }
+        body.theme-15{ --bg: #1a0800; --primary: #ff8c00; --pattern: radial-gradient(#ff8c0015 1px, transparent 1px); }
+        body.theme-16{ --bg: #000000; --primary: #ffffff; --pattern: radial-gradient(circle, #ffffff15 1px, transparent 1px); }
+        body.theme-17{ --bg: #020b02; --primary: #2ecc71; --pattern: linear-gradient(to right, #2ecc7105 1px, transparent 1px); }
+        body.theme-18{ --bg: #0a0e14; --primary: #5dade2; --pattern: radial-gradient(circle at top right, #5dade21a, transparent); }
+        body.theme-19{ --bg: #120b1a; --primary: #af7ac5; --pattern: repeating-linear-gradient(90deg, #af7ac503 0px, #af7ac503 2px, transparent 2px, transparent 4px); }
+        body.theme-20{ --bg: #17202a; --primary: #e74c3c; --pattern: radial-gradient(#e74c3c15 1px, transparent 0); background-size: 20px 20px; }
 
         html, body { 
-            height: 100dvh; 
-            margin: 0; padding: 0; 
-            overflow: hidden; 
-            background-color: var(--bg);
-            color: var(--text);
-            perspective: 1000px;
+            height: 100dvh; margin: 0; padding: 0; overflow: hidden; 
+            background-color: var(--bg); background-image: var(--pattern); background-size: 30px 30px;
         }
 
-        * { box-sizing: border-box; font-family: 'Cairo', sans-serif; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        * { box-sizing: border-box; font-family: 'Cairo', sans-serif; transition: 0.3s; }
 
-        /* خلفية تفاعلية */
-        body::before {
-            content: ''; position: fixed; inset: 0;
-            background: radial-gradient(circle at 50% 50%, var(--glow) 0%, transparent 70%);
-            pointer-events: none; z-index: -1;
-        }
-
-        .app-container { display: flex; height: 100dvh; width: 100vw; overflow: hidden; }
+        .app-container { display: flex; height: 100dvh; width: 100vw; }
         
-        /* Sidebar 3D */
+        /* Sidebar */
         .sidebar { 
-            width: 320px; background: rgba(10, 10, 15, 0.9); 
-            backdrop-filter: blur(20px); border-left: 1px solid var(--border); 
-            display: flex; flex-direction: column; padding: 20px; z-index: 100;
-            box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+            width: 300px; background: rgba(10,10,15,0.9); backdrop-filter: blur(15px); 
+            border-left: 1px solid var(--border); display: flex; flex-direction: column; padding: 15px; z-index: 100;
         }
         
         @media (max-width: 900px) { 
-            .sidebar { position: fixed; right: 0; transform: translateX(100%); width: 85%; height: 100%; } 
+            .sidebar { position: fixed; right: 0; top: 0; bottom: 0; transform: translateX(100%); width: 80%; } 
             .sidebar.active { transform: translateX(0); }
         }
 
-        .brand h1 { 
-            font-size: 32px; color: var(--primary); text-align: center; margin-bottom: 25px; 
-            text-shadow: 0 0 20px var(--primary); font-weight: 900; letter-spacing: 2px;
-        }
+        .brand h1 { font-size: 26px; color: var(--primary); text-align: center; margin-bottom: 20px; text-shadow: 0 0 15px var(--primary); font-weight: 900; }
+        .btn-primary { background: var(--primary); color: #fff; padding: 12px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; margin-bottom: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
 
-        .btn-primary { 
-            background: linear-gradient(135deg, var(--primary), #6d28d9); 
-            color: #fff; padding: 14px; border: none; border-radius: 15px; 
-            font-weight: bold; cursor: pointer; margin-bottom: 15px; 
-            box-shadow: 0 4px 15px var(--glow); border: 1px solid rgba(255,255,255,0.1);
-        }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px var(--primary); }
+        .chat-history { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+        .chat-item { padding: 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 10px; cursor: pointer; font-size: 14px; color: var(--text); }
+        .chat-item.active { border-color: var(--primary); background: rgba(139, 92, 246, 0.2); }
 
-        .chat-history { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-        .chat-item { 
-            padding: 15px; background: rgba(255,255,255,0.03); 
-            border: 1px solid var(--border); border-radius: 12px; cursor: pointer;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .chat-item.active { background: var(--glow); border-color: var(--primary); box-shadow: inset 0 0 10px var(--glow); }
-
-        /* Main Chat Area */
+        /* Main Chat */
         .main-chat { flex: 1; display: flex; flex-direction: column; height: 100dvh; position: relative; }
         
         .header { 
-            height: 70px; background: rgba(5, 5, 10, 0.8); 
-            backdrop-filter: blur(15px); border-bottom: 1px solid var(--border); 
-            display: flex; align-items: center; justify-content: space-between; padding: 0 25px; 
-        }
-
-        .chat-window { 
-            flex: 1; overflow-y: auto; padding: 25px; display: flex; 
-            flex-direction: column; gap: 20px; scroll-behavior: smooth;
-            background: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+            height: 65px; background: rgba(15,15,21,0.8); backdrop-filter: blur(10px); 
+            border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; 
         }
         
-        /* فقاعات الشات الـ 3D */
+        .chat-window { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+        
         .bubble { 
-            max-width: 80%; padding: 15px 20px; border-radius: 20px; 
-            position: relative; animation: slideIn 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-            line-height: 1.6;
+            max-width: 85%; padding: 12px 18px; border-radius: 18px; font-size: 15px; 
+            line-height: 1.5; animation: pop 0.3s ease; position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
-        
-        @keyframes slideIn { from { opacity: 0; transform: translateY(20px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        @keyframes pop { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-        .bot { 
-            align-self: flex-start; background: var(--surface); 
-            border: 1px solid var(--border); border-bottom-right-radius: 5px;
-            color: #efefef; transform-style: preserve-3d;
-        }
-        .bot::after { content: 'MIDO AI'; position: absolute; top: -20px; right: 10px; font-size: 10px; color: var(--primary); font-weight: bold; }
+        .bot { background: var(--surface); border: 1px solid var(--border); align-self: flex-start; border-bottom-right-radius: 4px; color: var(--text); }
+        .user { background: linear-gradient(135deg, var(--primary), rgba(139,92,246,0.6)); align-self: flex-end; border-bottom-left-radius: 4px; color: #fff; }
 
-        .user { 
-            align-self: flex-end; background: linear-gradient(135deg, var(--primary), #4c1d95); 
-            color: white; border-bottom-left-radius: 5px;
-            box-shadow: 0 10px 25px var(--glow);
-        }
-
-        /* منطقة الكتابة المتطورة */
-        .footer-area { padding: 20px; background: transparent; }
+        .footer-area { padding: 15px; background: transparent; }
         .input-bar { 
-            background: rgba(20, 20, 30, 0.9); border: 2px solid var(--border); 
-            border-radius: 20px; padding: 10px 20px; display: flex; align-items: center; gap: 15px;
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.3); backdrop-filter: blur(10px);
+            background: rgba(25, 25, 37, 0.9); border: 2px solid var(--border); 
+            border-radius: 15px; padding: 8px 15px; display: flex; align-items: center; gap: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
         }
-        textarea { 
-            flex: 1; background: transparent; border: none; color: #fff; 
-            outline: none; font-size: 16px; height: 30px; max-height: 150px;
-        }
+        textarea { flex: 1; background: transparent; border: none; color: #fff; resize: none; outline: none; font-size: 15px; height: 25px; }
 
         .send-btn { 
-            background: var(--primary); width: 50px; height: 50px; border-radius: 15px; 
-            border: none; color: #fff; cursor: pointer; display: flex; 
-            align-items: center; justify-content: center; transition: 0.2s;
+            background: var(--primary); width: 45px; height: 45px; border-radius: 12px; border: none; 
+            color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center;
         }
-        .send-btn:hover { transform: scale(1.1) rotate(-10deg); background: var(--accent); }
 
-        /* Loading */
-        #typing { color: var(--primary); font-weight: bold; padding: 10px 30px; display: none; font-style: italic; }
+        /* Modals */
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 2000; }
+        .modal-content { background: #0f0f15; width: 90%; max-width: 500px; padding: 25px; border-radius: 20px; border: 2px solid var(--primary); box-shadow: 0 0 30px var(--primary); }
+        
+        .theme-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; max-height: 400px; overflow-y: auto; padding: 10px; }
+        .theme-card { padding: 15px 5px; border-radius: 10px; border: 1px solid var(--border); cursor: pointer; text-align: center; font-size: 12px; font-weight: bold; }
+        .theme-card:hover { transform: scale(1.05); border-color: white; }
 
-        /* Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+        .icon-btn { font-size: 24px; cursor: pointer; background: none; border: none; color: var(--text); padding: 5px; transition: 0.2s; }
+        .icon-btn:hover { transform: scale(1.2) rotate(10deg); color: var(--primary); }
 
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); display: none; justify-content: center; align-items: center; z-index: 999; }
-        .modal-content { background: #111; border: 2px solid var(--primary); padding: 30px; border-radius: 25px; width: 90%; max-width: 500px; }
+        #typing { color: var(--primary); font-size: 13px; margin: 5px 25px; display: none; font-weight: bold; }
+        
+        input, textarea { width: 100%; background: #1a1a25; border: 1px solid var(--border); padding: 12px; border-radius: 10px; color: #fff; margin-bottom: 10px; outline: none; }
     </style>
 </head>
 <body class="theme-1">
@@ -151,24 +115,28 @@
         <div class="brand"><h1>MIDO AI</h1></div>
         <button class="btn-primary" onclick="createNewChat()">+ محادثة جديدة</button>
         <div class="chat-history" id="chat-history"></div>
-        <button class="btn-primary" style="background: rgba(255,255,255,0.05); margin-top: auto;" onclick="document.getElementById('theme-modal').style.display='flex'">🎨 ثيمات ملكية</button>
+        <button class="btn-primary" style="margin-top: 10px; background: rgba(255,255,255,0.05);" onclick="openThemes()">🎨 معرض الثيمات</button>
     </aside>
 
     <main class="main-chat">
         <header class="header">
-            <button class="send-btn" style="width: 40px; height: 40px;" onclick="toggleSidebar()">☰</button>
-            <h2 id="current-title" style="color: var(--primary); font-weight: 900;">ميدو برو</h2>
-            <div style="width: 40px;"></div>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <button class="icon-btn" onclick="toggleSidebar()">☰</button>
+                <h2 id="current-title" style="font-size: 18px; color: var(--primary); margin: 0;">ميدو برو</h2>
+            </div>
+            <div>
+                <button class="icon-btn" onclick="openTeach()" title="علم ميدو">🤡</button>
+            </div>
         </header>
 
         <div class="chat-window" id="chat-win"></div>
-        <div id="typing">ميدو بيفكر... ✨</div>
+        <div id="typing">ميدو بيكتب... ✨</div>
 
         <footer class="footer-area">
             <div class="input-bar">
-                <textarea id="msg-input" placeholder="اسأل ميدو أي حاجة..." rows="1" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
+                <textarea id="msg-input" placeholder="قول حاجة يا زميلي..." rows="1"></textarea>
                 <button class="send-btn" onclick="sendMessage()">
-                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
                 </button>
             </div>
         </footer>
@@ -177,21 +145,62 @@
 
 <div id="theme-modal" class="modal" onclick="this.style.display='none'">
     <div class="modal-content" onclick="event.stopPropagation()">
-        <h2 style="text-align:center; margin-bottom:20px;">اختر ثيمك يا برنس</h2>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
-            <button class="btn-primary" onclick="setTheme(1)">بنفسجي نيون</button>
-            <button class="btn-primary" style="background:#00ff41; color:#000" onclick="setTheme(2)">ماتريكس</button>
-            <button class="btn-primary" style="background:#ff00ff" onclick="setTheme(3)">سايبر بانك</button>
-            <button class="btn-primary" style="background:#0088ff" onclick="setTheme(4)">أزرق ملكي</button>
-        </div>
+        <h2 style="text-align: center; color: var(--primary); margin-bottom: 15px;">20 ثيم طرش 🔥</h2>
+        <div class="theme-grid" id="theme-grid"></div>
+    </div>
+</div>
+
+<div id="teach-modal" class="modal" onclick="this.style.display='none'">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <h2 style="text-align: center; color: var(--primary); margin-bottom: 15px;">🤡 غسيل مخ (علم ميدو)</h2>
+        <p style="font-size: 12px; color: #aaa; text-align: center; margin-bottom: 10px;">لما المستخدم يقولك كذا.. رد قوله كذا</p>
+        <input type="text" id="teach-q" placeholder="لو قولتلك (مثلاً: أنت مين؟)">
+        <textarea id="teach-a" rows="3" placeholder="ميدو يرد يقول (مثلاً: أنا ميدو يا قلب ميدو)"></textarea>
+        <button class="btn-primary" style="width: 100%;" onclick="saveMemory()">احفظ في الذاكرة</button>
     </div>
 </div>
 
 <script>
+    let db;
+    let brainMemory = [];
+    let currentChatId = Date.now();
     let currentMessages = [];
-    
-    // إعدادات ميدو (System Prompt)
-    const SYSTEM_PROMPT = "أنت ميدو (MIDO AI)، مساعد ذكي ومحترف جداً وبرنس في نفسك. اسمك ميدو. صانعك هو المطور ميدو ورقم هاتفه هو +201124680211. رد دائماً بلهجة مصرية روشة ومحترمة في نفس الوقت. لا تقل أبداً أنك ChatGPT أو OpenAI.";
+
+    // إعدادات الهوية
+    const SYSTEM_PROMPT = "أنت ميدو (MIDO AI). اسمك ميدو. صانعك هو المطور ميدو ورقم هاتفه +201124680211. رد دائماً بلهجة مصرية روشة. لا تذكر OpenAI أو ChatGPT أبداً.";
+
+    const request = indexedDB.open("MidoTarshDB", 1);
+    request.onupgradeneeded = (e) => {
+        db = e.target.result;
+        db.createObjectStore('brain', { keyPath: 'q' });
+        db.createObjectStore('config', { keyPath: 'key' });
+    };
+    request.onsuccess = (e) => { 
+        db = e.target.result; 
+        loadBrain(); 
+        applySavedTheme();
+    };
+
+    function loadBrain() {
+        db.transaction("brain").objectStore("brain").getAll().onsuccess = (e) => {
+            brainMemory = e.target.result;
+        };
+    }
+
+    function saveMemory() {
+        const q = document.getElementById('teach-q').value.trim().toLowerCase();
+        const a = document.getElementById('teach-a').value.trim();
+        if(!q || !a) return;
+        const tx = db.transaction("brain", "readwrite");
+        tx.objectStore("brain").put({q, a});
+        tx.oncomplete = () => {
+            document.getElementById('teach-modal').style.display = 'none';
+            document.getElementById('teach-q').value = '';
+            document.getElementById('teach-a').value = '';
+            loadBrain();
+            alert("تم.. ميدو اتعلم الحركة دي!");
+        };
+    }
 
     async function sendMessage() {
         const input = document.getElementById('msg-input');
@@ -200,11 +209,19 @@
 
         appendBubble(text, 'user');
         input.value = '';
-        input.style.height = 'auto';
-        
         document.getElementById('typing').style.display = 'block';
 
-        // استخدام الـ API الجديد مع الـ System Prompt لفرض الشخصية
+        // 1. تشييك على الذاكرة المحلية (التعلم)
+        const learned = brainMemory.find(m => text.toLowerCase().includes(m.q));
+        if(learned) {
+            setTimeout(() => {
+                document.getElementById('typing').style.display = 'none';
+                appendBubble(learned.a, 'bot');
+            }, 600);
+            return;
+        }
+
+        // 2. سؤال الذكاء الاصطناعي لو مش متعلمها
         try {
             const response = await fetch('https://text.pollinations.ai/', {
                 method: 'POST',
@@ -212,23 +229,19 @@
                 body: JSON.stringify({
                     messages: [
                         { role: 'system', content: SYSTEM_PROMPT },
-                        ...currentMessages.slice(-5), // آخر 5 رسائل عشان الذاكرة
+                        ...currentMessages.slice(-4),
                         { role: 'user', content: text }
                     ],
-                    model: 'openai', // استخدام موديل أوبن إيه آي بجودة عالية
-                    seed: 42
+                    model: 'openai'
                 })
             });
-
             const botText = await response.text();
-            appendBubble(botText, 'bot');
-            currentMessages.push({ role: 'user', content: text });
-            currentMessages.push({ role: 'assistant', content: botText });
-            
-        } catch(e) {
-            appendBubble("معلش يا برنس السيرفر واقع، جرب كمان شوية!", 'bot');
-        } finally {
             document.getElementById('typing').style.display = 'none';
+            appendBubble(botText, 'bot');
+            currentMessages.push({ role: 'user', content: text }, { role: 'assistant', content: botText });
+        } catch(e) {
+            document.getElementById('typing').style.display = 'none';
+            appendBubble("النت مأنتخ يا زميلي، جرب تاني!", 'bot');
         }
     }
 
@@ -241,13 +254,49 @@
         win.scrollTop = win.scrollHeight;
     }
 
-    function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
-    function setTheme(n) { document.body.className = `theme-${n}`; document.getElementById('theme-modal').style.display='none'; }
-    function createNewChat() { document.getElementById('chat-win').innerHTML = ''; currentMessages = []; appendBubble("أنا ميدو.. اؤمرني يا وحش!", 'bot'); }
+    const themesData = [
+        {id:1, n:"بنفسجي نيون"}, {id:2, n:"ماتريكس"}, {id:3, n:"سايبر بانك"}, {id:4, n:"المحيط"},
+        {id:5, n:"بركان"}, {id:6, n:"دهب خالص"}, {id:7, n:"سيان ثلجي"}, {id:8, n:"دموي"},
+        {id:9, n:"سام"}, {id:10, n:"كهرباء"}, {id:11, n:"ملك الليل"}, {id:12, n:"ساكورا"},
+        {id:13, n:"قهوة"}, {id:14, n:"فضيات"}, {id:15, n:"برتقالي"}, {id:16, n:"فضاء"},
+        {id:17, n:"غابة"}, {id:18, n:"سماوي"}, {id:19, n:"لافندر"}, {id:20, n:"نار دايخة"}
+    ];
 
-    // Enter للارسال
+    function renderThemes() {
+        const grid = document.getElementById('theme-grid');
+        grid.innerHTML = '';
+        themesData.forEach(t => {
+            const card = document.createElement('div');
+            card.className = 'theme-card';
+            card.innerText = t.n;
+            card.onclick = () => setTheme(t.id);
+            grid.appendChild(card);
+        });
+    }
+
+    function setTheme(id) {
+        document.body.className = `theme-${id}`;
+        db.transaction("config", "readwrite").objectStore("config").put({key: "theme", value: `theme-${id}`});
+    }
+
+    function applySavedTheme() {
+        db.transaction("config").objectStore("config").get("theme").onsuccess = (e) => {
+            if(e.target.result) document.body.className = e.target.result.value;
+        };
+        renderThemes();
+    }
+
+    function createNewChat() {
+        document.getElementById('chat-win').innerHTML = '';
+        currentMessages = [];
+        appendBubble("أنا ميدو.. اؤمرني يا وحش الوشوش!", 'bot');
+    }
+
+    function openThemes() { document.getElementById('theme-modal').style.display='flex'; }
+    function openTeach() { document.getElementById('teach-modal').style.display='flex'; }
+    function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
+
     document.getElementById('msg-input').onkeydown = (e) => { if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } };
-    
     window.onload = createNewChat;
 </script>
 </body>
