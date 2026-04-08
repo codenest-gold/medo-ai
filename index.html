@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MIDO AI v3.5 - النسخة الفاخرة المطورة</title>
+    <title>MIDO AI v3.5 - النسخة الفاخرة</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -17,71 +17,74 @@
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
         
+        /* ضبط الطول ليتناسب مع شاشات الموبايل والمتصفحات */
         html, body { 
             height: 100%; 
             width: 100%; 
             background: var(--bg); 
             color: var(--text); 
-            overflow: hidden; 
+            overflow: hidden; /* لمنع السكرول الخارجي */
         }
 
-        body { display: flex; }
-
-        /* Sidebar */
-        .sidebar { 
-            width: 280px; 
-            background: var(--surface); 
-            border-left: 1px solid var(--border); 
-            display: flex; 
-            flex-direction: column; 
+        body { 
+            display: grid; 
+            grid-template-columns: 280px 1fr; /* تقسيم الشاشة لسايدبار ومحتوى */
         }
-        
-        /* إخفاء السايدبار في الشاشات الصغيرة عشان ميخربش التصميم */
+
         @media (max-width: 768px) {
+            body { grid-template-columns: 1fr; } /* إخفاء السايدبار في الموبايل */
             .sidebar { display: none; }
         }
 
-        .brand { padding: 25px; font-size: 24px; font-weight: 900; color: var(--primary); letter-spacing: 2px; text-align: center; border-bottom: 1px solid var(--border); }
-        .chat-list { flex: 1; overflow-y: auto; padding: 15px; }
-        .new-btn { margin: 15px; padding: 12px; background: var(--primary); border: none; border-radius: 12px; color: white; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .new-btn:hover { opacity: 0.8; transform: translateY(-2px); }
+        /* Sidebar */
+        .sidebar { 
+            background: var(--surface); 
+            border-left: 1px solid var(--border); 
+            display: flex; 
+            flex-direction: column;
+            height: 100vh;
+        }
+        .brand { padding: 25px; font-size: 24px; font-weight: 900; color: var(--primary); text-align: center; border-bottom: 1px solid var(--border); }
+        .new-btn { margin: 15px; padding: 12px; background: var(--primary); border: none; border-radius: 12px; color: white; font-weight: bold; cursor: pointer; }
 
-        /* Main Chat Area */
+        /* Main Chat Container */
         .main { 
-            flex: 1; 
             display: flex; 
             flex-direction: column; 
-            height: 100vh;
-            background: radial-gradient(circle at top right, #111, #050507); 
+            height: 100vh; /* طول الشاشة كاملة */
+            position: relative;
+            background: radial-gradient(circle at top right, #111, #050507);
         }
         
+        /* منطقة الرسائل */
         .chat-window { 
-            flex: 1; 
+            flex: 1; /* تأخذ كل المساحة المتاحة ماعدا منطقة الكتابة */
             padding: 20px; 
             overflow-y: auto; 
             display: flex; 
             flex-direction: column; 
-            gap: 20px;
-            scroll-behavior: smooth;
+            gap: 15px;
+            padding-bottom: 100px; /* مساحة أمان عشان الرسايل متداريش ورا مربع الكتابة */
         }
         
         .bubble { max-width: 85%; padding: 12px 18px; border-radius: 20px; font-size: 16px; line-height: 1.6; animation: slideUp 0.3s ease-out; word-wrap: break-word; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
         .bot { background: #1a1a22; align-self: flex-start; border-bottom-right-radius: 5px; border: 1px solid var(--border); }
-        .user { background: var(--user-bubble); align-self: flex-end; border-bottom-left-radius: 5px; box-shadow: 0 5px 15px rgba(124, 58, 237, 0.3); }
+        .user { background: var(--user-bubble); align-self: flex-end; border-bottom-left-radius: 5px; }
 
-        /* منطقة الكتابة - تم تدعيمها لعدم الاختفاء */
+        /* منطقة الكتابة - مثبتة في الأسفل */
         .input-area {
-            padding: 20px;
-            background: #101014;
+            position: absolute; /* تثبيت مطلق داخل الـ main */
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 15px 20px;
+            background: rgba(16, 16, 20, 0.98);
             border-top: 1px solid var(--border);
             display: flex;
-            align-items: flex-end;
-            gap: 12px;
-            flex-shrink: 0; /* منع العنصر من الانكماش والاختفاء */
-            position: relative;
-            z-index: 10;
+            align-items: center;
+            gap: 10px;
+            backdrop-filter: blur(10px);
+            z-index: 999; /* التأكد إنها فوق كل شيء */
         }
 
         .input-container {
@@ -89,12 +92,8 @@
             background: #1a1a22;
             border: 1px solid var(--border);
             border-radius: 15px;
-            padding: 10px 15px;
-            display: flex;
-            align-items: center;
+            padding: 8px 15px;
         }
-        
-        .input-container:focus-within { border-color: var(--primary); box-shadow: 0 0 10px rgba(192, 132, 252, 0.2); }
 
         textarea {
             width: 100%;
@@ -103,16 +102,16 @@
             color: white;
             resize: none;
             font-size: 16px;
-            max-height: 120px;
-            min-height: 24px;
+            max-height: 100px;
             outline: none;
             display: block;
+            line-height: 1.5;
         }
 
         .send-btn {
             background: var(--primary);
-            width: 48px;
-            height: 48px;
+            width: 45px;
+            height: 45px;
             border: none;
             border-radius: 12px;
             color: white;
@@ -120,14 +119,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: 0.2s;
             flex-shrink: 0;
         }
-        .send-btn:hover { transform: scale(1.05); background: #a855f7; }
-        .send-btn svg { width: 22px; height: 22px; fill: currentColor; }
 
-        .poem { text-align: center; color: #d8b4fe; font-style: italic; display: block; margin: 5px 0; }
-        #typing { display: none; padding: 10px 20px; font-size: 13px; color: var(--primary); background: rgba(0,0,0,0.2); }
+        #typing { position: absolute; bottom: 85px; right: 20px; font-size: 12px; color: var(--primary); display: none; }
+        
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -135,7 +132,6 @@
 <div class="sidebar">
     <div class="brand">MIDO AI</div>
     <button class="new-btn" onclick="location.reload()">+ محادثة جديدة</button>
-    <div class="chat-list" id="chat-list"></div>
 </div>
 
 <div class="main">
@@ -143,14 +139,14 @@
         <div class="bubble bot">إيه يا زميلي.. نورت الشات الفخم. أنا ميدو، اؤمرني عايز ندردش ولا أرسم لك صورة من خيالك؟</div>
     </div>
     
-    <div id="typing">ميدو بيفكر في الرد...</div>
+    <div id="typing">ميدو بيفكر...</div>
 
     <div class="input-area">
         <div class="input-container">
-            <textarea id="chat-in" placeholder="اكتب رسالتك هنا يا برنس..." rows="1" oninput="autoResize(this)"></textarea>
+            <textarea id="chat-in" placeholder="اكتب رسالتك هنا..." rows="1" oninput="autoResize(this)"></textarea>
         </div>
         <button class="send-btn" onclick="processInput()">
-            <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+            <svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
         </button>
     </div>
 </div>
@@ -158,19 +154,12 @@
 <script>
     const chatIn = document.getElementById('chat-in');
     const chatWindow = document.getElementById('chat-window');
-    const typingIndicator = document.getElementById('typing');
+    const typing = document.getElementById('typing');
 
-    function autoResize(textarea) {
-        textarea.style.height = 'auto';
-        textarea.style.height = textarea.scrollHeight + 'px';
+    function autoResize(t) {
+        t.style.height = 'auto';
+        t.style.height = (t.scrollHeight) + 'px';
     }
-
-    const poemResponse = `
-        <span class="poem">سألوني مين اللي صنعك يا ميدو؟</span>
-        <span class="poem">قلتلهم فنان، وعقله موش عادي..</span>
-        <span class="poem">من شركة <b>Codenest</b>، أصله وجودة وجديدو،</span>
-        <span class="poem">هو <b>"ميدو"</b>، العبقري، صاحب الأيادي..</span>
-    `;
 
     async function processInput() {
         const val = chatIn.value.trim();
@@ -180,37 +169,40 @@
         chatIn.value = "";
         chatIn.style.height = 'auto';
         
-        typingIndicator.style.display = 'block';
-        chatWindow.scrollTop = chatWindow.scrollHeight;
+        typing.style.display = 'block';
 
-        // الرد على سؤال "مين عملك"
-        if (val.includes("مين عملك") || val.includes("من صنعك") || val.includes("مين اللي عملك")) {
+        if (val.includes("مين عملك") || val.includes("من صنعك")) {
             setTimeout(() => {
-                typingIndicator.style.display = 'none';
-                addMsg(poemResponse, 'bot', true);
+                typing.style.display = 'none';
+                addMsg(`
+                    <div style="text-align:center; color:#d8b4fe; font-style:italic;">
+                        سألوني مين اللي صنعك يا ميدو؟<br>
+                        قلتلهم فنان، وعقله موش عادي..<br>
+                        من شركة <b>Codenest</b> أصله وجودة وجديدو<br>
+                        هو "ميدو" العبقري، صاحب الأيادي..
+                    </div>
+                `, 'bot', true);
             }, 800);
             return;
         }
 
-        // خاصية الرسم
         if (val.startsWith("ارسم") || val.startsWith("صورة")) {
             const imgUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(val)}?width=1024&height=1024&nologo=true`;
             setTimeout(() => {
-                typingIndicator.style.display = 'none';
-                addMsg(`<img src="${imgUrl}" style="width:100%; border-radius:10px; margin-top:10px;" onload="scrollToBottom()">`, 'bot', true);
+                typing.style.display = 'none';
+                addMsg(`<img src="${imgUrl}" style="width:100%; border-radius:10px; margin-top:5px;" onload="scrollBtm()">`, 'bot', true);
             }, 1500);
             return;
         }
 
-        // الرد العادي
         try {
             const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(val)}?model=openai`);
             const text = await res.text();
-            typingIndicator.style.display = 'none';
+            typing.style.display = 'none';
             addMsg(text, 'bot');
         } catch (e) {
-            typingIndicator.style.display = 'none';
-            addMsg("السيرفر هنج يا زميلي، جرب تاني.", 'bot');
+            typing.style.display = 'none';
+            addMsg("السيرفر واقع يا برنس، جرب كمان شوية.", 'bot');
         }
     }
 
@@ -220,11 +212,11 @@
         if (isHtml) div.innerHTML = content;
         else div.innerText = content;
         chatWindow.appendChild(div);
-        scrollToBottom();
+        scrollBtm();
     }
 
-    function scrollToBottom() {
-        chatWindow.scrollTop = chatWindow.scrollHeight;
+    function scrollBtm() {
+        chatWindow.scrollTo({ top: chatWindow.scrollHeight, behavior: 'smooth' });
     }
 
     chatIn.addEventListener('keypress', (e) => {
