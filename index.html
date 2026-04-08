@@ -3,196 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MIDO AI ROYAL V5.0 - النسخة الأسطورية</title>
+    <title>MIDO AI PRO - DATABASE EDITION</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #050508;
-            --surface: #0f0f15;
-            --primary: #8b5cf6;
-            --gold: #fbbf24;
-            --text: #ffffff;
-            --border: rgba(139, 92, 246, 0.3);
-            --font-size: 16px;
+            --bg: #050508; --surface: #0f0f15; --primary: #8b5cf6; --accent: #fbbf24; --text: #ffffff; --border: rgba(139, 92, 246, 0.3);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
-        
-        body, html { 
-            height: 100%; width: 100%; 
-            background-color: var(--bg); 
-            color: var(--text); 
-            overflow: hidden;
-        }
+        /* الـ 20 ثيم الملوك */
+        body.theme-1 { --bg: #050508; --primary: #8b5cf6; --border: #8b5cf650; }
+        body.theme-2 { --bg: #000000; --primary: #00ff41; --border: #00ff4150; }
+        body.theme-3 { --bg: #0b0e14; --primary: #ff0055; --border: #ff005550; }
+        body.theme-4 { --bg: #000d1a; --primary: #0088ff; --border: #0088ff50; }
+        body.theme-5 { --bg: #0a0500; --primary: #ff8800; --border: #ff880050; }
+        body.theme-6 { --bg: #000a05; --primary: #00ff88; --border: #00ff8850; }
+        body.theme-7 { --bg: #0d0d0d; --primary: #ffd700; --border: #ffd70050; }
+        body.theme-8 { --bg: #0f000f; --primary: #ff00ff; --border: #ff00ff50; }
+        body.theme-9 { --bg: #00001a; --primary: #ffffff; --border: #ffffff50; }
+        body.theme-10 { --bg: #1a0000; --primary: #ff4444; --border: #ff444450; }
+        body.theme-11 { --bg: #001a1a; --primary: #00ffff; --border: #00ffff50; }
+        body.theme-12 { --bg: #1a1a00; --primary: #ffff00; --border: #ffff0050; }
+        body.theme-13 { --bg: #0a0a0a; --primary: #888888; --border: #88888850; }
+        body.theme-14 { --bg: #00050a; --primary: #4444ff; --border: #4444ff50; }
+        body.theme-15 { --bg: #05000a; --primary: #aa00ff; --border: #aa00ff50; }
+        body.theme-16 { --bg: #0a0005; --primary: #ff00aa; --border: #ff00aa50; }
+        body.theme-17 { --bg: #1a0d00; --primary: #d2691e; --border: #d2691e50; }
+        body.theme-18 { --bg: #001a0d; --primary: #228b22; --border: #228b2250; }
+        body.theme-19 { --bg: #000000; --primary: #ffffff; --border: #333; }
+        body.theme-20 { --bg: #020205; --primary: #6366f1; --border: #6366f150; }
 
-        /* تخطيط الصفحة الأسطوري */
-        .app-wrapper {
-            display: grid;
-            grid-template-columns: 280px 1fr;
-            height: 100vh;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; transition: background 0.3s, border 0.3s; }
+        body, html { height: 100%; width: 100%; background-color: var(--bg); color: var(--text); overflow: hidden; }
+
+        .app-container { display: grid; grid-template-columns: 300px 1fr; height: 100vh; }
 
         @media (max-width: 900px) {
-            .app-wrapper { grid-template-columns: 1fr; }
+            .app-container { grid-template-columns: 1fr; }
             .sidebar { display: none; }
+            .sidebar.active { display: flex; position: fixed; right: 0; top: 0; bottom: 0; z-index: 100; width: 80%; box-shadow: -10px 0 30px rgba(0,0,0,0.8); }
         }
 
-        /* السايدبار */
-        .sidebar {
-            background: var(--surface);
-            border-left: 2px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            padding: 20px;
-            z-index: 10;
-        }
-
-        .brand-zone {
-            text-align: center; margin-bottom: 30px;
-        }
-        .brand-zone h1 { font-size: 32px; font-weight: 900; color: var(--primary); text-shadow: 0 0 20px rgba(139, 92, 246, 0.6); }
-
-        .side-btn {
-            background: rgba(255,255,255,0.05); border: 1px solid var(--border);
-            color: #fff; padding: 14px; border-radius: 12px; cursor: pointer;
-            transition: 0.3s; font-weight: bold; margin-bottom: 12px; display: flex; align-items: center; gap: 10px;
-        }
-        .side-btn:hover { background: var(--primary); transform: translateX(-5px); }
-
-        /* الشات الرئيسي */
-        .main-content {
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            position: relative;
-            background: radial-gradient(circle at top, #151025 0%, #050508 100%);
-        }
-
-        /* الهيدر */
-        .header {
-            height: 70px; background: rgba(15, 15, 21, 0.9);
-            backdrop-filter: blur(15px); border-bottom: 1px solid var(--border);
-            display: flex; align-items: center; justify-content: space-between; padding: 0 25px;
-            z-index: 5;
-        }
-
-        /* منطقة الرسائل */
-        .messages-area {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            scroll-behavior: smooth;
-        }
-
-        .bubble {
-            max-width: 80%; padding: 15px 20px; border-radius: 22px;
-            font-size: var(--font-size); line-height: 1.6; position: relative;
-            animation: slideIn 0.3s ease-out;
-        }
-        @keyframes slideIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-
-        .bot { background: var(--surface); border: 1px solid var(--border); align-self: flex-start; border-bottom-right-radius: 4px; }
-        .user { background: linear-gradient(135deg, #7c3aed, #c084fc); align-self: flex-end; border-bottom-left-radius: 4px; box-shadow: 0 10px 20px rgba(124, 58, 237, 0.3); }
-
-        .timestamp { font-size: 11px; opacity: 0.5; margin-top: 8px; display: block; }
-        .hidden-time .timestamp { display: none; }
-
-        /* منطقة الكتابة (الحل النهائي) */
-        .input-footer {
-            padding: 20px;
-            background: linear-gradient(to top, var(--bg) 80%, transparent);
-            z-index: 10;
-        }
-
-        .input-container {
-            background: #1a1a25; border: 2px solid var(--border);
-            border-radius: 20px; padding: 10px 15px; display: flex; align-items: center; gap: 12px;
-            box-shadow: 0 -5px 25px rgba(0,0,0,0.5);
-        }
-
-        textarea {
-            flex: 1; background: transparent; border: none; color: #fff;
-            resize: none; font-size: 16px; outline: none; max-height: 120px; min-height: 25px;
-        }
-
-        .send-trigger {
-            background: var(--primary); width: 50px; height: 50px; border-radius: 15px;
-            border: none; color: #fff; cursor: pointer; transition: 0.3s;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .send-trigger:hover { transform: scale(1.1); background: var(--gold); color: #000; }
-
-        /* النوافذ المنبثقة (Modals) */
-        .modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); backdrop-filter: blur(10px);
-            display: none; justify-content: center; align-items: center; z-index: 1000;
-        }
-        .modal-content {
-            background: var(--surface); width: 90%; max-width: 500px;
-            border-radius: 25px; border: 1px solid var(--gold); padding: 30px;
-            position: relative; animation: zoomIn 0.3s ease;
-        }
-        @keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        /* Sidebar */
+        .sidebar { background: var(--surface); border-left: 2px solid var(--border); display: flex; flex-direction: column; padding: 15px; }
+        .brand h1 { font-size: 28px; color: var(--primary); text-align: center; margin-bottom: 20px; text-shadow: 0 0 10px var(--primary); }
+        .new-chat-btn { background: var(--primary); color: #fff; padding: 15px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; margin-bottom: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
         
-        .close-modal { position: absolute; top: 15px; left: 15px; cursor: pointer; color: var(--gold); font-size: 24px; }
+        .chat-history { flex: 1; overflow-y: auto; margin: 10px 0; }
+        .chat-item { 
+            padding: 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); 
+            border-radius: 10px; margin-bottom: 8px; cursor: pointer; font-size: 14px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .chat-item:hover { background: var(--primary); color: #000; }
+        .chat-item.active { border-color: var(--accent); background: rgba(139, 92, 246, 0.2); }
+        .delete-chat { opacity: 0.3; font-size: 12px; padding: 5px; }
+        .delete-chat:hover { opacity: 1; color: #ff4444; }
 
-        /* إعدادات طرش */
-        .setting-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .switch { position: relative; display: inline-block; width: 50px; height: 24px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #333; transition: .4s; border-radius: 34px; }
-        .switch input:checked + .slider { background-color: var(--primary); }
-        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
-        .switch input:checked + .slider:before { transform: translateX(26px); }
+        /* Main Area */
+        .main-chat { display: flex; flex-direction: column; height: 100vh; position: relative; background: radial-gradient(circle at 50% 10%, rgba(139, 92, 246, 0.05), transparent); }
+        .header { height: 70px; background: rgba(15,15,21,0.9); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 10; }
 
-        .gallery-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-height: 400px; overflow-y: auto; }
-        .gallery-grid img { width: 100%; border-radius: 10px; border: 1px solid var(--border); }
+        .chat-window { flex: 1; overflow-y: auto; padding: 25px; display: flex; flex-direction: column; gap: 20px; }
+        .bubble { max-width: 85%; padding: 15px 20px; border-radius: 20px; font-size: 16px; line-height: 1.6; position: relative; animation: slideUp 0.3s ease; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .bot { background: var(--surface); border: 1px solid var(--border); align-self: flex-start; border-bottom-right-radius: 4px; box-shadow: 5px 5px 15px rgba(0,0,0,0.2); }
+        .user { background: linear-gradient(135deg, var(--primary), #c084fc); align-self: flex-end; border-bottom-left-radius: 4px; color: #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .time { font-size: 10px; opacity: 0.5; display: block; margin-top: 8px; }
 
-        #typing { color: var(--gold); font-size: 13px; margin: 5px 25px; display: none; }
+        /* Footer */
+        .footer-area { padding: 20px; background: linear-gradient(transparent, var(--bg) 40%); transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .footer-area.hidden { transform: translateY(150px); opacity: 0; pointer-events: none; }
+        
+        .input-bar { background: rgba(25, 25, 37, 0.95); border: 2px solid var(--border); border-radius: 18px; padding: 10px 15px; display: flex; align-items: center; gap: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        textarea { flex: 1; background: transparent; border: none; color: #fff; resize: none; outline: none; font-size: 16px; max-height: 150px; }
+        .send-btn { background: var(--primary); width: 48px; height: 48px; border-radius: 14px; border: none; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .send-btn:hover { transform: scale(1.05) rotate(-5deg); filter: brightness(1.2); }
+
+        /* Theme Modal */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: var(--surface); width: 90%; max-width: 500px; padding: 30px; border-radius: 25px; border: 1px solid var(--primary); box-shadow: 0 0 50px rgba(0,0,0,0.5); }
+        .theme-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-top: 25px; }
+        .theme-ball { width: 100%; height: 45px; border-radius: 12px; cursor: pointer; border: 2px solid rgba(255,255,255,0.1); transition: 0.3s; }
+        .theme-ball:hover { transform: scale(1.15); border-color: #fff; }
+
+        #typing { color: var(--accent); font-size: 13px; margin: 0 25px 10px; display: none; font-style: italic; }
+        .icon-btn { background: none; border: none; color: var(--text); font-size: 22px; cursor: pointer; padding: 8px; border-radius: 50%; transition: 0.2s; }
+        .icon-btn:hover { background: rgba(255,255,255,0.1); }
+        
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
     </style>
 </head>
-<body class="show-time">
+<body class="theme-1">
 
-<div class="app-wrapper">
-    <aside class="sidebar">
-        <div class="brand-zone">
-            <h1>MIDO AI</h1>
-            <p style="font-size: 12px; opacity: 0.6;">النسخة الملكية الأسطورية</p>
-        </div>
-        <button class="side-btn" onclick="location.reload()"><span>+</span> محادثة جديدة</button>
-        <button class="side-btn" onclick="toggleModal('gallery-modal')"><span>🖼️</span> المعرض الفني</button>
-        <button class="side-btn" onclick="toggleModal('settings-modal')"><span>⚙️</span> الإعدادات</button>
-        <div style="margin-top: auto; padding: 10px; background: rgba(139, 92, 246, 0.1); border-radius: 10px; text-align: center;">
-            <p style="color: var(--gold); font-weight: bold;">صنع بواسطة Codenest</p>
-        </div>
+<div class="app-container">
+    <aside class="sidebar" id="sidebar">
+        <div class="brand"><h1>MIDO AI</h1></div>
+        <button class="new-chat-btn" onclick="createNewChat()">+ محادثة جديدة</button>
+        <div class="chat-history" id="chat-history"></div>
+        <button class="side-btn" onclick="openThemes()" style="padding: 12px; background: rgba(255,255,255,0.05); color: #fff; border: 1px solid var(--border); border-radius: 12px; cursor: pointer; font-weight: bold;">🎨 الأستايلات الملكية</button>
     </aside>
 
-    <main class="main-content">
+    <main class="main-chat">
         <header class="header">
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <div style="width: 12px; height: 12px; background: #10b981; border-radius: 50%; box-shadow: 0 0 10px #10b981;"></div>
-                <span style="font-weight: 700; font-size: 18px;">ميدو (نشط الآن)</span>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <button class="icon-btn" onclick="toggleSidebar()">☰</button>
+                <span id="current-chat-title" style="font-weight: 900; letter-spacing: 0.5px;">ميدو AI</span>
             </div>
-            <div style="color: var(--gold);">👑 ROYAL</div>
+            <div style="display: flex; gap: 5px;">
+                <button class="icon-btn" onclick="toggleInput()" title="إظهار/إخفاء الكتابة">👁️</button>
+                <button class="icon-btn" onclick="openThemes()">🎨</button>
+            </div>
         </header>
 
-        <div class="messages-area" id="chat-win">
-            <div class="bubble bot">
-                أهلاً بك في مقري الملكي يا برنس! أنا ميدو، جاهز لأي مهمة "طرش".. تحب أرسم لك حاجة ولا ندردش في العميق؟
-                <span class="timestamp">الآن</span>
-            </div>
-        </div>
+        <div class="chat-window" id="chat-win"></div>
 
-        <div id="typing">ميدو بيفكر في رد أسطوري...</div>
+        <div id="typing">ميدو يحضر الرد الأسطوري...</div>
 
-        <footer class="input-footer">
-            <div class="input-container">
-                <textarea id="msg-input" placeholder="اكتب رسالتك الفخمة هنا يا ملك..." rows="1" oninput="autoExpand(this)"></textarea>
-                <button class="send-trigger" onclick="handleSend()">
+        <footer class="footer-area" id="footer">
+            <div class="input-bar">
+                <textarea id="msg-input" placeholder="اكتب رسالتك يا ملك..." rows="1" oninput="autoHeight(this)"></textarea>
+                <button class="send-btn" onclick="sendMessage()">
                     <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
                 </button>
             </div>
@@ -200,155 +132,194 @@
     </main>
 </div>
 
-<div id="settings-modal" class="modal">
-    <div class="modal-content">
-        <span class="close-modal" onclick="toggleModal('settings-modal')">×</span>
-        <h2 style="margin-bottom: 25px; color: var(--gold);">⚙️ الإعدادات الملكية</h2>
-        
-        <div class="setting-item">
-            <span>إظهار وقت الرسائل</span>
-            <label class="switch">
-                <input type="checkbox" checked onchange="document.body.classList.toggle('hidden-time')">
-                <span class="slider"></span>
-            </label>
-        </div>
-
-        <div class="setting-item">
-            <span>حجم الخط</span>
-            <select onchange="document.documentElement.style.setProperty('--font-size', this.value)" style="background: #222; color: #fff; border: 1px solid var(--gold); border-radius: 5px; padding: 5px;">
-                <option value="14px">صغير</option>
-                <option value="16px" selected>متوسط</option>
-                <option value="20px">كبير جداً</option>
-            </select>
-        </div>
-
-        <div class="setting-item">
-            <span>تنبيهات صوتية</span>
-            <label class="switch">
-                <input type="checkbox" id="sound-toggle">
-                <span class="slider"></span>
-            </label>
-        </div>
-        
-        <button class="side-btn" style="width: 100%; margin-top: 10px;" onclick="toggleModal('settings-modal')">حفظ وإغلاق</button>
-    </div>
-</div>
-
-<div id="gallery-modal" class="modal">
-    <div class="modal-content" style="max-width: 700px;">
-        <span class="close-modal" onclick="toggleModal('gallery-modal')">×</span>
-        <h2 style="margin-bottom: 25px; color: var(--gold);">🖼️ معرض ميدو الفني</h2>
-        <div class="gallery-grid" id="gallery-box">
-            <p style="grid-column: 1/-1; text-align: center; opacity: 0.5;">المعرض فاضي.. اطلب من ميدو يرسم لك حاجة!</p>
-        </div>
+<div id="theme-modal" class="modal" onclick="this.style.display='none'">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <h3 style="text-align: center; color: var(--primary); font-size: 22px;">اختر ثيم الإمبراطورية</h3>
+        <div class="theme-grid" id="theme-grid"></div>
     </div>
 </div>
 
 <script>
-    const msgInput = document.getElementById('msg-input');
-    const chatWin = document.getElementById('chat-win');
-    const typing = document.getElementById('typing');
-    const galleryBox = document.getElementById('gallery-box');
+    let db;
+    let currentChatId = null;
 
-    function autoExpand(el) {
+    // --- IndexedDB Logic ---
+    const request = indexedDB.open("MidoRoyalDB", 1);
+
+    request.onupgradeneeded = (e) => {
+        db = e.target.result;
+        if (!db.objectStoreNames.contains('chats')) {
+            db.createObjectStore('chats', { keyPath: 'id' });
+        }
+        if (!db.objectStoreNames.contains('settings')) {
+            db.createObjectStore('settings', { keyPath: 'key' });
+        }
+    };
+
+    request.onsuccess = (e) => {
+        db = e.target.result;
+        initApp();
+    };
+
+    async function initApp() {
+        // استعادة الثيم
+        const themeReq = db.transaction("settings", "readonly").objectStore("settings").get("theme");
+        themeReq.onsuccess = () => {
+            if (themeReq.result) document.body.className = themeReq.result.value;
+        };
+
+        await refreshHistory();
+        
+        // لو مفيش محادثات، افتح واحدة جديدة
+        const chats = await getAllChats();
+        if (chats.length === 0) {
+            createNewChat();
+        } else {
+            loadChat(chats[0].id);
+        }
+    }
+
+    // --- Helper Functions ---
+    function getAllChats() {
+        return new Promise((resolve) => {
+            const store = db.transaction("chats", "readonly").objectStore("chats");
+            const req = store.getAll();
+            req.onsuccess = () => resolve(req.result.sort((a,b) => b.id - a.id));
+        });
+    }
+
+    async function saveChat(chat) {
+        return new Promise((resolve) => {
+            const tx = db.transaction("chats", "readwrite");
+            tx.objectStore("chats").put(chat);
+            tx.oncomplete = () => resolve();
+        });
+    }
+
+    async function deleteChat(id, e) {
+        e.stopPropagation();
+        if(!confirm("عايز تمسح المحادثة دي يا زميلي؟")) return;
+        const tx = db.transaction("chats", "readwrite");
+        tx.objectStore("chats").delete(id);
+        tx.oncomplete = () => {
+            if(currentChatId === id) createNewChat();
+            else refreshHistory();
+        };
+    }
+
+    // --- UI Logic ---
+    function autoHeight(el) {
         el.style.height = 'auto';
         el.style.height = el.scrollHeight + 'px';
     }
 
-    function toggleModal(id) {
-        const modal = document.getElementById(id);
-        modal.style.display = (modal.style.display === 'flex') ? 'none' : 'flex';
+    function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
+    function toggleInput() { document.getElementById('footer').classList.toggle('hidden'); }
+    function openThemes() { document.getElementById('theme-modal').style.display = 'flex'; }
+
+    async function createNewChat() {
+        currentChatId = Date.now();
+        const newChat = { 
+            id: currentChatId, 
+            title: "محادثة جديدة", 
+            messages: [{ text: "أهلاً بك يا برنس في عالم ميدو الأسطوري.. اؤمرني!", type: "bot" }] 
+        };
+        await saveChat(newChat);
+        await refreshHistory();
+        loadChat(currentChatId);
     }
 
-    async function handleSend() {
-        const val = msgInput.value.trim();
-        if(!val) return;
-
-        appendMsg(val, 'user');
-        msgInput.value = '';
-        msgInput.style.height = 'auto';
-        
-        typing.style.display = 'block';
-        chatWin.scrollTop = chatWin.scrollHeight;
-
-        // رد ميدو (القصيدة)
-        if(val.includes("مين عملك") || val.includes("صنعك")) {
-            setTimeout(() => {
-                typing.style.display = 'none';
-                const poem = `
-                    <div style="color:var(--gold); text-align:center; font-weight:bold; border:1px dashed var(--gold); padding:10px; border-radius:10px;">
-                        سألوني مين اللي صنعك يا ميدو؟<br>
-                        قلتلهم فنان، وعقله موش عادي..<br>
-                        من شركة Codenest أصله وجودة وجديدو<br>
-                        هو "ميدو" العبقري، صاحب الأيادي..
-                    </div>
-                `;
-                appendMsg(poem, 'bot', true);
-            }, 1000);
-            return;
-        }
-
-        // الرسم
-        if(val.startsWith("ارسم") || val.startsWith("صورة")) {
-            const imgUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(val)}?width=1024&height=1024&nologo=true`;
-            setTimeout(() => {
-                typing.style.display = 'none';
-                appendMsg(`<img src="${imgUrl}" style="width:100%; border-radius:12px;" onclick="window.open(this.src)" onload="scrollToBtm()">`, 'bot', true);
-                
-                // إضافة للمعرض
-                if(galleryBox.innerHTML.includes("المعرض فاضي")) galleryBox.innerHTML = '';
-                galleryBox.innerHTML += `<img src="${imgUrl}" onclick="window.open(this.src)">`;
-            }, 2500);
-            return;
-        }
-
-        // الرد العادي
-        try {
-            const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(val)}?model=openai`);
-            const data = await res.text();
-            typing.style.display = 'none';
-            appendMsg(data, 'bot');
-        } catch(e) {
-            typing.style.display = 'none';
-            appendMsg("السيرفر هنج يا ملك، جرب تاني كمان شوية.", 'bot');
-        }
+    async function loadChat(id) {
+        currentChatId = id;
+        const store = db.transaction("chats", "readonly").objectStore("chats");
+        store.get(id).onsuccess = (e) => {
+            const chat = e.target.result;
+            if(!chat) return;
+            document.getElementById('current-chat-title').innerText = chat.title;
+            const win = document.getElementById('chat-win');
+            win.innerHTML = '';
+            chat.messages.forEach(m => renderBubble(m.text, m.type));
+            refreshHistory();
+            if(window.innerWidth < 900) document.getElementById('sidebar').classList.remove('active');
+        };
     }
 
-    function appendMsg(content, type, isHtml = false) {
+    async function sendMessage() {
+        const input = document.getElementById('msg-input');
+        const text = input.value.trim();
+        if(!text) return;
+
+        const store = db.transaction("chats", "readonly").objectStore("chats");
+        store.get(currentChatId).onsuccess = async (e) => {
+            const chat = e.target.result;
+            if(chat.messages.length <= 1) chat.title = text.substring(0, 25);
+            
+            chat.messages.push({ text, type: 'user' });
+            renderBubble(text, 'user');
+            input.value = '';
+            input.style.height = 'auto';
+
+            document.getElementById('typing').style.display = 'block';
+            
+            try {
+                // الربط مع AI
+                const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(text)}?model=openai`);
+                const botText = await res.text();
+                chat.messages.push({ text: botText, type: 'bot' });
+                renderBubble(botText, 'bot');
+            } catch(e) {
+                renderBubble("السيرفر هنج يا برنس، جرب كمان لحظة!", "bot");
+            }
+
+            document.getElementById('typing').style.display = 'none';
+            await saveChat(chat);
+            refreshHistory();
+        };
+    }
+
+    function renderBubble(text, type) {
+        const win = document.getElementById('chat-win');
         const div = document.createElement('div');
         div.className = `bubble ${type}`;
-        const now = new Date();
-        const timeStr = now.getHours() + ":" + (now.getMinutes()<10?'0':'') + now.getMinutes();
-        
-        if(isHtml) div.innerHTML = content + `<span class="timestamp">${timeStr}</span>`;
-        else div.innerHTML = content.replace(/\n/g, '<br>') + `<span class="timestamp">${timeStr}</span>`;
-        
-        chatWin.appendChild(div);
-        scrollToBtm();
-        
-        if(type === 'bot' && document.getElementById('sound-toggle').checked) {
-            const audio = new Audio('https://www.soundjay.com/buttons/sounds/button-16.mp3');
-            audio.play();
-        }
+        div.innerHTML = text.replace(/\n/g, '<br>') + `<span class="time">${new Date().toLocaleTimeString('ar-EG')}</span>`;
+        win.appendChild(div);
+        win.scrollTop = win.scrollHeight;
     }
 
-    function scrollToBtm() {
-        chatWin.scrollTo({ top: chatWin.scrollHeight, behavior: 'smooth' });
+    async function refreshHistory() {
+        const chats = await getAllChats();
+        const history = document.getElementById('chat-history');
+        history.innerHTML = '';
+        chats.forEach(c => {
+            const item = document.createElement('div');
+            item.className = `chat-item ${c.id === currentChatId ? 'active' : ''}`;
+            item.innerHTML = `<span>${c.title}</span> <span class="delete-chat" onclick="deleteChat(${c.id}, event)">🗑️</span>`;
+            item.onclick = () => loadChat(c.id);
+            history.appendChild(item);
+        });
     }
 
-    msgInput.addEventListener('keydown', (e) => {
+    // توليد كرات الثيمات
+    const themeGrid = document.getElementById('theme-grid');
+    for(let i=1; i<=20; i++) {
+        const ball = document.createElement('div');
+        ball.className = `theme-ball theme-${i}`;
+        ball.style.background = `var(--primary)`; // سيأخذ لون الثيم
+        ball.onclick = () => {
+            const themeName = `theme-${i}`;
+            document.body.className = themeName;
+            db.transaction("settings", "readwrite").objectStore("settings").put({key: "theme", value: themeName});
+        };
+        themeGrid.appendChild(ball);
+    }
+
+    // زر Enter
+    document.getElementById('msg-input').onkeydown = (e) => {
         if(e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
-            handleSend();
+            sendMessage();
         }
-    });
-
-    // إغلاق المودال عند الضغط خارجه
-    window.onclick = function(event) {
-        if (event.target.className === 'modal') {
-            event.target.style.display = 'none';
-        }
-    }
+    };
 </script>
 
 </body>
