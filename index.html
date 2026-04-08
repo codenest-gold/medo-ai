@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MIDO AI v3.5 - النسخة الفاخرة المطورة</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -17,34 +17,71 @@
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
         
-        body { background: var(--bg); color: var(--text); display: flex; height: 100vh; overflow: hidden; }
+        html, body { 
+            height: 100%; 
+            width: 100%; 
+            background: var(--bg); 
+            color: var(--text); 
+            overflow: hidden; 
+        }
+
+        body { display: flex; }
 
         /* Sidebar */
-        .sidebar { width: 280px; background: var(--surface); border-left: 1px solid var(--border); display: flex; flex-direction: column; }
+        .sidebar { 
+            width: 280px; 
+            background: var(--surface); 
+            border-left: 1px solid var(--border); 
+            display: flex; 
+            flex-direction: column; 
+        }
+        
+        /* إخفاء السايدبار في الشاشات الصغيرة عشان ميخربش التصميم */
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+        }
+
         .brand { padding: 25px; font-size: 24px; font-weight: 900; color: var(--primary); letter-spacing: 2px; text-align: center; border-bottom: 1px solid var(--border); }
         .chat-list { flex: 1; overflow-y: auto; padding: 15px; }
         .new-btn { margin: 15px; padding: 12px; background: var(--primary); border: none; border-radius: 12px; color: white; font-weight: bold; cursor: pointer; transition: 0.3s; }
         .new-btn:hover { opacity: 0.8; transform: translateY(-2px); }
 
         /* Main Chat Area */
-        .main { flex: 1; display: flex; flex-direction: column; background: radial-gradient(circle at top right, #111, #050507); }
+        .main { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            height: 100vh;
+            background: radial-gradient(circle at top right, #111, #050507); 
+        }
         
-        .chat-window { flex: 1; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
-        .bubble { max-width: 75%; padding: 15px 20px; border-radius: 20px; font-size: 16px; line-height: 1.6; animation: slideUp 0.3s ease-out; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .chat-window { 
+            flex: 1; 
+            padding: 20px; 
+            overflow-y: auto; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 20px;
+            scroll-behavior: smooth;
+        }
+        
+        .bubble { max-width: 85%; padding: 12px 18px; border-radius: 20px; font-size: 16px; line-height: 1.6; animation: slideUp 0.3s ease-out; word-wrap: break-word; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
         .bot { background: #1a1a22; align-self: flex-start; border-bottom-right-radius: 5px; border: 1px solid var(--border); }
         .user { background: var(--user-bubble); align-self: flex-end; border-bottom-left-radius: 5px; box-shadow: 0 5px 15px rgba(124, 58, 237, 0.3); }
 
-        /* مكان الكتابة المطور - الميزة المطلوبة */
+        /* منطقة الكتابة - تم تدعيمها لعدم الاختفاء */
         .input-area {
-            padding: 25px 40px;
-            background: rgba(16, 16, 20, 0.95);
+            padding: 20px;
+            background: #101014;
             border-top: 1px solid var(--border);
             display: flex;
             align-items: flex-end;
-            gap: 15px;
-            backdrop-filter: blur(10px);
+            gap: 12px;
+            flex-shrink: 0; /* منع العنصر من الانكماش والاختفاء */
+            position: relative;
+            z-index: 10;
         }
 
         .input-container {
@@ -53,8 +90,10 @@
             border: 1px solid var(--border);
             border-radius: 15px;
             padding: 10px 15px;
-            transition: 0.3s;
+            display: flex;
+            align-items: center;
         }
+        
         .input-container:focus-within { border-color: var(--primary); box-shadow: 0 0 10px rgba(192, 132, 252, 0.2); }
 
         textarea {
@@ -64,33 +103,31 @@
             color: white;
             resize: none;
             font-size: 16px;
-            max-height: 150px;
+            max-height: 120px;
             min-height: 24px;
             outline: none;
-            padding: 5px 0;
+            display: block;
         }
 
         .send-btn {
             background: var(--primary);
-            width: 50px;
-            height: 50px;
+            width: 48px;
+            height: 48px;
             border: none;
-            border-radius: 15px;
+            border-radius: 12px;
             color: white;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: 0.3s;
+            transition: 0.2s;
             flex-shrink: 0;
         }
         .send-btn:hover { transform: scale(1.05); background: #a855f7; }
-        .send-btn svg { width: 24px; height: 24px; fill: currentColor; }
+        .send-btn svg { width: 22px; height: 22px; fill: currentColor; }
 
-        /* القصيدة */
         .poem { text-align: center; color: #d8b4fe; font-style: italic; display: block; margin: 5px 0; }
-
-        #typing { display: none; padding: 0 40px 10px; font-size: 13px; color: var(--primary); }
+        #typing { display: none; padding: 10px 20px; font-size: 13px; color: var(--primary); background: rgba(0,0,0,0.2); }
     </style>
 </head>
 <body>
@@ -121,14 +158,13 @@
 <script>
     const chatIn = document.getElementById('chat-in');
     const chatWindow = document.getElementById('chat-window');
+    const typingIndicator = document.getElementById('typing');
 
-    // جعل مكان الكتابة يتمدد تلقائياً
     function autoResize(textarea) {
         textarea.style.height = 'auto';
         textarea.style.height = textarea.scrollHeight + 'px';
     }
 
-    // الرد بالقصيدة
     const poemResponse = `
         <span class="poem">سألوني مين اللي صنعك يا ميدو؟</span>
         <span class="poem">قلتلهم فنان، وعقله موش عادي..</span>
@@ -144,14 +180,15 @@
         chatIn.value = "";
         chatIn.style.height = 'auto';
         
-        document.getElementById('typing').style.display = 'block';
+        typingIndicator.style.display = 'block';
+        chatWindow.scrollTop = chatWindow.scrollHeight;
 
         // الرد على سؤال "مين عملك"
-        if (val.includes("مين عملك") || val.includes("من صنعك")) {
+        if (val.includes("مين عملك") || val.includes("من صنعك") || val.includes("مين اللي عملك")) {
             setTimeout(() => {
-                document.getElementById('typing').style.display = 'none';
+                typingIndicator.style.display = 'none';
                 addMsg(poemResponse, 'bot', true);
-            }, 1000);
+            }, 800);
             return;
         }
 
@@ -159,20 +196,20 @@
         if (val.startsWith("ارسم") || val.startsWith("صورة")) {
             const imgUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(val)}?width=1024&height=1024&nologo=true`;
             setTimeout(() => {
-                document.getElementById('typing').style.display = 'none';
-                addMsg(`<img src="${imgUrl}" style="width:100%; border-radius:10px; margin-top:10px;">`, 'bot', true);
-            }, 2000);
+                typingIndicator.style.display = 'none';
+                addMsg(`<img src="${imgUrl}" style="width:100%; border-radius:10px; margin-top:10px;" onload="scrollToBottom()">`, 'bot', true);
+            }, 1500);
             return;
         }
 
-        // الرد العادي من الذكاء الاصطناعي
+        // الرد العادي
         try {
             const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(val)}?model=openai`);
             const text = await res.text();
-            document.getElementById('typing').style.display = 'none';
+            typingIndicator.style.display = 'none';
             addMsg(text, 'bot');
         } catch (e) {
-            document.getElementById('typing').style.display = 'none';
+            typingIndicator.style.display = 'none';
             addMsg("السيرفر هنج يا زميلي، جرب تاني.", 'bot');
         }
     }
@@ -183,10 +220,13 @@
         if (isHtml) div.innerHTML = content;
         else div.innerText = content;
         chatWindow.appendChild(div);
+        scrollToBottom();
+    }
+
+    function scrollToBottom() {
         chatWindow.scrollTop = chatWindow.scrollHeight;
     }
 
-    // الإرسال بالإنتر (Enter)
     chatIn.addEventListener('keypress', (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
