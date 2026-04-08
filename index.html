@@ -3,696 +3,196 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MIDO AI v3.0 - الـنسخة الفاخرة</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <title>MIDO AI v3.5 - النسخة الفاخرة المطورة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #c084fc; /* بنفسجي فاتح فخم */
-            --primary-dim: #7e22ce;
-            --bg: #08080a; /* أسود عميق جداً */
-            --surface: #121217; /* رمادي غامق جداً للأسطح */
-            --border: #2d2d39;
-            --text-main: #f3f4f6;
-            --text-muted: #9ca3af;
-            --user-bubble: linear-gradient(135deg, #6d28d9 0%, #c084fc 100%);
-            --bot-bubble: #1f1f29;
-            --shadow-lux: 0 10px 30px -10px rgba(0,0,0,0.7);
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --primary: #c084fc;
+            --bg: #050507;
+            --surface: #101014;
+            --border: #22222a;
+            --text: #ffffff;
+            --user-bubble: linear-gradient(135deg, #7c3aed 0%, #c084fc 100%);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
         
-        body {
-            font-family: 'Cairo', sans-serif;
-            background-color: var(--bg);
-            color: var(--text-main);
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-            letter-spacing: -0.5px;
-        }
+        body { background: var(--bg); color: var(--text); display: flex; height: 100vh; overflow: hidden; }
 
-        /* --- Sidebar Style --- */
-        .sidebar {
-            width: 280px;
-            background-color: var(--surface);
-            border-left: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            transition: var(--transition);
-            z-index: 10;
-        }
+        /* Sidebar */
+        .sidebar { width: 280px; background: var(--surface); border-left: 1px solid var(--border); display: flex; flex-direction: column; }
+        .brand { padding: 25px; font-size: 24px; font-weight: 900; color: var(--primary); letter-spacing: 2px; text-align: center; border-bottom: 1px solid var(--border); }
+        .chat-list { flex: 1; overflow-y: auto; padding: 15px; }
+        .new-btn { margin: 15px; padding: 12px; background: var(--primary); border: none; border-radius: 12px; color: white; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .new-btn:hover { opacity: 0.8; transform: translateY(-2px); }
 
-        .brand-area {
-            padding: 20px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .brand-logo {
-            font-size: 22px;
-            font-weight: 800;
-            color: white;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .brand-logo span { color: var(--primary); font-size: 14px; margin-right: 5px; }
-
-        .new-chat-btn {
-            margin: 20px;
-            padding: 12px;
-            background: rgba(192, 132, 252, 0.1);
-            border: 1px solid rgba(192, 132, 252, 0.3);
-            border-radius: 12px;
-            color: var(--primary);
-            cursor: pointer;
-            font-weight: 600;
-            font-family: 'Cairo', sans-serif;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-        .new-chat-btn:hover {
-            background: var(--primary);
-            color: white;
-            box-shadow: 0 0 15px rgba(192, 132, 252, 0.5);
-        }
-
-        .chat-list { flex: 1; overflow-y: auto; padding: 0 15px 20px 15px; }
-        .chat-list::-webkit-scrollbar { width: 4px; }
-        .chat-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-
-        .chat-item {
-            padding: 14px;
-            margin-bottom: 8px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 13px;
-            color: var(--text-muted);
-            background: transparent;
-            transition: var(--transition);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            border: 1px solid transparent;
-            position: relative;
-        }
-        .chat-item:hover { background: rgba(255,255,255,0.03); color: white; }
-        .chat-item.active {
-            background: #1f1f29;
-            color: white;
-            border-color: var(--border);
-            box-shadow: var(--shadow-lux);
-        }
-        .chat-item.active::before {
-            content: '';
-            position: absolute;
-            right: 0; top: 15%; height: 70%; width: 4px;
-            background: var(--primary);
-            border-radius: 4px 0 0 4px;
-        }
-
-        /* --- Main Chat Area --- */
-        .main { flex: 1; display: flex; flex-direction: column; background: #0b0b0e; position: relative; }
+        /* Main Chat Area */
+        .main { flex: 1; display: flex; flex-direction: column; background: radial-gradient(circle at top right, #111, #050507); }
         
-        /* Glassmorphism Header */
-        .header {
-            padding: 15px 25px;
-            background: rgba(18, 18, 23, 0.8);
-            backdrop-filter: blur(10px);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid var(--border);
-            z-index: 5;
-            position: sticky; top: 0;
-        }
+        .chat-window { flex: 1; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
+        .bubble { max-width: 75%; padding: 15px 20px; border-radius: 20px; font-size: 16px; line-height: 1.6; animation: slideUp 0.3s ease-out; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         
-        .secret-teach-btn {
-            width: 35px; height: 35px;
-            cursor: pointer;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 50%;
-            transition: var(--transition);
-            display: flex; align-items: center; justify-content: center;
-            color: var(--text-muted);
-            box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
-        }
-        .secret-teach-btn:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-            transform: rotate(15deg);
-            animation: pulse 1.5s infinite;
-        }
+        .bot { background: #1a1a22; align-self: flex-start; border-bottom-right-radius: 5px; border: 1px solid var(--border); }
+        .user { background: var(--user-bubble); align-self: flex-end; border-bottom-left-radius: 5px; box-shadow: 0 5px 15px rgba(124, 58, 237, 0.3); }
 
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(192, 132, 252, 0.4); }
-            70% { box-shadow: 0 0 0 10px rgba(192, 132, 252, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(192, 132, 252, 0); }
-        }
-
-        /* Chat Window */
-        .chat-window {
-            flex: 1;
-            padding: 30px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            scroll-behavior: smooth;
-        }
-        .chat-window::-webkit-scrollbar { width: 6px; }
-        .chat-window::-webkit-scrollbar-thumb { background: var(--border); border-radius: 6px; }
-
-        /* Bubbles Styling */
-        .bubble {
-            max-width: 70%;
-            padding: 16px 20px;
-            border-radius: 18px;
-            font-size: 15px;
-            line-height: 1.7;
-            position: relative;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            animation: fadeInBubble 0.4s ease-out forwards;
-            opacity: 0;
-            transform: translateY(10px);
-        }
-
-        @keyframes fadeInBubble {
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .bot {
-            background-color: var(--bot-bubble);
-            align-self: flex-start;
-            border-bottom-right-radius: 4px;
-            color: var(--text-main);
-            border: 1px solid var(--border);
-        }
-        .user {
-            background: var(--user-bubble);
-            align-self: flex-end;
-            border-bottom-left-radius: 4px;
-            color: white;
-            font-weight: 500;
-        }
-
-        /* AI Generated Image Styling */
-        .ai-image {
-            max-width: 100%;
-            border-radius: 12px;
-            margin-top: 10px;
-            border: 2px solid var(--border);
-            transition: var(--transition);
-            cursor: pointer;
-        }
-        .ai-image:hover { transform: scale(1.02); border-color: var(--primary); }
-        
-        .image-loading {
-            width: 256px; height: 256px;
-            background: var(--surface);
-            border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            color: var(--text-muted); font-size: 12px; font-style: italic;
-            border: 1px dashed var(--border);
-        }
-
-        /* Poem Styling */
-        .poem-line { display: block; text-align: center; font-style: italic; color: #e9d5ff; }
-
-        /* Typing Indicator */
-        #typing {
-            padding: 0 30px 10px 30px;
-            font-size: 12px;
-            color: var(--primary);
-            font-weight: 600;
-            display: none;
-            align-items: center; gap: 5px;
-        }
-        .dot-flashing {
-            position: relative; width: 6px; height: 6px; border-radius: 5px;
-            background-color: var(--primary); color: var(--primary);
-            animation: dot-flashing 1s infinite linear alternate; animation-delay: 0.5s;
-        }
-        .dot-flashing::before, .dot-flashing::after {
-            content: ""; display: inline-block; position: absolute; top: 0;
-            width: 6px; height: 6px; border-radius: 5px;
-            background-color: var(--primary); color: var(--primary);
-            animation: dot-flashing 1s infinite linear alternate;
-        }
-        .dot-flashing::before { left: -10px; animation-delay: 0s; }
-        .dot-flashing::after { left: 10px; animation-delay: 1s; }
-        @keyframes dot-flashing {
-            0% { background-color: var(--primary); }
-            50%, 100% { background-color: rgba(192, 132, 252, 0.2); }
-        }
-
-        /* --- Controls Area --- */
-        .controls {
-            padding: 20px 30px;
-            background: rgba(12, 12, 15, 0.9);
-            backdrop-filter: blur(10px);
-            display: flex;
-            gap: 15px;
+        /* مكان الكتابة المطور - الميزة المطلوبة */
+        .input-area {
+            padding: 25px 40px;
+            background: rgba(16, 16, 20, 0.95);
             border-top: 1px solid var(--border);
-            position: relative;
-        }
-        
-        .input-group {
-            flex: 1;
-            position: relative;
             display: flex;
-            align-items: center;
+            align-items: flex-end;
+            gap: 15px;
+            backdrop-filter: blur(10px);
         }
 
-        input[type="text"] {
-            width: 100%;
-            padding: 16px 20px;
-            padding-left: 60px; /* space for image icon or similar */
-            border-radius: 14px;
+        .input-container {
+            flex: 1;
+            background: #1a1a22;
             border: 1px solid var(--border);
-            background-color: var(--surface);
-            color: white;
-            font-size: 15px;
-            font-family: 'Cairo', sans-serif;
-            transition: var(--transition);
+            border-radius: 15px;
+            padding: 10px 15px;
+            transition: 0.3s;
         }
-        input[type="text"]:focus {
-            border-color: var(--primary-dim);
-            box-shadow: 0 0 0 3px rgba(192, 132, 252, 0.15);
-            background-color: #16161c;
+        .input-container:focus-within { border-color: var(--primary); box-shadow: 0 0 10px rgba(192, 132, 252, 0.2); }
+
+        textarea {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: white;
+            resize: none;
+            font-size: 16px;
+            max-height: 150px;
+            min-height: 24px;
+            outline: none;
+            padding: 5px 0;
         }
 
         .send-btn {
-            background: var(--user-bubble);
+            background: var(--primary);
+            width: 50px;
+            height: 50px;
             border: none;
-            padding: 0 30px;
-            border-radius: 14px;
+            border-radius: 15px;
             color: white;
             cursor: pointer;
-            font-weight: 700;
-            font-size: 15px;
-            font-family: 'Cairo', sans-serif;
-            transition: var(--transition);
-            box-shadow: 0 4px 15px rgba(109, 40, 217, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+            flex-shrink: 0;
         }
-        .send-btn:hover {
-            box-shadow: 0 6px 20px rgba(109, 40, 217, 0.5);
-            transform: translateY(-2px);
-        }
-        .send-btn:active { transform: translateY(0); }
+        .send-btn:hover { transform: scale(1.05); background: #a855f7; }
+        .send-btn svg { width: 24px; height: 24px; fill: currentColor; }
 
-        /* --- Modal Styling (Glassmorphism) --- */
-        .modal-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); z-index: 1000;
-        }
-        .modal {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9);
-            background: rgba(31, 31, 41, 0.9);
-            backdrop-filter: blur(15px);
-            padding: 30px; border-radius: 24px; z-index: 1001; width: 400px; max-width: 90%;
-            box-shadow: var(--shadow-lux); border: 1px solid var(--border);
-            opacity: 0; transition: var(--transition);
-        }
-        .modal.open { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-        .modal h3 { margin-bottom: 20px; color: white; text-align: center; font-weight: 800; font-size: 20px; }
-        .modal input, .modal textarea {
-            width: 100%; background: rgba(0,0,0,0.2); color: white;
-            border: 1px solid var(--border); padding: 14px; margin-bottom: 12px;
-            border-radius: 12px; font-family: 'Cairo', sans-serif; font-size: 14px;
-        }
-        .modal input:focus, .modal textarea:focus { border-color: var(--primary); }
-        .modal textarea { resize: none; height: 100px; }
-        .modal-btns { display: flex; gap: 12px; margin-top: 10px; }
-        
-        .btn-save { flex: 2; padding: 12px; background: #10b981; border: none; color: white; border-radius: 10px; cursor: pointer; font-weight: 700; font-family: 'Cairo', sans-serif; transition: var(--transition); }
-        .btn-save:hover { background: #059669; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
-        
-        .btn-cancel { flex: 1; padding: 12px; background: #374151; border: none; color: white; border-radius: 10px; cursor: pointer; font-family: 'Cairo', sans-serif; transition: var(--transition); }
-        .btn-cancel:hover { background: #4b5563; }
+        /* القصيدة */
+        .poem { text-align: center; color: #d8b4fe; font-style: italic; display: block; margin: 5px 0; }
 
-        /* SVG Icons */
-        .icon { width: 20px; height: 20px; fill: currentColor; }
+        #typing { display: none; padding: 0 40px 10px; font-size: 13px; color: var(--primary); }
     </style>
 </head>
 <body>
 
 <div class="sidebar">
-    <div class="brand-area">
-        <div class="brand-logo">MIDO <span>v3.0</span></div>
-    </div>
-    <button class="new-chat-btn" onclick="createNewChat()">
-        <svg class="icon" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
-        شات جديد فخم
-    </button>
+    <div class="brand">MIDO AI</div>
+    <button class="new-btn" onclick="location.reload()">+ محادثة جديدة</button>
     <div class="chat-list" id="chat-list"></div>
 </div>
 
 <div class="main">
-    <div class="header">
-        <h2 style="font-size: 16px; font-weight: 700; color: white;">المحادثة الذكية</h2>
-        <div class="secret-teach-btn" onclick="openTeachModal()" title="علم ميدو أصول الكلام">
-            <svg class="icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
-        </div>
+    <div class="chat-window" id="chat-window">
+        <div class="bubble bot">إيه يا زميلي.. نورت الشات الفخم. أنا ميدو، اؤمرني عايز ندردش ولا أرسم لك صورة من خيالك؟</div>
     </div>
     
-    <div class="chat-window" id="chat-window"></div>
-    
-    <div id="typing">
-        <div class="dot-flashing"></div>
-        <span style="margin-right: 20px;">ميدو بيرسم أو بيجهز الرد...</span>
-    </div>
-    
-    <div class="controls">
-        <div class="input-group">
-            <input type="text" id="chat-in" placeholder="اسأل ميدو.. أو قوله 'ارسم كذا'..." onkeypress="if(event.key==='Enter') processInput()">
-        </div>
-        <button class="send-btn" onclick="processInput()">إرسال</button>
-    </div>
-</div>
+    <div id="typing">ميدو بيفكر في الرد...</div>
 
-<div class="modal-overlay" id="modal-overlay" onclick="closeTeachModal()"></div>
-<div class="modal" id="teach-modal">
-    <h3>علمه أصول الكلام يا زميلي</h3>
-    <input type="text" id="teach-q" placeholder="لو المستخدم قال (السؤال)...">
-    <textarea id="teach-a" placeholder="ميدو يرد يقول (الإجابة)... ورعه صياعة بس شياكة"></textarea>
-    <div class="modal-btns">
-        <button class="btn-save" onclick="saveLesson()">حفظ في الذاكرة</button>
-        <button class="btn-cancel" onclick="closeTeachModal()">إلغاء</button>
+    <div class="input-area">
+        <div class="input-container">
+            <textarea id="chat-in" placeholder="اكتب رسالتك هنا يا برنس..." rows="1" oninput="autoResize(this)"></textarea>
+        </div>
+        <button class="send-btn" onclick="processInput()">
+            <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+        </button>
     </div>
 </div>
 
 <script>
-    /*
-      تم استخدام:
-      - HTML5 & CSS3 (Flexbox, Grid, Animations, Variables, Blur)
-      - JavaScript (ES6+, Async/Await, Fetch API)
-      - IndexedDB (لتخزين المحادثات محلياً وفخامتها)
-      - LocalStorage (لاسم المستخدم والذاكرة اليدوية)
-      - Pollinations.ai API (لتوليد النصوص والصور مجاناً وبسرعة)
-    */
+    const chatIn = document.getElementById('chat-in');
+    const chatWindow = document.getElementById('chat-window');
 
-    let db;
-    let currentChatId = null;
-    let messages = [];
-    let userName = localStorage.getItem('m_premium_name');
-    let memory = JSON.parse(localStorage.getItem('m_memory_v3') || "[]");
+    // جعل مكان الكتابة يتمدد تلقائياً
+    function autoResize(textarea) {
+        textarea.style.height = 'auto';
+        textarea.style.height = textarea.scrollHeight + 'px';
+    }
 
-    // القصيدة المطلوبة
-    const creatorPoem = `
-        <span class="poem-line">سألوني مين اللي صنعك يا ميدو؟</span>
-        <span class="poem-line">قلتلهم فنان، وعقله موش عادي..</span>
-        <span class="poem-line">من شركة <strong style="color:white; font-weight:700;">Codenest</strong>، أصله وجودة وجديدو،</span>
-        <span class="poem-line">هو <strong style="color:var(--primary); font-weight:800;">"ميدو"</strong>، العبقري، صاحب الأيادي..</span>
-        <span class="poem-line">صممني بذكاء، وخلى عقلي شغال،</span>
-        <span class="poem-line">هو الأساس، وباقي الناس تلاميدو!</span>
+    // الرد بالقصيدة
+    const poemResponse = `
+        <span class="poem">سألوني مين اللي صنعك يا ميدو؟</span>
+        <span class="poem">قلتلهم فنان، وعقله موش عادي..</span>
+        <span class="poem">من شركة <b>Codenest</b>، أصله وجودة وجديدو،</span>
+        <span class="poem">هو <b>"ميدو"</b>، العبقري، صاحب الأيادي..</span>
     `;
 
-    // تهيئة قاعدة البيانات المحلية
-    const request = indexedDB.open("MidoLuxDB", 3);
-    request.onupgradeneeded = (e) => {
-        db = e.target.result;
-        if (!db.objectStoreNames.contains('chats')) {
-            db.createObjectStore('chats', { keyPath: 'id' });
-        }
-    };
-    request.onsuccess = (e) => { db = e.target.result; loadSidebar(); };
-
-    // شخصية ميدو المطورة
-    function getPersona() {
-        return {
-            role: "system",
-            content: `أنت ميدو (MIDO AI v3.0)، مساعد ذكي جداً وفخم، مطور بواسطة العبقري "ميدو" من شركة "Codenest".
-            تتحدث بلهجة مصرية "شوارعية" ولكن بأسلوب "شيك" وفاخر، كأنك "برنس" من شبرا أو جاردن سيتي. لسانك حلو، جريء، ذكي، وتستخدم مصطلحات الصياعة الراقية.
-            اسم المستخدم: ${userName || 'زميلي'}.
-            تذكر السياق دائماً واربط الكلام ببعضه. لا تستخدم الفصحى أبداً.`
-        };
-    }
-
-    function createNewChat() {
-        currentChatId = Date.now().toString();
-        messages = [getPersona()];
-        document.getElementById('chat-window').innerHTML = "";
-        
-        if (!userName) {
-            addMsg("يا هلا بالبرنس.. أنا ميدو AI النسخة الفاخرة. تشرفنا يا غالي.. اسمك إيه بقى عشان ندلعك؟", "bot");
-        } else {
-            addMsg(`يا مرحب يا ${userName}.. نورت الشات الفخم. قولي شاغل بالك بإيه النهاردة؟ عايز ندردش ولا نرسم؟`, "bot");
-        }
-        // لا نحفظ الشات فارغاً، سنحفظه بعد أول رسالة مستخدم
-    }
-
     async function processInput() {
-        const inputEl = document.getElementById('chat-in');
-        const val = inputEl.value.trim();
+        const val = chatIn.value.trim();
         if (!val) return;
-        inputEl.value = "";
 
-        // أول مرة: تسجيل اسم المستخدم
-        if (!userName) {
-            userName = val;
-            localStorage.setItem('m_premium_name', val);
-            addMsg(val, "user");
-            addTyping(true);
+        addMsg(val, 'user');
+        chatIn.value = "";
+        chatIn.style.height = 'auto';
+        
+        document.getElementById('typing').style.display = 'block';
+
+        // الرد على سؤال "مين عملك"
+        if (val.includes("مين عملك") || val.includes("من صنعك")) {
             setTimeout(() => {
-                addTyping(false);
-                addMsg(`أحلى مسا عليك يا ${userName} يا برنس.. كده عرفنا الأسامي، اؤمرني بقى، عايز رغي ولا فن؟`, "bot");
-                messages.push({role: "assistant", content: `أحلى مسا عليك يا ${userName}...`});
-                // تحديث الشخصية بعد معرفة الاسم
-                messages[0] = getPersona();
-                saveChat(val);
+                document.getElementById('typing').style.display = 'none';
+                addMsg(poemResponse, 'bot', true);
             }, 1000);
             return;
         }
 
-        addMsg(val, "user");
-        
-        if(!currentChatId) currentChatId = Date.now().toString(); // ضمان وجود ID
-
-        // --- خاصية 1: التأكد من سؤال "مين عملك" ---
-        const whoMadeYouQueries = ["مين عملك", "من صنعك", "شكون خدمك", "مين طورك", "who made you", "creator"];
-        if (whoMadeYouQueries.some(q => val.toLowerCase().includes(q))) {
-            addTyping(true);
-            messages.push({ role: "user", content: val });
+        // خاصية الرسم
+        if (val.startsWith("ارسم") || val.startsWith("صورة")) {
+            const imgUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(val)}?width=1024&height=1024&nologo=true`;
             setTimeout(() => {
-                addTyping(false);
-                addMsg(creatorPoem, "bot", true); // true تعني HTML
-                messages.push({ role: "assistant", content: "لقد ألقيت قصيدة عن مبدعي ميدو من كود نيست." });
-                saveChat(val);
-            }, 1200);
+                document.getElementById('typing').style.display = 'none';
+                addMsg(`<img src="${imgUrl}" style="width:100%; border-radius:10px; margin-top:10px;">`, 'bot', true);
+            }, 2000);
             return;
         }
 
-        // --- خاصية 2: توليد الصور AI ---
-        if (val.startsWith("ارسم") || val.startsWith("صورة لـ") || val.toLowerCase().startsWith("draw")) {
-            messages.push({ role: "user", content: val });
-            generateImage(val);
-            saveChat(val);
-            return;
-        }
-
-        // --- الرد النصي العادي عبر AI أو الذاكرة ---
-        messages.push({ role: "user", content: val });
-        
-        // فحص الذاكرة اليدوية أولاً
-        const manualResponse = memory.find(m => val.toLowerCase().includes(m.q.toLowerCase()));
-        if (manualResponse) {
-            addTyping(true);
-            setTimeout(() => {
-                addTyping(false);
-                addMsg(manualResponse.a, "bot");
-                messages.push({ role: "assistant", content: manualResponse.a });
-                saveChat(val);
-            }, 800);
-            return;
-        }
-
-        // طلب من الـ AI
-        addTyping(true);
+        // الرد العادي من الذكاء الاصطناعي
         try {
-            // نستخدم جيت لجعل الرد أسرع وأخف
-            const url = `https://text.pollinations.ai/${encodeURIComponent(val)}?model=openai&json=true&system=${encodeURIComponent(messages[0].content)}&context=${encodeURIComponent(JSON.stringify(messages.slice(-5)))}`;
-            
-            const res = await fetch(url);
-            const data = await res.json();
-            const text = data.response || "معلش يا زميلي، الدماغ مهيسة شوية، جرب تاني.";
-            
-            addTyping(false);
-            addMsg(text, "bot");
-            messages.push({ role: "assistant", content: text });
+            const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(val)}?model=openai`);
+            const text = await res.text();
+            document.getElementById('typing').style.display = 'none';
+            addMsg(text, 'bot');
         } catch (e) {
-            addTyping(false);
-            addMsg("السيرفر واقع يا غالي، شكلنا اتحسدنا. جرب كمان شوية.", "bot");
+            document.getElementById('typing').style.display = 'none';
+            addMsg("السيرفر هنج يا زميلي، جرب تاني.", 'bot');
         }
-        saveChat(val);
-    }
-
-    // وظيف توليد الصور
-    async function generateImage(prompt) {
-        // تنظيف البرومبت
-        const cleanPrompt = prompt.replace(/^(ارسم|صورة لـ|draw)\s*/i, '');
-        
-        // إضافة مكان تحميل الصورة
-        const chatId = 'img-' + Date.now();
-        addMsg(`<div class="image-loading" id="${chatId}">جاري رسم اللوحة الفنية... صبرك بالله</div>`, "bot", true);
-        addTyping(true);
-
-        // ترجمة البرومبت للانجليزية للحصول على نتائج أفضل (اختياري، البولينشن بيقبل عربي بس الانجليزي أحسن)
-        // سنفترض قبول العربي حالياً لسرعة الكود
-        
-        const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(cleanPrompt)}?width=1024&height=1024&nologo=true&seed=${Date.now()}`;
-
-        // محاكاة التحميل للتأكد من الصورة جهزت
-        const img = new Image();
-        img.src = imageUrl;
-        img.onload = () => {
-            addTyping(false);
-            const container = document.getElementById(chatId);
-            if(container) {
-                container.parentNode.innerHTML = `<img src="${imageUrl}" alt="${cleanPrompt}" class="ai-image" onclick="window.open(this.src)">`;
-                messages.push({ role: "assistant", content: `[صورة تم توليدها: ${cleanPrompt}]` });
-                saveChat(prompt); // تحديث الحفظ بالصورة
-            }
-        };
-        img.onerror = () => {
-            addTyping(false);
-            const container = document.getElementById(chatId);
-            if(container) container.parentNode.innerText = "فشلت عملية الرسم يا برنس، جرب برومبت تاني.";
-        };
     }
 
     function addMsg(content, sender, isHtml = false) {
-        const win = document.getElementById('chat-window');
         const div = document.createElement('div');
         div.className = `bubble ${sender}`;
-        if (isHtml) {
-            div.innerHTML = content;
-        } else {
-            div.innerText = content;
+        if (isHtml) div.innerHTML = content;
+        else div.innerText = content;
+        chatWindow.appendChild(div);
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+
+    // الإرسال بالإنتر (Enter)
+    chatIn.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            processInput();
         }
-        win.appendChild(div);
-        win.scrollTop = win.scrollHeight;
-    }
-
-    function addTyping(show) {
-        document.getElementById('typing').style.display = show ? 'flex' : 'none';
-        document.getElementById('chat-window').scrollTop = document.getElementById('chat-window').scrollHeight;
-    }
-
-    // إدارة تخزين المحادثات
-    function saveChat(lastUserMsg) {
-        if (!currentChatId || !messages || messages.length <= 1) return;
-        
-        const tx = db.transaction(['chats'], 'readwrite');
-        const store = tx.objectStore('chats');
-        
-        // تحديد عنوان الشات من أول رسالة مستخدم
-        let title = "حكاية جديدة فخمة";
-        const firstUser = messages.find(m => m.role === 'user');
-        if(firstUser) title = firstUser.content.substring(0, 30) + (firstUser.content.length > 30 ? '...' : '');
-
-        store.put({ 
-            id: currentChatId, 
-            title: title, 
-            messages: messages, 
-            date: Date.now() 
-        });
-        
-        tx.oncomplete = () => loadSidebar();
-    }
-
-    function loadSidebar() {
-        if(!db) return;
-        const tx = db.transaction(['chats'], 'readonly');
-        const store = tx.objectStore('chats');
-        store.getAll().onsuccess = (e) => {
-            const list = document.getElementById('chat-list');
-            list.innerHTML = "";
-            const chats = e.target.result;
-            
-            chats.sort((a,b) => b.date - a.date).forEach(chat => {
-                const item = document.createElement('div');
-                item.className = `chat-item ${chat.id === currentChatId ? 'active' : ''}`;
-                item.innerHTML = `
-                    <svg class="icon" style="margin-left:10px; width:14px; color:var(--text-muted)" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>
-                    ${chat.title}
-                `;
-                item.onclick = () => loadChat(chat.id);
-                list.appendChild(item);
-            });
-            
-            if (!currentChatId && chats.length === 0) createNewChat();
-        };
-    }
-
-    function loadChat(id) {
-        currentChatId = id;
-        const tx = db.transaction(['chats'], 'readonly');
-        const store = tx.objectStore('chats');
-        store.get(id).onsuccess = (e) => {
-            const chat = e.target.result;
-            if(!chat) return;
-            messages = chat.messages;
-            // تحديث برسيونا في حال تم تغيير الاسم
-            if(messages[0]) messages[0] = getPersona();
-            
-            const win = document.getElementById('chat-window');
-            win.innerHTML = "";
-            
-            messages.filter(m => m.role !== 'system').forEach(m => {
-                // فحص إذا كانت رسالة صورة مخزنة
-                if (m.content.startsWith("[صورة تم توليدها:")) {
-                    // لا نعيد عرض الصورة المخزنة كـ img لتوفير التحميل، بل كنص
-                    addMsg(m.content, m.role === 'user' ? 'user' : 'bot');
-                } else if (m.content.includes('poem-line')) {
-                     addMsg(m.content, 'bot', true);
-                }
-                 else {
-                    addMsg(m.content, m.role === 'user' ? 'user' : 'bot');
-                }
-            });
-            loadSidebar();
-        };
-    }
-
-    // وظائف التعليم (Modal)
-    function openTeachModal() {
-        document.getElementById('modal-overlay').style.display = 'block';
-        const modal = document.getElementById('teach-modal');
-        modal.style.display = 'block';
-        setTimeout(() => modal.classList.add('open'), 10);
-    }
-    
-    function closeTeachModal() {
-        const modal = document.getElementById('teach-modal');
-        modal.classList.remove('open');
-        setTimeout(() => {
-            modal.style.display = 'none';
-            document.getElementById('modal-overlay').style.display = 'none';
-        }, 300);
-    }
-    
-    function saveLesson() {
-        const q = document.getElementById('teach-q').value.trim();
-        const a = document.getElementById('teach-a').value.trim();
-        
-        if(q && a) {
-            memory.push({q, a});
-            localStorage.setItem('m_memory_v3', JSON.stringify(memory));
-            alert("خلاص يا زميلي.. ميدو بصمها في دماغه موش هينساها!");
-            document.getElementById('teach-q').value = "";
-            document.getElementById('teach-a').value = "";
-            closeTeachModal();
-        } else {
-            alert("املا الخانات يا غالي.. بلاش كروتة!");
-        }
-    }
+    });
 </script>
 
 </body>
